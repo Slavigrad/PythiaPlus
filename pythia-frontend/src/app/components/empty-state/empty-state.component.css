@@ -1,0 +1,73 @@
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 64px 32px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.empty-icon {
+  width: 96px;
+  height: 96px;
+  color: #bdbdbd;
+  margin-bottom: 24px;
+}
+
+.empty-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #424242;
+  margin: 0 0 12px 0;
+}
+
+.empty-description {
+  font-size: 16px;
+  color: #757575;
+  margin: 0 0 32px 0;
+  line-height: 1.6;
+}
+
+.empty-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.tip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #616161;
+}
+
+.tip svg {
+  width: 20px;
+  height: 20px;
+  color: #4caf50;
+  flex-shrink: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .empty-state {
+    padding: 48px 24px;
+  }
+
+  .empty-icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .empty-title {
+    font-size: 20px;
+  }
+
+  .empty-description {
+    font-size: 14px;
+  }
+}
