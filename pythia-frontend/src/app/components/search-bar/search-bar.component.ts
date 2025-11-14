@@ -1,6 +1,11 @@
 import { Component, signal, inject, effect, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
+import {
+  MIN_QUERY_LENGTH,
+  SEARCH_DEBOUNCE_MS,
+  EXAMPLE_QUERIES
+} from '../../core/constants';
 
 /**
  * Search Bar Component
@@ -25,11 +30,8 @@ export class SearchBarComponent {
   private debounceTimeout: any;
   private isInitialized = false;
 
-  protected readonly exampleQueries = [
-    'Find React developers in Zurich',
-    'Senior Python developers with 5+ years experience',
-    'Show me available machine learning engineers'
-  ];
+  // Example queries (from constants)
+  protected readonly exampleQueries = EXAMPLE_QUERIES;
 
   constructor() {
     // Initialize from URL input
@@ -50,14 +52,14 @@ export class SearchBarComponent {
         clearTimeout(this.debounceTimeout);
       }
 
-      // Debounce search by 500ms
+      // Debounce search
       this.debounceTimeout = setTimeout(() => {
-        if (currentQuery.trim().length >= 3) {
+        if (currentQuery.trim().length >= MIN_QUERY_LENGTH) {
           this.searchService.search({ query: currentQuery });
         } else if (currentQuery.trim().length === 0) {
           this.searchService.clear();
         }
-      }, 500);
+      }, SEARCH_DEBOUNCE_MS);
     });
   }
 
