@@ -196,7 +196,7 @@
 
 **Goal**: Add search refinement controls with @defer for performance
 
-- [ ] **Task 4.1: Create SearchOptionsComponent with collapsible panel**
+- [x] **Task 4.1: Create SearchOptionsComponent with collapsible panel**
   - Build collapsible panel (default: collapsed)
   - Add "⚙️ Advanced options" toggle button
   - Implement expand/collapse animation with CSS transitions
@@ -205,7 +205,7 @@
   - _Requirements: 6.3 (SearchOptionsComponent), 7.4 (Advanced Options)_
   - _Deliverable: Collapsible options panel_
 
-- [ ] **Task 4.2: Implement "Show me" dropdown for topK**
+- [x] **Task 4.2: Implement "Show me" dropdown for topK**
   - Create Material select dropdown
   - Options: "Top 5 matches", "Top 10 matches" (default), "Top 20 matches", "All matches (50)"
   - Map UI labels to API values (5, 10, 20, 50)
@@ -214,7 +214,7 @@
   - _Requirements: 7.4 (TopK Selector)_
   - _Deliverable: Working result count selector_
 
-- [ ] **Task 4.3: Build minScore slider with visual zones**
+- [x] **Task 4.3: Build minScore slider with visual zones**
   - Create horizontal slider (50% to 100%)
   - Add gradient background: orange (50-70%) → green (70-85%) → dark green (85-100%)
   - Display current percentage value (e.g., "70%")
@@ -224,21 +224,22 @@
   - _Requirements: 6.3 (Score Slider), 7.4 (MinScore Control)_
   - _Deliverable: Visual match quality slider_
 
-- [ ] **Task 4.4: Implement @defer for SearchOptionsComponent**
+- [x] **Task 4.4: Implement @defer for SearchOptionsComponent**
   - Wrap SearchOptionsComponent in @defer (on interaction)
   - Show simple button in @placeholder state
   - Load component only when user clicks "Advanced options"
-  - Reduce initial bundle by ~10-15kb
+  - Reduce initial bundle by ~262kb (from 285kb to 24kb)
   - Test lazy loading behavior in dev tools
   - _Requirements: 5.3 (Deferred Loading)_
   - _Deliverable: Lazy-loaded advanced options_
 
-- [ ] **Task 4.5: Add @defer for below-the-fold candidate cards**
+- [x] **Task 4.5: Add @defer for below-the-fold candidate cards**
   - Wrap candidate cards in @defer (on viewport)
   - Create SkeletonCardComponent for @placeholder
   - Show skeleton loader while component loads
   - Add @loading state with minimum 100ms
   - Prefetch on idle for better UX
+  - CandidateCard split into 4.98kb lazy chunk (1.69kb transferred)
   - _Requirements: 5.3 (@defer patterns), 6.6 (Skeleton Placeholders)_
   - _Deliverable: Optimized lazy loading_
 

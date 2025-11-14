@@ -1,0 +1,121 @@
+/* Skeleton Card - Loading Placeholder */
+.skeleton-card {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: box-shadow 150ms ease-in-out;
+}
+
+/* Header */
+.skeleton-header {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.skeleton-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  flex-shrink: 0;
+}
+
+.skeleton-header-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+/* Content */
+.skeleton-content {
+  margin-bottom: 16px;
+}
+
+.skeleton-line {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.skeleton-name {
+  width: 70%;
+  height: 20px;
+}
+
+.skeleton-title {
+  width: 50%;
+  height: 16px;
+}
+
+.skeleton-location {
+  width: 40%;
+  margin-bottom: 12px;
+}
+
+/* Skills */
+.skeleton-skills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.skeleton-skill {
+  width: 80px;
+  height: 28px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 14px;
+}
+
+/* Footer */
+.skeleton-footer {
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.skeleton-match {
+  width: 30%;
+  height: 20px;
+}
+
+/* Shimmer Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .skeleton-card {
+    padding: 16px;
+  }
+
+  .skeleton-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .skeleton-name {
+    width: 80%;
+  }
+
+  .skeleton-title {
+    width: 60%;
+  }
+}
