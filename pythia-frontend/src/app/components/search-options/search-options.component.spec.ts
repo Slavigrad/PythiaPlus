@@ -115,39 +115,39 @@ describe('SearchOptionsComponent', () => {
 
   describe('getScoreLabel()', () => {
     it('should return "Only excellent" for score >= 0.85', () => {
-      expect(component.getScoreLabel(0.85)).toBe('Only excellent');
-      expect(component.getScoreLabel(0.90)).toBe('Only excellent');
-      expect(component.getScoreLabel(1.0)).toBe('Only excellent');
+      expect(component['getScoreLabel'](0.85)).toBe('Only excellent');
+      expect(component['getScoreLabel'](0.90)).toBe('Only excellent');
+      expect(component['getScoreLabel'](1.0)).toBe('Only excellent');
     });
 
     it('should return "Good matches" for score 0.70-0.84', () => {
-      expect(component.getScoreLabel(0.70)).toBe('Good matches');
-      expect(component.getScoreLabel(0.75)).toBe('Good matches');
-      expect(component.getScoreLabel(0.84)).toBe('Good matches');
+      expect(component['getScoreLabel'](0.70)).toBe('Good matches');
+      expect(component['getScoreLabel'](0.75)).toBe('Good matches');
+      expect(component['getScoreLabel'](0.84)).toBe('Good matches');
     });
 
     it('should return "Cast a wide net" for score < 0.70', () => {
-      expect(component.getScoreLabel(0.50)).toBe('Cast a wide net');
-      expect(component.getScoreLabel(0.60)).toBe('Cast a wide net');
-      expect(component.getScoreLabel(0.69)).toBe('Cast a wide net');
+      expect(component['getScoreLabel'](0.50)).toBe('Cast a wide net');
+      expect(component['getScoreLabel'](0.60)).toBe('Cast a wide net');
+      expect(component['getScoreLabel'](0.69)).toBe('Cast a wide net');
     });
   });
 
   describe('getScorePercentage()', () => {
     it('should convert score to percentage', () => {
-      expect(component.getScorePercentage(0.7)).toBe(70);
-      expect(component.getScorePercentage(0.85)).toBe(85);
-      expect(component.getScorePercentage(1.0)).toBe(100);
+      expect(component['getScorePercentage'](0.7)).toBe(70);
+      expect(component['getScorePercentage'](0.85)).toBe(85);
+      expect(component['getScorePercentage'](1.0)).toBe(100);
     });
 
     it('should round to nearest integer', () => {
-      expect(component.getScorePercentage(0.754)).toBe(75);
-      expect(component.getScorePercentage(0.756)).toBe(76);
+      expect(component['getScorePercentage'](0.754)).toBe(75);
+      expect(component['getScorePercentage'](0.756)).toBe(76);
     });
 
     it('should handle edge cases', () => {
-      expect(component.getScorePercentage(0.5)).toBe(50);
-      expect(component.getScorePercentage(0.0)).toBe(0);
+      expect(component['getScorePercentage'](0.5)).toBe(50);
+      expect(component['getScorePercentage'](0.0)).toBe(0);
     });
   });
 

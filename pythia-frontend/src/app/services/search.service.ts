@@ -6,6 +6,12 @@ import { SearchParams } from '../models/search-params.model';
 import { SearchResponse } from '../models/search-response.model';
 import { Candidate } from '../models/candidate.model';
 import { environment } from '../../environments/environment';
+import {
+  DEFAULT_TOP_K,
+  DEFAULT_MIN_SCORE,
+  MIN_QUERY_LENGTH,
+  ERROR_MESSAGES
+} from '../core/constants';
 
 /**
  * Search Service - Signal-Based State Management with URL Persistence
@@ -40,7 +46,7 @@ export class SearchService {
    */
   search(params: SearchParams, updateUrl: boolean = true): void {
     // Validate query
-    if (!params.query || params.query.trim().length < 3) {
+    if (!params.query || params.query.trim().length < MIN_QUERY_LENGTH) {
       this.searchResults.set([]);
       this.lastQuery.set('');
       if (updateUrl) {
@@ -62,8 +68,8 @@ export class SearchService {
     // Build query params
     const queryParams = new URLSearchParams({
       query: params.query,
-      topK: (params.topK || 10).toString(),
-      minScore: (params.minScore || 0.7).toString()
+      topK: (params.topK || DEFAULT_TOP_K).toString(),
+      minScore: (params.minScore || DEFAULT_MIN_SCORE).toString()
     });
 
     // Make HTTP request
@@ -75,7 +81,7 @@ export class SearchService {
         }),
         catchError(err => {
           console.error('Search error:', err);
-          this.error.set('Failed to search candidates. Please try again.');
+          this.error.set(ERROR_MESSAGES.SEARCH_FAILED);
           this.loading.set(false);
           this.searchResults.set([]);
           return of(null);
@@ -93,10 +99,10 @@ export class SearchService {
     if (query) {
       queryParams.q = query;
     }
-    if (topK && topK !== 10) {
+    if (topK && topK !== DEFAULT_TOP_K) {
       queryParams.topK = topK;
     }
-    if (minScore && minScore !== 0.7) {
+    if (minScore && minScore !== DEFAULT_MIN_SCORE) {
       queryParams.minScore = minScore;
     }
 

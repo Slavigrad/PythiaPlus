@@ -1,5 +1,11 @@
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Candidate } from '../../models/candidate.model';
+import {
+  AVATAR_COLORS,
+  MATCH_COLORS,
+  MATCH_PERCENTAGE_HIGH,
+  MATCH_PERCENTAGE_MEDIUM
+} from '../../core/constants';
 
 /**
  * Candidate Card Component
@@ -30,10 +36,9 @@ export class CandidateCardComponent {
   });
 
   protected readonly avatarColor = computed(() => {
-    const colors = ['#FF6B35', '#4ECDC4', '#556FB5', '#9B59B6'];
     const id = this.candidate().id;
-    const index = parseInt(id, 10) % colors.length;
-    return colors[index];
+    const index = parseInt(id, 10) % AVATAR_COLORS.length;
+    return AVATAR_COLORS[index];
   });
 
   protected readonly matchPercentage = computed(() => {
@@ -42,9 +47,9 @@ export class CandidateCardComponent {
 
   protected readonly matchColor = computed(() => {
     const percentage = this.matchPercentage();
-    if (percentage >= 90) return '#4caf50'; // Green
-    if (percentage >= 70) return '#ff9800'; // Orange
-    return '#757575'; // Gray
+    if (percentage >= MATCH_PERCENTAGE_HIGH) return MATCH_COLORS.HIGH;
+    if (percentage >= MATCH_PERCENTAGE_MEDIUM) return MATCH_COLORS.MEDIUM;
+    return MATCH_COLORS.LOW;
   });
 
   protected readonly availabilityClass = computed(() => {

@@ -1,6 +1,15 @@
 import { Component, signal, effect, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
+import {
+  DEFAULT_TOP_K,
+  DEFAULT_MIN_SCORE,
+  MIN_QUERY_LENGTH,
+  TOP_K_OPTIONS,
+  SCORE_THRESHOLD_EXCELLENT,
+  SCORE_THRESHOLD_GOOD,
+  SCORE_LABELS
+} from '../../core/constants';
 
 /**
  * Search Options Component
@@ -19,31 +28,26 @@ export class SearchOptionsComponent {
   private readonly searchService = inject(SearchService);
 
   // Input from URL (for initial state)
-  readonly initialTopK = input<number>(10);
-  readonly initialMinScore = input<number>(0.7);
+  readonly initialTopK = input<number>(DEFAULT_TOP_K);
+  readonly initialMinScore = input<number>(DEFAULT_MIN_SCORE);
 
   // UI state
   protected readonly isExpanded = signal(false);
 
   // Search parameters
-  protected readonly topK = signal(10);
-  protected readonly minScore = signal(0.7);
+  protected readonly topK = signal(DEFAULT_TOP_K);
+  protected readonly minScore = signal(DEFAULT_MIN_SCORE);
   private isInitialized = false;
 
-  // TopK options
-  protected readonly topKOptions = [
-    { value: 5, label: 'Top 5 matches' },
-    { value: 10, label: 'Top 10 matches' },
-    { value: 20, label: 'Top 20 matches' },
-    { value: 50, label: 'All matches (50)' }
-  ];
+  // TopK options (from constants)
+  protected readonly topKOptions = TOP_K_OPTIONS;
 
   constructor() {
     // Initialize from URL input
     effect(() => {
       const urlTopK = this.initialTopK();
       const urlMinScore = this.initialMinScore();
-      if (!this.isInitialized && (urlTopK !== 10 || urlMinScore !== 0.7)) {
+      if (!this.isInitialized && (urlTopK !== DEFAULT_TOP_K || urlMinScore !== DEFAULT_MIN_SCORE)) {
         this.topK.set(urlTopK);
         this.minScore.set(urlMinScore);
         this.isInitialized = true;
@@ -57,7 +61,7 @@ export class SearchOptionsComponent {
       const currentMinScore = this.minScore();
 
       // Only search if we have a query
-      if (query && query.length >= 3) {
+      if (query && query.length >= MIN_QUERY_LENGTH) {
         this.searchService.search({
           query,
           topK: currentTopK,
@@ -72,9 +76,9 @@ export class SearchOptionsComponent {
   }
 
   protected getScoreLabel(score: number): string {
-    if (score >= 0.85) return 'Only excellent';
-    if (score >= 0.70) return 'Good matches';
-    return 'Cast a wide net';
+    if (score >= SCORE_THRESHOLD_EXCELLENT) return SCORE_LABELS.EXCELLENT;
+    if (score >= SCORE_THRESHOLD_GOOD) return SCORE_LABELS.GOOD;
+    return SCORE_LABELS.WIDE;
   }
 
   protected getScorePercentage(score: number): number {

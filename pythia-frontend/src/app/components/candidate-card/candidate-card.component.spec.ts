@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CandidateCardComponent } from './candidate-card.component';
 import { Candidate } from '../../models/candidate.model';
+import { AVATAR_COLORS, MATCH_COLORS } from '../../core/constants';
 
 describe('CandidateCardComponent', () => {
   let component: CandidateCardComponent;
@@ -81,22 +82,22 @@ describe('CandidateCardComponent', () => {
       const candidate1 = { ...mockCandidate, id: '0' };
       fixture.componentRef.setInput('candidate', candidate1);
       fixture.detectChanges();
-      expect(component['avatarColor']()).toBe('#FF6B35');
+      expect(component['avatarColor']()).toBe(AVATAR_COLORS[0]);
 
       const candidate2 = { ...mockCandidate, id: '1' };
       fixture.componentRef.setInput('candidate', candidate2);
       fixture.detectChanges();
-      expect(component['avatarColor']()).toBe('#4ECDC4');
+      expect(component['avatarColor']()).toBe(AVATAR_COLORS[1]);
 
       const candidate3 = { ...mockCandidate, id: '2' };
       fixture.componentRef.setInput('candidate', candidate3);
       fixture.detectChanges();
-      expect(component['avatarColor']()).toBe('#556FB5');
+      expect(component['avatarColor']()).toBe(AVATAR_COLORS[2]);
 
       const candidate4 = { ...mockCandidate, id: '3' };
       fixture.componentRef.setInput('candidate', candidate4);
       fixture.detectChanges();
-      expect(component['avatarColor']()).toBe('#9B59B6');
+      expect(component['avatarColor']()).toBe(AVATAR_COLORS[3]);
     });
 
     it('should be deterministic for same ID', () => {
@@ -163,7 +164,7 @@ describe('CandidateCardComponent', () => {
       fixture.componentRef.setInput('candidate', candidate);
       fixture.detectChanges();
 
-      expect(component['matchColor']()).toBe('#4caf50');
+      expect(component['matchColor']()).toBe(MATCH_COLORS.HIGH);
     });
 
     it('should return green for exactly 90% match', () => {
@@ -174,7 +175,7 @@ describe('CandidateCardComponent', () => {
       fixture.componentRef.setInput('candidate', candidate);
       fixture.detectChanges();
 
-      expect(component['matchColor']()).toBe('#4caf50');
+      expect(component['matchColor']()).toBe(MATCH_COLORS.HIGH);
     });
 
     it('should return orange for 70-89% match', () => {
@@ -185,7 +186,7 @@ describe('CandidateCardComponent', () => {
       fixture.componentRef.setInput('candidate', candidate);
       fixture.detectChanges();
 
-      expect(component['matchColor']()).toBe('#ff9800');
+      expect(component['matchColor']()).toBe(MATCH_COLORS.MEDIUM);
     });
 
     it('should return orange for exactly 70% match', () => {
@@ -196,7 +197,7 @@ describe('CandidateCardComponent', () => {
       fixture.componentRef.setInput('candidate', candidate);
       fixture.detectChanges();
 
-      expect(component['matchColor']()).toBe('#ff9800');
+      expect(component['matchColor']()).toBe(MATCH_COLORS.MEDIUM);
     });
 
     it('should return gray for below 70% match', () => {
@@ -207,7 +208,7 @@ describe('CandidateCardComponent', () => {
       fixture.componentRef.setInput('candidate', candidate);
       fixture.detectChanges();
 
-      expect(component['matchColor']()).toBe('#757575');
+      expect(component['matchColor']()).toBe(MATCH_COLORS.LOW);
     });
   });
 
