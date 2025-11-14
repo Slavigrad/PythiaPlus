@@ -8,10 +8,16 @@
     <p class="results-subtitle">Sorted by relevance</p>
   </div>
 
-  <!-- Candidate Cards -->
+  <!-- Candidate Cards (Viewport-based Lazy Loading) -->
   <div class="candidate-list">
     @for (candidate of candidates(); track candidate.id) {
-      <app-candidate-card [candidate]="candidate" />
+      @defer (on viewport; prefetch on idle) {
+        <app-candidate-card [candidate]="candidate" />
+      } @placeholder {
+        <app-skeleton-card />
+      } @loading (minimum 100ms) {
+        <app-skeleton-card />
+      }
     } @empty {
       <p class="no-candidates">No candidates to display</p>
     }
