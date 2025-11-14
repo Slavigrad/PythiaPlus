@@ -1,5 +1,6 @@
 import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatRippleModule } from '@angular/material/core';
 import { SearchService } from '../../services/search.service';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { SearchOptionsComponent } from '../../components/search-options/search-options.component';
@@ -10,11 +11,11 @@ import { EmptyStateComponent } from '../../components/empty-state/empty-state.co
  * Search Page Component
  *
  * Purpose: Main search interface for Pythia+
- * Features: Search bar, advanced options, results display, empty state, URL persistence
+ * Features: Search bar, advanced options, results display, empty state, URL persistence, ripple effects
  */
 @Component({
   selector: 'app-search-page',
-  imports: [SearchBarComponent, SearchOptionsComponent, CandidateListComponent, EmptyStateComponent],
+  imports: [SearchBarComponent, SearchOptionsComponent, CandidateListComponent, EmptyStateComponent, MatRippleModule],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

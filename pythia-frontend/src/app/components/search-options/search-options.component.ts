@@ -1,5 +1,6 @@
 import { Component, signal, effect, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatRippleModule } from '@angular/material/core';
 import { SearchService } from '../../services/search.service';
 import {
   DEFAULT_TOP_K,
@@ -15,11 +16,11 @@ import {
  * Search Options Component
  *
  * Purpose: Advanced search controls (topK, minScore)
- * Features: Collapsible panel, dropdown, slider with visual zones, URL state restoration
+ * Features: Collapsible panel, dropdown, slider with visual zones, URL state restoration, ripple effects
  */
 @Component({
   selector: 'app-search-options',
-  imports: [FormsModule],
+  imports: [FormsModule, MatRippleModule],
   templateUrl: './search-options.component.html',
   styleUrl: './search-options.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
