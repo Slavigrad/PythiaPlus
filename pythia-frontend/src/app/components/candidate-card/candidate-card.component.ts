@@ -1,4 +1,4 @@
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Candidate } from '../../models/candidate.model';
 import {
   AVATAR_COLORS,
@@ -11,18 +11,37 @@ import {
  * Candidate Card Component
  *
  * Purpose: Display individual candidate information
- * Features: Colored avatars, match score %, skill pills
+ * Features: Colored avatars, match score %, skill pills, clickable for details
+ *
+ * Future Enhancement: Clicking a card will open a detailed candidate modal with:
+ * - Full profile information
+ * - Complete skills and certifications list
+ * - Project history
+ * - Contact information
+ * - Download resume option
  */
 @Component({
   selector: 'app-candidate-card',
   imports: [],
   templateUrl: './candidate-card.component.html',
   styleUrl: './candidate-card.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(click)': 'handleCardClick()',
+    '(keydown.enter)': 'handleCardClick()',
+    '(keydown.space)': 'handleCardClick($event)',
+    '[attr.tabindex]': '0',
+    '[attr.role]': '"button"',
+    '[attr.aria-label]': '"View details for " + candidate().name'
+  }
 })
 export class CandidateCardComponent {
   // Signal input (Angular 20)
   readonly candidate = input.required<Candidate>();
+
+  // Signal output for card selection (Angular 20)
+  // Emits the candidate ID when the card is clicked
+  readonly candidateSelected = output<string>();
 
   // Computed signals
   protected readonly initials = computed(() => {
@@ -58,4 +77,27 @@ export class CandidateCardComponent {
     if (availability === 'Notice Period') return 'notice-period';
     return 'not-available';
   });
+
+  /**
+   * Handles card click/keyboard interaction
+   * Emits the candidate ID for parent component to handle
+   *
+   * Future Enhancement: This will trigger opening a detailed candidate modal
+   * The modal will fetch additional candidate data from the backend API
+   */
+  protected handleCardClick(event?: Event): void {
+    // Prevent default for space key to avoid page scroll
+    if (event && event.type === 'keydown') {
+      event.preventDefault();
+    }
+
+    // Emit candidate ID for parent component to handle
+    this.candidateSelected.emit(this.candidate().id);
+
+    // TODO: Future enhancement - Open candidate detail modal
+    // The parent component should handle this event and:
+    // 1. Fetch full candidate profile from API: GET /api/v1/candidates/{id}
+    // 2. Open CandidateDetailModal component (to be created)
+    // 3. Display comprehensive candidate information
+  }
 }
