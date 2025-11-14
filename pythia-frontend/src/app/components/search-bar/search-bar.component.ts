@@ -1,5 +1,6 @@
 import { Component, signal, inject, effect, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatRippleModule } from '@angular/material/core';
 import { SearchService } from '../../services/search.service';
 import {
   MIN_QUERY_LENGTH,
@@ -11,11 +12,11 @@ import {
  * Search Bar Component
  *
  * Purpose: Natural language search input with URL persistence
- * Features: Debounced search, example queries, keyboard shortcuts, URL state
+ * Features: Debounced search, example queries, keyboard shortcuts, URL state, ripple effects
  */
 @Component({
   selector: 'app-search-bar',
-  imports: [FormsModule],
+  imports: [FormsModule, MatRippleModule],
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
