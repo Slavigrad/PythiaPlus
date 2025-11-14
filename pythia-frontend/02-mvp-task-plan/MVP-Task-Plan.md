@@ -171,12 +171,13 @@
   - _Requirements: 6.3 (Candidate Info Styling)_
   - _Deliverable: Complete candidate info display_
 
-- [ ] **Task 3.6: Prepare for candidate details view (future enhancement)**
-  - Add click handler to candidate cards
-  - Create output() event for card selection
-  - Add hover cursor pointer styling
-  - Document API requirements for full candidate profile
-  - Add placeholder comment for future detail modal
+- [x] **Task 3.6: Prepare for candidate details view (future enhancement)**
+  - ✅ Add click handler to candidate cards
+  - ✅ Create output() event for card selection
+  - ✅ Add hover cursor pointer styling (already present)
+  - ✅ Document API requirements for full candidate profile (API-REQUIREMENTS.md)
+  - ✅ Add placeholder comment for future detail modal
+  - ✅ Comprehensive tests for click handling (6 new tests)
   - _Requirements: Future enhancement_
   - _Deliverable: Click handling infrastructure ready_
 

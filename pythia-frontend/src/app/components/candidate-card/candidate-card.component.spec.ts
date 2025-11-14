@@ -317,4 +317,91 @@ describe('CandidateCardComponent', () => {
       expect(component['matchColor']()).not.toBe(firstColor);
     });
   });
+
+  describe('Click Handling (Task 3.6)', () => {
+    beforeEach(() => {
+      fixture.componentRef.setInput('candidate', mockCandidate);
+      fixture.detectChanges();
+    });
+
+    it('should emit candidateSelected event when card is clicked', () => {
+      let emittedId: string | undefined;
+      component.candidateSelected.subscribe((id: string) => {
+        emittedId = id;
+      });
+
+      const card = fixture.nativeElement as HTMLElement;
+      card.click();
+      fixture.detectChanges();
+
+      expect(emittedId).toBe('123');
+    });
+
+    it('should emit candidateSelected event when Enter key is pressed', () => {
+      let emittedId: string | undefined;
+      component.candidateSelected.subscribe((id: string) => {
+        emittedId = id;
+      });
+
+      const card = fixture.nativeElement as HTMLElement;
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      card.dispatchEvent(event);
+      fixture.detectChanges();
+
+      expect(emittedId).toBe('123');
+    });
+
+    it('should emit candidateSelected event when Space key is pressed', () => {
+      let emittedId: string | undefined;
+      component.candidateSelected.subscribe((id: string) => {
+        emittedId = id;
+      });
+
+      const card = fixture.nativeElement as HTMLElement;
+      const event = new KeyboardEvent('keydown', { key: ' ' });
+      card.dispatchEvent(event);
+      fixture.detectChanges();
+
+      expect(emittedId).toBe('123');
+    });
+
+    it('should prevent default behavior for Space key to avoid page scroll', () => {
+      const card = fixture.nativeElement as HTMLElement;
+      const event = new KeyboardEvent('keydown', { key: ' ' });
+      const preventDefaultSpy = spyOn(event, 'preventDefault');
+
+      component['handleCardClick'](event);
+
+      expect(preventDefaultSpy).toHaveBeenCalled();
+    });
+
+    it('should emit correct candidate ID for different candidates', () => {
+      const emittedIds: string[] = [];
+      component.candidateSelected.subscribe((id: string) => {
+        emittedIds.push(id);
+      });
+
+      // Click first candidate
+      const card = fixture.nativeElement as HTMLElement;
+      card.click();
+
+      // Change to different candidate
+      const newCandidate = { ...mockCandidate, id: '456', name: 'Jane Smith' };
+      fixture.componentRef.setInput('candidate', newCandidate);
+      fixture.detectChanges();
+
+      // Click second candidate
+      card.click();
+
+      expect(emittedIds).toEqual(['123', '456']);
+    });
+
+    it('should have appropriate ARIA attributes for accessibility', () => {
+      const card = fixture.nativeElement as HTMLElement;
+
+      expect(card.getAttribute('role')).toBe('button');
+      expect(card.getAttribute('tabindex')).toBe('0');
+      expect(card.getAttribute('aria-label')).toContain('View details for John Doe');
+    });
+  });
 });
