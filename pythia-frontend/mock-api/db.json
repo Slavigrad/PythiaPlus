@@ -1,0 +1,204 @@
+{
+  "candidates": [
+    {
+      "id": "1",
+      "name": "Daniel Park",
+      "title": "Full Stack Engineer",
+      "location": "Berlin",
+      "profilePicture": "",
+      "experience": "8.5 years",
+      "availability": "Available",
+      "technologies": ["Node.js", "PostgreSQL", "Angular", "TypeScript"],
+      "skills": ["Angular", "React", "Vue.js", "Node.js"],
+      "certifications": ["AWS Certified Solutions Architect"],
+      "currentProject": {
+        "name": "E-Commerce Platform",
+        "company": "TechCorp GmbH"
+      },
+      "matchScore": {
+        "matched": 0.95,
+        "total": 1
+      }
+    },
+    {
+      "id": "2",
+      "name": "Olivia Chen",
+      "title": "Frontend Engineer",
+      "location": "Remote",
+      "profilePicture": "",
+      "experience": "6.0 years",
+      "availability": "Notice Period",
+      "technologies": ["React", "Django", "PostgreSQL", "AWS"],
+      "skills": ["React", "TypeScript", "Tailwind CSS"],
+      "certifications": ["Google UX Design Certificate"],
+      "currentProject": {
+        "name": "Design System Revamp",
+        "company": "StartupHub"
+      },
+      "matchScore": {
+        "matched": 0.92,
+        "total": 1
+      }
+    },
+    {
+      "id": "3",
+      "name": "Liam O'Connor",
+      "title": "React Native Developer",
+      "location": "Dublin",
+      "profilePicture": "",
+      "experience": "5.5 years",
+      "availability": "Available",
+      "technologies": ["JavaScript", "React", "Node.js", "MongoDB"],
+      "skills": ["React Native", "Redux", "GraphQL"],
+      "certifications": ["Meta React Native Certification"],
+      "currentProject": {
+        "name": "Mobile Banking App",
+        "company": "FinTech Solutions"
+      },
+      "matchScore": {
+        "matched": 0.88,
+        "total": 1
+      }
+    },
+    {
+      "id": "4",
+      "name": "Sarah Chen",
+      "title": "Senior Full Stack Developer",
+      "location": "San Francisco",
+      "profilePicture": "",
+      "experience": "10.0 years",
+      "availability": "Not Available",
+      "technologies": ["React", "AWS", "Python", "Docker"],
+      "skills": ["React", "Node.js", "Kubernetes", "Terraform"],
+      "certifications": ["AWS Solutions Architect Professional"],
+      "currentProject": {
+        "name": "Cloud Infrastructure Migration",
+        "company": "CloudFirst Inc"
+      },
+      "matchScore": {
+        "matched": 0.85,
+        "total": 1
+      }
+    },
+    {
+      "id": "5",
+      "name": "Lisa Anderson",
+      "title": "Mobile Developer",
+      "location": "Stockholm",
+      "profilePicture": "",
+      "experience": "7.5 years",
+      "availability": "Available",
+      "technologies": ["React Native", "Azure", "Swift", "Kotlin"],
+      "skills": ["iOS", "Android", "Flutter", "React Native"],
+      "certifications": ["Apple Developer Certification"],
+      "currentProject": {
+        "name": "Health Tracking App",
+        "company": "WellnessLab"
+      },
+      "matchScore": {
+        "matched": 0.82,
+        "total": 1
+      }
+    },
+    {
+      "id": "6",
+      "name": "Alexandra Bennett",
+      "title": "Senior React Developer",
+      "location": "London",
+      "profilePicture": "",
+      "experience": "9.0 years",
+      "availability": "Notice Period",
+      "technologies": ["GraphQL", "Next.js", "PostgreSQL", "TypeScript"],
+      "skills": ["React", "Next.js", "GraphQL", "TypeScript"],
+      "certifications": ["Meta Frontend Developer Professional"],
+      "currentProject": {
+        "name": "Content Management Platform",
+        "company": "MediaTech Ltd"
+      },
+      "matchScore": {
+        "matched": 0.89,
+        "total": 1
+      }
+    },
+    {
+      "id": "7",
+      "name": "Marcus Weber",
+      "title": "Backend Engineer",
+      "location": "Zurich",
+      "profilePicture": "",
+      "experience": "11.5 years",
+      "availability": "Available",
+      "technologies": ["Kotlin", "Spring Boot", "PostgreSQL", "Redis"],
+      "skills": ["Java", "Kotlin", "Microservices", "Kafka"],
+      "certifications": ["Oracle Java SE Certification"],
+      "currentProject": {
+        "name": "Payment Gateway API",
+        "company": "SwissPay AG"
+      },
+      "matchScore": {
+        "matched": 0.78,
+        "total": 1
+      }
+    },
+    {
+      "id": "8",
+      "name": "Elena Rodriguez",
+      "title": "DevOps Engineer",
+      "location": "Barcelona",
+      "profilePicture": "",
+      "experience": "8.0 years",
+      "availability": "Available",
+      "technologies": ["Kubernetes", "Docker", "Terraform", "AWS"],
+      "skills": ["DevOps", "CI/CD", "Infrastructure as Code"],
+      "certifications": ["CKA: Certified Kubernetes Administrator"],
+      "currentProject": {
+        "name": "Multi-Cloud Infrastructure",
+        "company": "CloudScale"
+      },
+      "matchScore": {
+        "matched": 0.73,
+        "total": 1
+      }
+    },
+    {
+      "id": "9",
+      "name": "Thomas Müller",
+      "title": "Senior Angular Developer",
+      "location": "Munich",
+      "profilePicture": "",
+      "experience": "12.0 years",
+      "availability": "Notice Period",
+      "technologies": ["Angular", "RxJS", "Node.js", "MongoDB"],
+      "skills": ["Angular", "TypeScript", "NgRx", "RxJS"],
+      "certifications": ["Angular Certified Developer"],
+      "currentProject": {
+        "name": "Enterprise Dashboard",
+        "company": "AutoTech Solutions"
+      },
+      "matchScore": {
+        "matched": 0.91,
+        "total": 1
+      }
+    },
+    {
+      "id": "10",
+      "name": "Sophia Kim",
+      "title": "Machine Learning Engineer",
+      "location": "Seoul",
+      "profilePicture": "",
+      "experience": "6.5 years",
+      "availability": "Available",
+      "technologies": ["Python", "TensorFlow", "PyTorch", "AWS"],
+      "skills": ["Machine Learning", "Deep Learning", "Python"],
+      "certifications": ["TensorFlow Developer Certificate"],
+      "currentProject": {
+        "name": "Recommendation Engine",
+        "company": "AI Innovations"
+      },
+      "matchScore": {
+        "matched": 0.70,
+        "total": 1
+      }
+    }
+  ]
+}
