@@ -6,7 +6,10 @@
   </header>
 
   <!-- Search Bar -->
-  <app-search-bar />
+  <app-search-bar [initialQuery]="urlQuery()" />
+
+  <!-- Advanced Options -->
+  <app-search-options [initialTopK]="urlTopK()" [initialMinScore]="urlMinScore()" />
 
   <!-- Empty State (before first search) -->
   @if (searchService.isEmpty()) {

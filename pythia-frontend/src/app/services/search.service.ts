@@ -1,21 +1,23 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router, ActivatedRoute } from '@angular/router';
 import { catchError, of, tap } from 'rxjs';
 import { SearchParams } from '../models/search-params.model';
 import { SearchResponse } from '../models/search-response.model';
 import { Candidate } from '../models/candidate.model';
 
 /**
- * Search Service - Signal-Based State Management
+ * Search Service - Signal-Based State Management with URL Persistence
  *
  * Purpose: Manages semantic search state and API communication
- * Features: Signal-based reactivity, error handling, loading states
+ * Features: Signal-based reactivity, error handling, loading states, URL persistence
  */
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly apiUrl = 'http://localhost:3000/api/v1/search';
 
   // Signal-based state (Angular 20)
@@ -33,13 +35,16 @@ export class SearchService {
   readonly hasError = computed(() => this.error() !== null);
 
   /**
-   * Perform semantic search
+   * Perform semantic search and update URL
    */
-  search(params: SearchParams): void {
+  search(params: SearchParams, updateUrl: boolean = true): void {
     // Validate query
     if (!params.query || params.query.trim().length < 3) {
       this.searchResults.set([]);
       this.lastQuery.set('');
+      if (updateUrl) {
+        this.updateUrl('', params.topK, params.minScore);
+      }
       return;
     }
 
@@ -47,6 +52,11 @@ export class SearchService {
     this.loading.set(true);
     this.error.set(null);
     this.lastQuery.set(params.query);
+
+    // Update URL with search params
+    if (updateUrl) {
+      this.updateUrl(params.query, params.topK, params.minScore);
+    }
 
     // Build query params
     const queryParams = new URLSearchParams({
@@ -74,11 +84,36 @@ export class SearchService {
   }
 
   /**
-   * Clear search results
+   * Update URL with search parameters
+   */
+  private updateUrl(query: string, topK?: number, minScore?: number): void {
+    const queryParams: any = {};
+
+    if (query) {
+      queryParams.q = query;
+    }
+    if (topK && topK !== 10) {
+      queryParams.topK = topK;
+    }
+    if (minScore && minScore !== 0.7) {
+      queryParams.minScore = minScore;
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.router.routerState.root,
+      queryParams,
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+  }
+
+  /**
+   * Clear search results and URL params
    */
   clear(): void {
     this.searchResults.set([]);
     this.error.set(null);
     this.lastQuery.set('');
+    this.updateUrl('');
   }
 }
