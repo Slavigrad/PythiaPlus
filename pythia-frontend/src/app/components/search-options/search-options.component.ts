@@ -1,4 +1,4 @@
-import { Component, signal, effect, inject } from '@angular/core';
+import { Component, signal, effect, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
 
@@ -6,7 +6,7 @@ import { SearchService } from '../../services/search.service';
  * Search Options Component
  *
  * Purpose: Advanced search controls (topK, minScore)
- * Features: Collapsible panel, dropdown, slider with visual zones
+ * Features: Collapsible panel, dropdown, slider with visual zones, URL state restoration
  */
 @Component({
   selector: 'app-search-options',
@@ -17,12 +17,17 @@ import { SearchService } from '../../services/search.service';
 export class SearchOptionsComponent {
   private readonly searchService = inject(SearchService);
 
+  // Input from URL (for initial state)
+  readonly initialTopK = input<number>(10);
+  readonly initialMinScore = input<number>(0.7);
+
   // UI state
   protected readonly isExpanded = signal(false);
 
   // Search parameters
   protected readonly topK = signal(10);
   protected readonly minScore = signal(0.7);
+  private isInitialized = false;
 
   // TopK options
   protected readonly topKOptions = [
@@ -33,6 +38,17 @@ export class SearchOptionsComponent {
   ];
 
   constructor() {
+    // Initialize from URL input
+    effect(() => {
+      const urlTopK = this.initialTopK();
+      const urlMinScore = this.initialMinScore();
+      if (!this.isInitialized && (urlTopK !== 10 || urlMinScore !== 0.7)) {
+        this.topK.set(urlTopK);
+        this.minScore.set(urlMinScore);
+        this.isInitialized = true;
+      }
+    });
+
     // Trigger search when parameters change
     effect(() => {
       const query = this.searchService.lastQuery();

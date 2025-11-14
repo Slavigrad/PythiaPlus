@@ -1,12 +1,12 @@
-import { Component, signal, inject, effect } from '@angular/core';
+import { Component, signal, inject, effect, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
 
 /**
  * Search Bar Component
  *
- * Purpose: Natural language search input
- * Features: Debounced search, example queries, keyboard shortcuts
+ * Purpose: Natural language search input with URL persistence
+ * Features: Debounced search, example queries, keyboard shortcuts, URL state
  */
 @Component({
   selector: 'app-search-bar',
@@ -17,8 +17,12 @@ import { SearchService } from '../../services/search.service';
 export class SearchBarComponent {
   private readonly searchService = inject(SearchService);
 
+  // Input from URL (for initial state)
+  readonly initialQuery = input<string>('');
+
   protected readonly query = signal('');
   private debounceTimeout: any;
+  private isInitialized = false;
 
   protected readonly exampleQueries = [
     'Find React developers in Zurich',
@@ -27,6 +31,15 @@ export class SearchBarComponent {
   ];
 
   constructor() {
+    // Initialize from URL input
+    effect(() => {
+      const urlQuery = this.initialQuery();
+      if (!this.isInitialized && urlQuery) {
+        this.query.set(urlQuery);
+        this.isInitialized = true;
+      }
+    });
+
     // Debounced search effect
     effect(() => {
       const currentQuery = this.query();
