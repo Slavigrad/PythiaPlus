@@ -18,11 +18,15 @@
 
     <!-- Skills -->
     <div class="skills">
-      @for (tech of candidate().technologies.slice(0, 4); track tech) {
-        <span class="skill-pill">{{ tech }}</span>
-      }
-      @if (candidate().technologies.length > 4) {
-        <span class="skill-pill more">+{{ candidate().technologies.length - 4 }}</span>
+      @if (candidate().technologies && candidate().technologies!.length > 0) {
+        @for (tech of candidate().technologies!.slice(0, 4); track tech) {
+          <span class="skill-pill">{{ tech }}</span>
+        }
+        @if (candidate().technologies!.length > 4) {
+          <span class="skill-pill more">+{{ candidate().technologies!.length - 4 }}</span>
+        }
+      } @else {
+        <span class="skill-pill no-data">No technologies listed</span>
       }
     </div>
 
