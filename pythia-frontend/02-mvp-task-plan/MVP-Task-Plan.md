@@ -242,7 +242,7 @@
   - _Requirements: 5.3 (@defer patterns), 6.6 (Skeleton Placeholders)_
   - _Deliverable: Optimized lazy loading_
 
-- [ ] **Task 4.6: Add search state persistence with URL**
+- [x] **Task 4.6: Add search state persistence with URL**
   - Save search query to URL query parameters (?q=...)
   - Save topK and minScore to URL (?topK=10&minScore=0.7)
   - Restore search state on page reload
