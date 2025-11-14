@@ -1,0 +1,47 @@
+/* Candidate List Container */
+.candidate-list-container {
+  margin-top: 32px;
+}
+
+/* Results Header */
+.results-header {
+  margin-bottom: 20px;
+}
+
+.results-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #212121;
+  margin: 0 0 4px 0;
+}
+
+.results-subtitle {
+  font-size: 14px;
+  color: #757575;
+  margin: 0;
+}
+
+/* Candidate List */
+.candidate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.no-candidates {
+  text-align: center;
+  color: #9e9e9e;
+  padding: 32px;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .results-title {
+    font-size: 18px;
+  }
+
+  .candidate-list {
+    gap: 12px;
+  }
+}
