@@ -93,22 +93,22 @@ describe('SearchOptionsComponent', () => {
   describe('toggleExpanded()', () => {
     it('should toggle isExpanded from false to true', () => {
       expect(component['isExpanded']()).toBe(false);
-      component.toggleExpanded();
+      component['toggleExpanded']();
       expect(component['isExpanded']()).toBe(true);
     });
 
     it('should toggle isExpanded from true to false', () => {
       component['isExpanded'].set(true);
-      component.toggleExpanded();
+      component['toggleExpanded']();
       expect(component['isExpanded']()).toBe(false);
     });
 
     it('should toggle multiple times', () => {
-      component.toggleExpanded();
+      component['toggleExpanded']();
       expect(component['isExpanded']()).toBe(true);
-      component.toggleExpanded();
+      component['toggleExpanded']();
       expect(component['isExpanded']()).toBe(false);
-      component.toggleExpanded();
+      component['toggleExpanded']();
       expect(component['isExpanded']()).toBe(true);
     });
   });
