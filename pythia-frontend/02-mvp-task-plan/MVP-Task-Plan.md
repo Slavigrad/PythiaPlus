@@ -233,12 +233,13 @@
   - _Requirements: 5.3 (Deferred Loading)_
   - _Deliverable: Lazy-loaded advanced options_
 
-- [ ] **Task 4.5: Add @defer for below-the-fold candidate cards**
+- [x] **Task 4.5: Add @defer for below-the-fold candidate cards**
   - Wrap candidate cards in @defer (on viewport)
   - Create SkeletonCardComponent for @placeholder
   - Show skeleton loader while component loads
   - Add @loading state with minimum 100ms
   - Prefetch on idle for better UX
+  - CandidateCard split into 4.98kb lazy chunk (1.69kb transferred)
   - _Requirements: 5.3 (@defer patterns), 6.6 (Skeleton Placeholders)_
   - _Deliverable: Optimized lazy loading_
 
