@@ -1,0 +1,68 @@
+{
+  "name": "frontend-angular",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "api": "cd backend-mock && npm start",
+    "api:dev": "cd backend-mock && npm run dev",
+    "dev": "concurrently \"npm run api\" \"npm start\" --names \"API,APP\" --prefix-colors \"blue,green\"",
+    "setup:api": "cd backend-mock && npm install",
+    "build:prod": "ng build --configuration production",
+    "build:github-pages": "ng build --configuration github-pages",
+    "build:analyze": "ng build --configuration production --stats-json && npx webpack-bundle-analyzer dist/frontend-angular/stats.json",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:coverage": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
+    "deploy:github-pages": "npm run build:github-pages && npx angular-cli-ghpages --dir=dist/frontend-angular",
+    "deploy:preview": "npm run build:github-pages && npx http-server dist/frontend-angular -p 4200 -o",
+    "lighthouse": "lighthouse http://localhost:4200 --output html --output-path ./lighthouse-report.html",
+    "performance:audit": "npm run build:prod && npm run lighthouse"
+  },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "@angular/animations": "^20.3.0",
+    "@angular/cdk": "^20.2.2",
+    "@angular/material": "^20.2.2",
+    "chart.js": "^4.5.0",
+    "ng2-charts": "^8.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.3.10",
+    "@angular/cli": "^20.3.10",
+    "@angular/compiler-cli": "^20.3.0",
+    "@types/jasmine": "~5.1.0",
+    "concurrently": "^9.2.0",
+    "jasmine-core": "~5.9.0",
+    "json-server": "^1.0.0-beta.3",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.9.2"
+  }
+}
