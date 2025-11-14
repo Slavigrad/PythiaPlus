@@ -181,13 +181,15 @@
   - _Requirements: Future enhancement_
   - _Deliverable: Click handling infrastructure ready_
 
-- [ ] **Task 3.7: Add micro-interactions and animations**
-  - Card hover effects (elevation change from 2 to 8)
-  - Smooth transitions between loading/error/results states (300ms ease)
-  - Loading spinner animation (Material spinner)
-  - Fade-in animation for search results (stagger 50ms per card)
-  - Ripple effects on buttons and clickable elements
-  - Smooth collapse/expand for advanced options
+- [x] **Task 3.7: Add micro-interactions and animations** ✅
+  - ✅ Card hover effects (elevation change from 2 to 8)
+  - ✅ Smooth transitions between loading/error/results states (300ms ease)
+  - ✅ Loading spinner animation (Material spinner with dual rotation)
+  - ✅ Fade-in animation for search results (stagger 50ms per card)
+  - ✅ Ripple effects on buttons and clickable elements (MatRippleModule)
+  - ✅ Smooth collapse/expand for advanced options (300ms cubic-bezier)
+  - ✅ Enhanced button hover effects with elevation and transform
+  - ✅ Search input focus animations with subtle lift
   - _Requirements: Polish, Swiss quality standards_
   - _Deliverable: Polished UI with smooth animations_
 
