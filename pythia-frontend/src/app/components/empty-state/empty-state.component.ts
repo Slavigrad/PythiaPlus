@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 /**
  * Empty State Component
@@ -10,6 +10,7 @@ import { Component } from '@angular/core';
   selector: 'app-empty-state',
   imports: [],
   templateUrl: './empty-state.component.html',
-  styleUrl: './empty-state.component.css'
+  styleUrl: './empty-state.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmptyStateComponent {}

@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Candidate } from '../../models/candidate.model';
 
 /**
@@ -11,7 +11,8 @@ import { Candidate } from '../../models/candidate.model';
   selector: 'app-candidate-card',
   imports: [],
   templateUrl: './candidate-card.component.html',
-  styleUrl: './candidate-card.component.css'
+  styleUrl: './candidate-card.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CandidateCardComponent {
   // Signal input (Angular 20)

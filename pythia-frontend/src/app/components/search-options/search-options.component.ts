@@ -1,4 +1,4 @@
-import { Component, signal, effect, inject, input } from '@angular/core';
+import { Component, signal, effect, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
 
@@ -12,7 +12,8 @@ import { SearchService } from '../../services/search.service';
   selector: 'app-search-options',
   imports: [FormsModule],
   templateUrl: './search-options.component.html',
-  styleUrl: './search-options.component.css'
+  styleUrl: './search-options.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchOptionsComponent {
   private readonly searchService = inject(SearchService);
