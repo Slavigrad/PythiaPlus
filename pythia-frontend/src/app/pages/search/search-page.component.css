@@ -4,6 +4,19 @@
   margin: 0 auto;
 }
 
+/* Screen Reader Only - Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* Page Header */
 .page-header {
   margin-bottom: 32px;
@@ -139,6 +152,12 @@
 
 .retry-button:hover {
   background-color: #c62828;
+}
+
+.retry-button:focus-visible {
+  outline: 2px solid #d32f2f;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.2);
 }
 
 .retry-button:active {
