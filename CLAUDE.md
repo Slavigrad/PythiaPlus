@@ -345,6 +345,171 @@ export class CandidateCard {
 }
 ```
 
+### Angular Official Best Practices
+
+> **Source**: [Angular AI Development Guide](https://angular.dev/ai/develop-with-ai)
+
+These are the official Angular team recommendations for AI-assisted development:
+
+#### ✅ DO These Things
+
+```typescript
+// 1. ALWAYS use standalone components (default in Angular 20+)
+@Component({
+  selector: 'app-search-bar',
+  imports: [CommonModule, FormsModule],
+  // DON'T add standalone: true - it's the default in v20+
+})
+
+// 2. Use inject() function instead of constructor injection
+export class SearchService {
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+
+  // ❌ WRONG: Don't use constructor injection
+  // constructor(private http: HttpClient, private config: ConfigService) {}
+}
+
+// 3. Use host object instead of @HostBinding/@HostListener
+@Component({
+  selector: 'app-button',
+  host: {
+    '[class.active]': 'isActive()',
+    '[attr.aria-pressed]': 'isActive()',
+    '(click)': 'handleClick()',
+    '(keydown.enter)': 'handleEnter()'
+  }
+})
+export class Button {
+  // ❌ WRONG: Don't use decorators
+  // @HostBinding('class.active') isActive = signal(false);
+  // @HostListener('click') onClick() { }
+}
+
+// 4. Use update() or set() on signals, NEVER mutate()
+const users = signal<User[]>([]);
+
+// ✅ CORRECT
+users.update(list => [...list, newUser]);
+users.set([...users(), newUser]);
+
+// ❌ WRONG: Don't use mutate (deprecated/dangerous)
+// users.mutate(list => list.push(newUser));
+
+// 5. Use NgOptimizedImage for all static images
+@Component({
+  imports: [NgOptimizedImage],
+  template: `
+    <img ngSrc="/assets/logo.png" width="200" height="100" alt="Logo" priority>
+  `
+})
+// Note: NgOptimizedImage does NOT work with inline base64 images
+
+// 6. Prefer Reactive Forms over Template-driven forms
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+
+searchForm = new FormGroup({
+  query: new FormControl(''),
+  topK: new FormControl(10)
+});
+
+// 7. Prefer inline templates for small components
+@Component({
+  selector: 'app-badge',
+  template: `<span class="badge">{{ label() }}</span>`,
+  styles: `.badge { padding: 4px 8px; border-radius: 4px; }`
+})
+```
+
+#### ❌ DON'T Do These Things
+
+```typescript
+// 1. DON'T use ngClass - use class bindings instead
+// ❌ WRONG
+<div [ngClass]="{ 'active': isActive(), 'disabled': isDisabled() }">
+
+// ✅ CORRECT
+<div [class.active]="isActive()" [class.disabled]="isDisabled()">
+
+// 2. DON'T use ngStyle - use style bindings instead
+// ❌ WRONG
+<div [ngStyle]="{ 'color': color(), 'font-size': size() }">
+
+// ✅ CORRECT
+<div [style.color]="color()" [style.font-size]="size()">
+
+// 3. DON'T write arrow functions in templates (not supported)
+// ❌ WRONG
+<button (click)="items().filter(i => i.active).forEach(i => process(i))">
+
+// ✅ CORRECT - move logic to component
+protected readonly activeItems = computed(() =>
+  this.items().filter(i => i.active)
+);
+protected processItems(): void {
+  this.activeItems().forEach(i => this.process(i));
+}
+<button (click)="processItems()">
+
+// 4. DON'T write Regular expressions in templates (not supported)
+// ❌ WRONG
+<div>{{ email().match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) }}</div>
+
+// ✅ CORRECT
+protected readonly isValidEmail = computed(() =>
+  /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(this.email())
+);
+<div>{{ isValidEmail() }}</div>
+
+// 5. DON'T assume globals are available in templates
+// ❌ WRONG
+<div>{{ new Date().toISOString() }}</div>
+
+// ✅ CORRECT
+protected readonly currentDate = signal(new Date());
+<div>{{ currentDate().toISOString() }}</div>
+
+// 6. DON'T set standalone: true explicitly in v20+
+// ❌ WRONG (redundant in Angular 20+)
+@Component({
+  selector: 'app-card',
+  standalone: true,  // Don't add this - it's the default!
+})
+
+// ✅ CORRECT
+@Component({
+  selector: 'app-card',
+  // standalone is true by default in Angular 20+
+})
+```
+
+#### Template Best Practices
+
+```typescript
+// Keep templates simple - avoid complex logic
+// ✅ CORRECT: Logic in component, simple template
+protected readonly displayText = computed(() => {
+  const user = this.user();
+  return user ? `${user.firstName} ${user.lastName}` : 'Guest';
+});
+template: `<h1>{{ displayText() }}</h1>`
+
+// ❌ WRONG: Complex logic in template
+template: `<h1>{{ user() ? user().firstName + ' ' + user().lastName : 'Guest' }}</h1>`
+
+// Use async pipe for observables
+template: `<div>{{ data$ | async }}</div>`
+
+// Don't subscribe in components - use async pipe instead
+// ❌ WRONG
+ngOnInit() {
+  this.data$.subscribe(data => this.data.set(data));
+}
+
+// ✅ CORRECT
+template: `<div>{{ data$ | async }}</div>`
+```
+
 ### TypeScript Conventions
 
 #### Strict Mode (REQUIRED)
@@ -382,8 +547,22 @@ export interface SearchParams {
   minScore: number;
 }
 
-// ❌ WRONG: Don't use 'any'
+// ✅ CORRECT: Prefer type inference when obvious
+const count = 10;  // TypeScript infers number
+const results = signal<Candidate[]>([]);  // Type needed for empty array
+
+// ✅ CORRECT: Use 'unknown' when type is uncertain
+function processData(data: unknown): void {
+  if (typeof data === 'string') {
+    console.log(data.toUpperCase());
+  } else if (Array.isArray(data)) {
+    console.log(data.length);
+  }
+}
+
+// ❌ WRONG: Don't use 'any' - it disables type checking
 const data: any = fetchData();  // NEVER do this
+function processData(data: any): void { }  // NEVER do this
 ```
 
 #### Naming Conventions
@@ -472,37 +651,76 @@ const DEFAULT_TOP_K = 10;
 
 ### Accessibility Standards
 
+**CRITICAL**: All components MUST pass AXE accessibility checks and meet WCAG AA standards.
+
 ```typescript
 // ✅ WCAG AA Compliance Required
 
-// 1. Semantic HTML
+// 1. Semantic HTML - use native elements
 <button>Search</button>          // ✅ CORRECT
-<div (click)="search()">Search</div>  // ❌ WRONG
+<div (click)="search()">Search</div>  // ❌ WRONG - not keyboard accessible
 
-// 2. ARIA labels
+// 2. ARIA labels - descriptive and clear
 <input
   type="search"
-  aria-label="Search candidates"
+  aria-label="Search candidates by skills or location"
   [attr.aria-describedby]="hasError() ? 'error-msg' : null"
+  [attr.aria-invalid]="hasError()"
 />
 
-// 3. Keyboard navigation
-@HostListener('keydown.enter')
-handleEnter() { this.search(); }
+// 3. Keyboard navigation - all interactive elements must be keyboard accessible
+@Component({
+  host: {
+    '(keydown.enter)': 'handleEnter()',
+    '(keydown.escape)': 'handleEscape()',
+    '[attr.tabindex]': '0'
+  }
+})
 
-@HostListener('keydown.escape')
-handleEscape() { this.clear(); }
-
-// 4. Focus management
+// 4. Focus management - visible and logical
 <button
   [attr.aria-expanded]="isExpanded()"
+  [attr.aria-controls]="'options-panel'"
   (click)="toggleOptions()"
 >
   Advanced Options
 </button>
 
-// 5. Color contrast: 4.5:1 minimum
-// 6. Focus indicators: Always visible
+// 5. Color contrast - MUST meet 4.5:1 minimum for normal text, 3:1 for large text
+// Use Pythia theme colors which are pre-tested for WCAG AA compliance
+
+// 6. Focus indicators - MUST be visible on all interactive elements
+button:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+// 7. Live regions - announce dynamic content changes
+<div
+  role="status"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  @if (hasResults()) {
+    {{ resultCount() }} candidates found
+  }
+</div>
+```
+
+#### Testing Accessibility
+
+```bash
+# Install AXE DevTools browser extension
+# https://www.deque.com/axe/devtools/
+
+# Run AXE checks on every page/component
+# All checks MUST pass before committing
+
+# Also test with keyboard only:
+# - Tab through all interactive elements
+# - Enter/Space to activate buttons
+# - Arrow keys for lists/menus
+# - Escape to close modals/dialogs
 ```
 
 ---
@@ -815,20 +1033,38 @@ import * from '@angular/material';  // ❌ Imports everything
 - Use `ANGULAR-20-QUICK-REFERENCE.md` for syntax
 - Check this CLAUDE.md for conventions
 
-#### 2. Follow Angular 20 Modern Patterns
+#### 2. Follow Angular Official Best Practices
 
+> **Reference**: [Angular AI Development Guide](https://angular.dev/ai/develop-with-ai)
+
+**MUST DO:**
 - Use signals for state (not BehaviorSubject)
 - Use @if/@for/@switch (not *ngIf/*ngFor)
 - Use @defer for lazy loading
 - Use input()/output() for component API
 - Always enable OnPush change detection
 - Use inject() function (not constructor injection)
+- Use host object for bindings (not @HostBinding/@HostListener)
+- Use update()/set() on signals (NEVER mutate())
+- Use NgOptimizedImage for static images
+- Prefer Reactive Forms over Template-driven
+
+**MUST NOT DO:**
+- DON'T set `standalone: true` (default in Angular 20+)
+- DON'T use ngClass (use class bindings instead)
+- DON'T use ngStyle (use style bindings instead)
+- DON'T write arrow functions in templates
+- DON'T write regex in templates
+- DON'T assume globals (like `new Date()`) in templates
+- DON'T use @HostBinding/@HostListener decorators
+- DON'T use 'any' type (use 'unknown' if uncertain)
 
 #### 3. Maintain Code Quality
 
-- TypeScript strict mode (no 'any')
+- TypeScript strict mode (no 'any', use 'unknown')
+- Prefer type inference when obvious
 - Component-scoped styles with theme variables
-- WCAG AA accessibility compliance
+- WCAG AA accessibility compliance (MUST pass AXE checks)
 - 4.5:1 color contrast minimum
 - Semantic HTML and ARIA labels
 - Comprehensive tests (80%+ coverage)
@@ -942,9 +1178,11 @@ When making significant changes:
 
 ### External Resources
 - [Angular 20 Documentation](https://angular.dev)
+- [Angular AI Development Guide](https://angular.dev/ai/develop-with-ai) ⭐ **Official best practices**
 - [Angular Material 3](https://material.angular.io)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 - [WCAG AA Guidelines](https://www.w3.org/WAI/WCAG2AA-Conformance)
+- [AXE DevTools](https://www.deque.com/axe/devtools/) - Accessibility testing
 
 ---
 
@@ -964,6 +1202,7 @@ When making significant changes:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-11-14 | Initial CLAUDE.md creation |
+| 1.1 | 2025-11-14 | Added Angular official best practices from angular.dev/ai/develop-with-ai |
 
 ---
 
