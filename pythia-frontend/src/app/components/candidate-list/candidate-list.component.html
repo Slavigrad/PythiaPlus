@@ -1,6 +1,6 @@
 <div class="candidate-list-container">
   <!-- Results Header -->
-  <div class="results-header">
+  <div class="results-header" role="status" aria-live="polite">
     <h2 class="results-title">
       {{ candidates().length }}
       {{ candidates().length === 1 ? 'candidate' : 'candidates' }} found
@@ -9,7 +9,7 @@
   </div>
 
   <!-- Candidate Cards (Viewport-based Lazy Loading) -->
-  <div class="candidate-list">
+  <div class="candidate-list" role="region" aria-label="Search results">
     @for (candidate of candidates(); track candidate.id) {
       @defer (on viewport; prefetch on idle) {
         <app-candidate-card [candidate]="candidate" />
@@ -19,7 +19,7 @@
         <app-skeleton-card />
       }
     } @empty {
-      <p class="no-candidates">No candidates to display</p>
+      <p class="no-candidates" role="status">No candidates to display</p>
     }
   </div>
 </div>

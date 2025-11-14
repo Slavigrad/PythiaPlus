@@ -25,6 +25,13 @@
   background-color: #fafafa;
 }
 
+.options-toggle:focus-visible {
+  outline: 2px solid #d32f2f;
+  outline-offset: 2px;
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
 .gear-icon {
   width: 20px;
   height: 20px;
@@ -154,6 +161,11 @@
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
+.score-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.3);
+  transform: scale(1.15);
+}
+
 /* Firefox */
 .score-slider::-moz-range-thumb {
   width: 20px;
@@ -169,6 +181,11 @@
 .score-slider::-moz-range-thumb:hover {
   transform: scale(1.1);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.score-slider:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.3);
+  transform: scale(1.15);
 }
 
 /* Slider Labels */

@@ -35,6 +35,8 @@
   max-width: 400px;
   margin: 0 auto;
   text-align: left;
+  list-style: none;
+  padding: 0;
 }
 
 .tip {

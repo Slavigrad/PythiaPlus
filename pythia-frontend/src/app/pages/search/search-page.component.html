@@ -5,6 +5,25 @@
     <p class="page-subtitle">Find the perfect candidates using natural language search</p>
   </header>
 
+  <!-- Accessibility: Live region for search results announcements -->
+  <div
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    class="sr-only"
+    id="search-results-status"
+  >
+    @if (searchService.loading()) {
+      Searching for candidates...
+    } @else if (searchService.hasError()) {
+      Search failed. {{ searchService.error() }}
+    } @else if (searchService.hasResults()) {
+      Found {{ searchService.resultCount() }} {{ searchService.resultCount() === 1 ? 'candidate' : 'candidates' }}
+    } @else if (!searchService.isEmpty() && !searchService.loading() && !searchService.hasError()) {
+      No candidates found
+    }
+  </div>
+
   <!-- Search Bar -->
   <app-search-bar [initialQuery]="urlQuery()" />
 
@@ -38,17 +57,17 @@
 
   <!-- Loading State -->
   @if (searchService.loading()) {
-    <div class="loading-state">
-      <div class="spinner"></div>
+    <div class="loading-state" role="status" aria-busy="true" aria-label="Loading search results">
+      <div class="spinner" aria-hidden="true"></div>
       <p>Searching candidates...</p>
     </div>
   }
 
   <!-- Error State -->
   @if (searchService.hasError()) {
-    <div class="error-state">
+    <div class="error-state" role="alert" aria-live="assertive">
       <p class="error-message">{{ searchService.error() }}</p>
-      <button class="retry-button" (click)="searchService.clear()">Try Again</button>
+      <button class="retry-button" (click)="searchService.clear()" type="button">Try Again</button>
     </div>
   }
 
