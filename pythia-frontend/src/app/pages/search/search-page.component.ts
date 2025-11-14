@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SearchService } from '../../services/search.service';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
@@ -16,7 +16,8 @@ import { EmptyStateComponent } from '../../components/empty-state/empty-state.co
   selector: 'app-search-page',
   imports: [SearchBarComponent, SearchOptionsComponent, CandidateListComponent, EmptyStateComponent],
   templateUrl: './search-page.component.html',
-  styleUrl: './search-page.component.css'
+  styleUrl: './search-page.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchPageComponent implements OnInit {
   protected readonly searchService = inject(SearchService);

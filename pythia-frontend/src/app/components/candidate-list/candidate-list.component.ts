@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { Candidate } from '../../models/candidate.model';
 import { CandidateCardComponent } from '../candidate-card/candidate-card.component';
 import { SkeletonCardComponent } from '../skeleton-card/skeleton-card.component';
@@ -13,7 +13,8 @@ import { SkeletonCardComponent } from '../skeleton-card/skeleton-card.component'
   selector: 'app-candidate-list',
   imports: [CandidateCardComponent, SkeletonCardComponent],
   templateUrl: './candidate-list.component.html',
-  styleUrl: './candidate-list.component.css'
+  styleUrl: './candidate-list.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CandidateListComponent {
   readonly candidates = input.required<Candidate[]>();

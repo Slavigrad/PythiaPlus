@@ -1,4 +1,4 @@
-import { Component, signal, inject, effect, input } from '@angular/core';
+import { Component, signal, inject, effect, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
 
@@ -12,7 +12,8 @@ import { SearchService } from '../../services/search.service';
   selector: 'app-search-bar',
   imports: [FormsModule],
   templateUrl: './search-bar.component.html',
-  styleUrl: './search-bar.component.css'
+  styleUrl: './search-bar.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBarComponent {
   private readonly searchService = inject(SearchService);
