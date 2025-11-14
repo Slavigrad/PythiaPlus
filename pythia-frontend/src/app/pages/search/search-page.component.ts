@@ -1,6 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { SearchService } from '../../services/search.service';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
+import { SearchOptionsComponent } from '../../components/search-options/search-options.component';
 import { CandidateListComponent } from '../../components/candidate-list/candidate-list.component';
 import { EmptyStateComponent } from '../../components/empty-state/empty-state.component';
 
@@ -8,11 +9,11 @@ import { EmptyStateComponent } from '../../components/empty-state/empty-state.co
  * Search Page Component
  *
  * Purpose: Main search interface for Pythia+
- * Features: Search bar, results display, empty state
+ * Features: Search bar, advanced options, results display, empty state
  */
 @Component({
   selector: 'app-search-page',
-  imports: [SearchBarComponent, CandidateListComponent, EmptyStateComponent],
+  imports: [SearchBarComponent, SearchOptionsComponent, CandidateListComponent, EmptyStateComponent],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.css'
 })
