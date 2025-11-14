@@ -1,6 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+/**
+ * Root Application Component for Pythia+
+ *
+ * Purpose: Main application shell with header and routing
+ * Features: Pythia+ branding, sticky header, responsive layout
+ */
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
@@ -8,5 +14,6 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('frontend-angular');
+  // Root component - no local state needed
+  // All state management handled by feature components and services
 }
