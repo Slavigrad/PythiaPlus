@@ -5,6 +5,7 @@ import { catchError, of, tap } from 'rxjs';
 import { SearchParams } from '../models/search-params.model';
 import { SearchResponse } from '../models/search-response.model';
 import { Candidate } from '../models/candidate.model';
+import { environment } from '../../environments/environment';
 
 /**
  * Search Service - Signal-Based State Management with URL Persistence
@@ -18,7 +19,7 @@ import { Candidate } from '../models/candidate.model';
 export class SearchService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly apiUrl = 'http://localhost:3000/api/v1/search';
+  private readonly apiUrl = `${environment.apiUrl}/search`;
 
   // Signal-based state (Angular 20)
   readonly searchResults = signal<Candidate[]>([]);
