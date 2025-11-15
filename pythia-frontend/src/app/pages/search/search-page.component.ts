@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatRippleModule } from '@angular/material/core';
 import { SearchService } from '../../services/search.service';
 import { ComparisonService } from '../../services/comparison.service';
+import { ExportService } from '../../services/export.service';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { SearchOptionsComponent } from '../../components/search-options/search-options.component';
 import { CandidateListComponent } from '../../components/candidate-list/candidate-list.component';
@@ -14,9 +15,9 @@ import { ComparisonToolbarComponent } from '../../components/comparison-toolbar/
 /**
  * Search Page Component
  *
- * Purpose: Main search interface for Pythia+ with faceted search and candidate comparison
+ * Purpose: Main search interface for Pythia+ with faceted search, candidate comparison, and export
  * Features: Search bar, facet filters, stats summary, advanced options, results display,
- *           URL persistence, candidate navigation, multi-candidate comparison
+ *           URL persistence, candidate navigation, multi-candidate comparison, CSV/JSON export
  */
 @Component({
   selector: 'app-search-page',
@@ -37,6 +38,7 @@ import { ComparisonToolbarComponent } from '../../components/comparison-toolbar/
 export class SearchPageComponent implements OnInit {
   protected readonly searchService = inject(SearchService);
   protected readonly comparisonService = inject(ComparisonService);
+  protected readonly exportService = inject(ExportService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -117,12 +119,30 @@ export class SearchPageComponent implements OnInit {
   }
 
   /**
-   * Handle export button click
-   * Placeholder for Phase 3 export functionality
+   * Handle export format selection
+   * Exports selected candidates to CSV or JSON
    */
-  protected handleExport(): void {
-    // TODO: Phase 3 - Implement export functionality
-    console.log('Export selected candidates:', this.comparisonService.selectedIdsArray());
+  protected handleExport(format: 'csv' | 'json'): void {
+    const selectedIds = this.comparisonService.selectedIdsArray();
+    const selectedCandidates = this.searchService.searchResults().filter(c =>
+      selectedIds.includes(c.id)
+    );
+
+    if (selectedCandidates.length === 0) {
+      console.warn('No candidates selected for export');
+      return;
+    }
+
+    try {
+      if (format === 'csv') {
+        this.exportService.exportToCSV(selectedCandidates);
+      } else if (format === 'json') {
+        this.exportService.exportToJSON(selectedCandidates);
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      // Could show a snackbar notification here
+    }
   }
 
   /**

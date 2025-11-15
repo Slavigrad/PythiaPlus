@@ -31,16 +31,28 @@
       Compare ({{ selectionCount() }})
     </button>
 
-    <!-- Export button (placeholder - full functionality in Phase 3) -->
+    <!-- Export button with format menu -->
     <button
       mat-flat-button
       color="primary"
       class="export-button"
       [disabled]="selectionCount() === 0"
-      (click)="handleExport()"
+      [matMenuTriggerFor]="exportMenu"
       aria-label="Export selected candidates">
       <mat-icon>download</mat-icon>
       Export ({{ selectionCount() }})
     </button>
+
+    <!-- Export format menu -->
+    <mat-menu #exportMenu="matMenu">
+      <button mat-menu-item (click)="handleExport('csv')">
+        <mat-icon>description</mat-icon>
+        <span>Export as CSV</span>
+      </button>
+      <button mat-menu-item (click)="handleExport('json')">
+        <mat-icon>code</mat-icon>
+        <span>Export as JSON</span>
+      </button>
+    </mat-menu>
   </div>
 </div>

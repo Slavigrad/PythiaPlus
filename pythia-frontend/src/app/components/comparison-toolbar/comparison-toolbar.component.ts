@@ -1,19 +1,20 @@
 import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 /**
  * Comparison Toolbar Component
  *
  * Purpose: Display action buttons for candidate comparison and export
- * Features: Compare button, Export button, selection count, clear selections
+ * Features: Compare button, Export button with format menu, selection count, clear selections
  *
  * Visibility: Only shown when at least one candidate is selected
  * Position: Floats in top-right corner of results area
  */
 @Component({
   selector: 'app-comparison-toolbar',
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: './comparison-toolbar.component.html',
   styleUrl: './comparison-toolbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -26,7 +27,7 @@ export class ComparisonToolbarComponent {
 
   // Signal outputs
   readonly compare = output<void>();
-  readonly export = output<void>();
+  readonly exportFormat = output<'csv' | 'json'>();
   readonly clearSelections = output<void>();
 
   /**
@@ -39,10 +40,10 @@ export class ComparisonToolbarComponent {
   }
 
   /**
-   * Handle export button click
+   * Handle export format selection
    */
-  protected handleExport(): void {
-    this.export.emit();
+  protected handleExport(format: 'csv' | 'json'): void {
+    this.exportFormat.emit(format);
   }
 
   /**

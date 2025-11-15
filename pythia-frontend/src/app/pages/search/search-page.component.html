@@ -88,7 +88,7 @@
       [canCompare]="comparisonService.canCompare()"
       [isMaxReached]="comparisonService.isMaxReached()"
       (compare)="handleCompare()"
-      (export)="handleExport()"
+      (exportFormat)="handleExport($event)"
       (clearSelections)="handleClearSelections()" />
   }
 
