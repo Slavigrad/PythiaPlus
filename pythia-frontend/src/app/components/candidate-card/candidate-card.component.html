@@ -1,7 +1,7 @@
 <article class="candidate-card" [attr.aria-label]="'Candidate: ' + candidate().name + ', Match score: ' + matchPercentage() + ' percent'">
   <!-- Selection Checkbox (only in selectable mode) -->
   @if (selectable()) {
-    <div class="selection-checkbox">
+    <div class="selection-checkbox" (click)="handleCheckboxClick($event)">
       <mat-checkbox
         [checked]="isSelected()"
         [disabled]="selectionDisabled() && !isSelected()"
