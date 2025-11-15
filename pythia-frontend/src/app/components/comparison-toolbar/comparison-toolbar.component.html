@@ -1,0 +1,46 @@
+<div class="comparison-toolbar" role="toolbar" aria-label="Candidate comparison actions">
+  <!-- Selection count and clear button -->
+  <div class="selection-info">
+    <span class="selection-count" aria-live="polite" aria-atomic="true">
+      {{ selectionCount() }} selected
+      @if (isMaxReached()) {
+        <span class="max-reached">(max)</span>
+      }
+    </span>
+    <button
+      mat-button
+      class="clear-button"
+      (click)="handleClear()"
+      aria-label="Clear all selections">
+      <mat-icon>clear</mat-icon>
+      Clear
+    </button>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="action-buttons">
+    <!-- Compare button -->
+    <button
+      mat-stroked-button
+      class="compare-button"
+      [disabled]="!canCompare()"
+      [attr.title]="getCompareTooltip()"
+      (click)="handleCompare()"
+      aria-label="Compare selected candidates">
+      <mat-icon>compare_arrows</mat-icon>
+      Compare ({{ selectionCount() }})
+    </button>
+
+    <!-- Export button (placeholder - full functionality in Phase 3) -->
+    <button
+      mat-flat-button
+      color="primary"
+      class="export-button"
+      [disabled]="selectionCount() === 0"
+      (click)="handleExport()"
+      aria-label="Export selected candidates">
+      <mat-icon>download</mat-icon>
+      Export ({{ selectionCount() }})
+    </button>
+  </div>
+</div>
