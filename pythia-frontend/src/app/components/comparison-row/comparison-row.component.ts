@@ -41,11 +41,51 @@ export class ComparisonRowComponent {
 
   /**
    * Format array as string list
+   * Handles both string arrays and object arrays (Technology, Certification, Skill)
    */
   protected formatList(value: any): string[] {
     if (!Array.isArray(value)) {
       return [];
     }
-    return value.filter(item => item && item !== '—');
+
+    return value
+      .filter(item => item && item !== '—')
+      .map(item => {
+        // If item is a string, return as-is
+        if (typeof item === 'string') {
+          return item;
+        }
+
+        // If item is an object (Technology, Skill, Certification)
+        if (typeof item === 'object' && item !== null) {
+          return this.formatObjectItem(item);
+        }
+
+        return '';
+      })
+      .filter(item => item.length > 0);
+  }
+
+  /**
+   * Format object item (Technology, Skill, Certification) as display string
+   */
+  private formatObjectItem(item: any): string {
+    const name = item.name || '';
+
+    // For Technology/Skill: show name + proficiency + years
+    if (item.proficiency && item.yearsExperience !== undefined) {
+      const years = item.yearsExperience;
+      const proficiency = item.proficiency;
+      return `${name} (${proficiency}, ${years}y)`;
+    }
+
+    // For Certification: show name + issued date
+    if (item.issuedDate) {
+      const year = new Date(item.issuedDate).getFullYear();
+      return `${name} (${year})`;
+    }
+
+    // Fallback: just return the name
+    return name;
   }
 }

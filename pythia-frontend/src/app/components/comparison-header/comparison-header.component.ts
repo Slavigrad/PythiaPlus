@@ -23,10 +23,10 @@ export class ComparisonHeaderComponent {
 
   // Computed signals for avatar
   protected readonly initials = computed(() => {
-    const name = this.candidate().name;
+    const name = this.candidate().fullName;
     return name
       .split(' ')
-      .map(n => n[0])
+      .map((n: string) => n[0])
       .join('')
       .toUpperCase()
       .substring(0, 2);
