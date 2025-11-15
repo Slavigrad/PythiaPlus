@@ -1,0 +1,348 @@
+<!-- Loading State -->
+@if (loading()) {
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading employee profile...</p>
+  </div>
+}
+
+<!-- Error State -->
+@else if (error()) {
+  <div class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h2>Unable to load profile</h2>
+    <p class="error-message">{{ error() }}</p>
+    <button class="btn-primary" (click)="goBack()">
+      ← Back to Search
+    </button>
+  </div>
+}
+
+<!-- Employee Profile -->
+@else if (employee(); as emp) {
+  <article class="employee-profile">
+
+    <!-- Back Button -->
+    <button class="back-button" (click)="goBack()" aria-label="Back to search">
+      ← Back to Search
+    </button>
+
+    <!-- HEADER SECTION -->
+    <header class="profile-header">
+      <div class="header-left">
+        <div class="avatar-container">
+          <img
+            [src]="emp.profilePicture"
+            [alt]="emp.fullName + ' profile picture'"
+            class="avatar"
+            loading="eager"
+          />
+        </div>
+
+        <div class="header-info">
+          <h1 class="employee-name">{{ emp.fullName }}</h1>
+          <p class="employee-title">{{ emp.title }}</p>
+
+          <span
+            class="status-badge"
+            [class]="getAvailabilityClass(emp.availability)"
+            role="status"
+            [attr.aria-label]="'Employment status: ' + getAvailabilityLabel(emp.availability)">
+            {{ getAvailabilityIcon(emp.availability) }} {{ getAvailabilityLabel(emp.availability) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-secondary" (click)="exportCV()" aria-label="Export CV">
+          📥 Export CV
+        </button>
+      </div>
+    </header>
+
+    <!-- Contact Info Grid -->
+    <div class="contact-grid">
+      <div class="contact-item">
+        <span class="contact-icon">📧</span>
+        <a [href]="'mailto:' + emp.email" class="contact-value">{{ emp.email }}</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📞</span>
+        <a [href]="'tel:' + emp.phone" class="contact-value">{{ emp.phone }}</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📍</span>
+        <span class="contact-value">{{ emp.location }}</span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">🏢</span>
+        <span class="contact-value">{{ emp.department }}</span>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    @if (emp.summary) {
+      <div class="summary-section">
+        <p class="summary-text">{{ emp.summary }}</p>
+      </div>
+    }
+
+    <!-- QUICK STATS BAR -->
+    <div class="quick-stats-bar" role="region" aria-label="Quick statistics">
+      <div class="stat-item">
+        <span class="stat-icon">📍</span>
+        <span class="stat-value">{{ emp.location }}</span>
+      </div>
+      <div class="stat-divider">•</div>
+      <div class="stat-item">
+        <span class="stat-icon">💼</span>
+        <span class="stat-value">{{ emp.yearsExperience }} years</span>
+      </div>
+      <div class="stat-divider">•</div>
+      <div class="stat-item">
+        <span class="stat-icon">🏢</span>
+        <span class="stat-value">{{ emp.department }}</span>
+      </div>
+      <div class="stat-divider">•</div>
+      <div class="stat-item">
+        <span class="stat-icon">⭐</span>
+        <span class="stat-value">{{ emp.seniority }}</span>
+      </div>
+      <div class="stat-divider">•</div>
+      <div class="stat-item">
+        <span class="stat-icon">💻</span>
+        <span class="stat-value">{{ emp.technologies.length }} Technologies</span>
+      </div>
+      <div class="stat-divider">•</div>
+      <div class="stat-item">
+        <span class="stat-icon">🌐</span>
+        <span class="stat-value">{{ emp.languages.length }} Languages</span>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT GRID -->
+    <div class="content-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-column">
+
+        <!-- WORK EXPERIENCE TIMELINE -->
+        @if (sortedWorkExperiences().length > 0) {
+          <section class="profile-section" aria-labelledby="work-experience-heading">
+            <h2 id="work-experience-heading" class="section-title">
+              💼 Work Experience
+            </h2>
+
+            <div class="timeline">
+              @for (work of sortedWorkExperiences(); track work.id) {
+                <div class="timeline-item">
+                  <div class="timeline-marker"></div>
+                  @if (!$last) {
+                    <div class="timeline-line"></div>
+                  }
+
+                  <div class="timeline-content">
+                    <h3 class="work-role">{{ work.role }}</h3>
+                    <p class="work-company">{{ work.company }}</p>
+                    <p class="work-dates">
+                      <time [attr.datetime]="work.startDate">
+                        {{ work.startDate | date:'MMM yyyy' }}
+                      </time>
+                      -
+                      @if (work.endDate) {
+                        <time [attr.datetime]="work.endDate">
+                          {{ work.endDate | date:'MMM yyyy' }}
+                        </time>
+                      } @else {
+                        <span class="current-position">Present</span>
+                      }
+                    </p>
+                    <p class="work-duration">
+                      {{ calculateDuration(work.startDate, work.endDate) }}
+                    </p>
+                    @if (work.description) {
+                      <p class="work-description">{{ work.description }}</p>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- EDUCATION -->
+        @if (emp.educations.length > 0) {
+          <section class="profile-section" aria-labelledby="education-heading">
+            <h2 id="education-heading" class="section-title">
+              🎓 Education
+            </h2>
+
+            @for (edu of emp.educations; track edu.id) {
+              <div class="education-card">
+                <h3 class="edu-degree">{{ edu.degree }} {{ edu.field }}</h3>
+                <p class="edu-institution">{{ edu.institution }}</p>
+                <p class="edu-years">
+                  {{ edu.startYear }} - {{ edu.endYear }} • {{ edu.endYear - edu.startYear }} years
+                </p>
+              </div>
+            }
+          </section>
+        }
+
+        <!-- LANGUAGES -->
+        @if (emp.languages.length > 0) {
+          <section class="profile-section" aria-labelledby="languages-heading">
+            <h2 id="languages-heading" class="section-title">
+              🌐 Languages
+            </h2>
+
+            @for (lang of emp.languages; track lang.id) {
+              <div class="language-item">
+                <div class="language-header">
+                  <span class="language-name">{{ lang.name }}</span>
+                  @if (lang.level) {
+                    <span class="language-level">{{ lang.level }}</span>
+                  }
+                </div>
+
+                <div
+                  class="proficiency-bar"
+                  role="img"
+                  [attr.aria-label]="lang.name + ' proficiency: ' + lang.proficiency">
+                  <div
+                    class="bar-fill bar-language"
+                    [style.width.%]="getLanguageProficiency(lang.proficiency)">
+                  </div>
+                </div>
+
+                <p class="language-description">
+                  {{ getLanguageDescription(lang.proficiency) }}
+                </p>
+              </div>
+            }
+          </section>
+        }
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-column">
+
+        <!-- TECHNOLOGIES -->
+        @if (topTechnologies().length > 0) {
+          <section class="profile-section" aria-labelledby="technologies-heading">
+            <h2 id="technologies-heading" class="section-title">
+              💻 Technologies
+            </h2>
+
+            <div class="tech-list">
+              @for (tech of topTechnologies(); track tech.id) {
+                <div class="tech-item">
+                  <div class="tech-header">
+                    <span class="tech-name" [class]="getTechCategoryClass(tech.name)">
+                      {{ tech.name }}
+                    </span>
+                    <span class="tech-years">{{ tech.years }}y</span>
+                    <span class="tech-proficiency-label" [class]="getSkillProficiencyClass(tech.proficiency)">
+                      {{ tech.proficiency }}
+                    </span>
+                  </div>
+
+                  <div
+                    class="proficiency-bar"
+                    role="img"
+                    [attr.aria-label]="tech.name + ' proficiency: ' + tech.years + ' years of experience'">
+                    <div
+                      class="bar-fill"
+                      [class]="getTechCategoryClass(tech.name)"
+                      [style.width.%]="getProficiencyPercentage(tech.years)">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <p class="tech-legend">
+              Bar scale: 10 years = 100%
+            </p>
+          </section>
+        }
+
+        <!-- SKILLS -->
+        @if (emp.skills.length > 0) {
+          <section class="profile-section" aria-labelledby="skills-heading">
+            <h2 id="skills-heading" class="section-title">
+              🛠️ Skills
+            </h2>
+
+            <div class="skills-grid">
+              @for (skill of emp.skills; track skill.id) {
+                <span
+                  class="skill-badge"
+                  [class]="getSkillProficiencyClass(skill.proficiency)"
+                  [attr.title]="skill.name + ': ' + skill.proficiency + ' (' + skill.years + ' years)'">
+                  {{ skill.name }}
+                  <span class="skill-years">{{ skill.years }}y</span>
+                </span>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- CERTIFICATIONS -->
+        @if (emp.certifications.length > 0) {
+          <section class="profile-section" aria-labelledby="certifications-heading">
+            <h2 id="certifications-heading" class="section-title">
+              📜 Certifications
+            </h2>
+
+            @for (cert of emp.certifications; track cert.id) {
+              <div
+                class="certification-card"
+                [class]="getCertStatusClass(cert.expiresOn)">
+                <div class="cert-header">
+                  <h3 class="cert-name">{{ cert.name }}</h3>
+                  <span
+                    class="cert-status"
+                    [class]="getCertStatusClass(cert.expiresOn)">
+                    {{ getCertStatusLabel(cert.expiresOn) }}
+                  </span>
+                </div>
+
+                <div class="cert-dates">
+                  <div class="cert-date-item">
+                    <span class="cert-date-label">Issued:</span>
+                    <time [attr.datetime]="cert.issuedOn">
+                      {{ cert.issuedOn | date:'MMM yyyy' }}
+                    </time>
+                  </div>
+
+                  @if (cert.expiresOn) {
+                    <div class="cert-date-item">
+                      <span class="cert-date-label">Expires:</span>
+                      <time [attr.datetime]="cert.expiresOn">
+                        {{ cert.expiresOn | date:'MMM yyyy' }}
+                      </time>
+                    </div>
+
+                    @if (isExpiringSoon(cert.expiresOn) && !isExpired(cert.expiresOn)) {
+                      <p class="cert-warning" role="alert">
+                        ⚠️ Expires in {{ getMonthsUntilExpiry(cert.expiresOn) }} months
+                      </p>
+                    }
+                  } @else {
+                    <div class="cert-date-item">
+                      <span class="cert-no-expiry">✓ Lifetime certification</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </section>
+        }
+
+      </div>
+    </div>
+
+  </article>
+}
