@@ -1,5 +1,5 @@
 import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatRippleModule } from '@angular/material/core';
 import { SearchService } from '../../services/search.service';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
@@ -13,7 +13,7 @@ import { StatsSummaryComponent } from '../../components/stats-summary/stats-summ
  * Search Page Component
  *
  * Purpose: Main search interface for Pythia+ with faceted search
- * Features: Search bar, facet filters, stats summary, advanced options, results display, URL persistence
+ * Features: Search bar, facet filters, stats summary, advanced options, results display, URL persistence, candidate navigation
  */
 @Component({
   selector: 'app-search-page',
@@ -33,6 +33,7 @@ import { StatsSummaryComponent } from '../../components/stats-summary/stats-summ
 export class SearchPageComponent implements OnInit {
   protected readonly searchService = inject(SearchService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   // Signals for URL-driven state
   readonly urlQuery = signal<string>('');
@@ -74,5 +75,18 @@ export class SearchPageComponent implements OnInit {
         }, false);
       }
     });
+  }
+
+  /**
+   * Handle candidate selection
+   * Navigates to the employee profile page
+   *
+   * Note: Candidate ID is a string, but employee API expects a number
+   * The backend should handle the mapping from candidate ID to employee ID
+   */
+  protected handleCandidateSelected(candidateId: string): void {
+    // Navigate to employee profile
+    // Assuming candidate ID maps to employee ID (backend should handle this)
+    this.router.navigate(['/employees', candidateId]);
   }
 }

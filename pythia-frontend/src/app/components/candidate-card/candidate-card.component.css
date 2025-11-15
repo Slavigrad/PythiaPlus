@@ -23,11 +23,37 @@
   transform: translateY(-4px);
 }
 
+.candidate-card:active {
+  /* Active state when clicking */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
+              0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
 .candidate-card:focus-visible {
   outline: 2px solid #d32f2f;
   outline-offset: 2px;
   border-color: #d32f2f;
   box-shadow: 0 4px 12px rgba(211, 47, 47, 0.15);
+}
+
+/* Add a subtle visual indicator that the card is clickable */
+.candidate-card::after {
+  content: '→';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #d32f2f;
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.candidate-card:hover::after {
+  opacity: 0.6;
+  transform: translateY(-50%) translateX(4px);
 }
 
 /* Avatar */
