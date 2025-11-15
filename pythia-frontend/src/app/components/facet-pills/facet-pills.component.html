@@ -1,0 +1,96 @@
+@if (facets()) {
+  <div class="facet-pills-container">
+    <!-- Clear Filters Button (only if filters active) -->
+    @if (searchService.activeFilterCount() > 0) {
+      <div class="clear-filters">
+        <button
+          mat-stroked-button
+          color="warn"
+          (click)="clearAllFilters()"
+          class="clear-button"
+        >
+          <mat-icon>clear_all</mat-icon>
+          Clear {{ searchService.activeFilterCount() }} filters
+        </button>
+      </div>
+    }
+
+    <!-- Location Facets -->
+    @if (topLocations().length > 0) {
+      <div class="facet-group">
+        <div class="facet-label">📍 Locations</div>
+        <div class="facet-pills">
+          @for (facet of topLocations(); track facet.value) {
+            <button
+              class="facet-pill"
+              [class.active]="isLocationActive(facet.value)"
+              (click)="toggleLocation(facet.value)"
+            >
+              {{ facet.value }}
+              <span class="count">{{ facet.count }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Availability Facets -->
+    @if (topAvailabilities().length > 0) {
+      <div class="facet-group">
+        <div class="facet-label">⚡ Availability</div>
+        <div class="facet-pills">
+          @for (facet of topAvailabilities(); track facet.value) {
+            <button
+              class="facet-pill availability"
+              [class.active]="isAvailabilityActive(facet.value)"
+              [attr.data-status]="getAvailabilityColor(facet.value)"
+              (click)="toggleAvailability(facet.value)"
+            >
+              <mat-icon class="small-icon">{{ getAvailabilityIcon(facet.value) }}</mat-icon>
+              {{ getAvailabilityLabel(facet.value) }}
+              <span class="count">{{ facet.count }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Technology Facets -->
+    @if (topTechnologies().length > 0) {
+      <div class="facet-group">
+        <div class="facet-label">💻 Technologies</div>
+        <div class="facet-pills">
+          @for (facet of topTechnologies(); track facet.value) {
+            <button
+              class="facet-pill technology"
+              [class.active]="isTechnologyActive(facet.value)"
+              (click)="toggleTechnology(facet.value)"
+            >
+              {{ facet.value }}
+              <span class="count">{{ facet.count }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Skill Facets -->
+    @if (topSkills().length > 0) {
+      <div class="facet-group">
+        <div class="facet-label">🎯 Skills</div>
+        <div class="facet-pills">
+          @for (facet of topSkills(); track facet.value) {
+            <button
+              class="facet-pill skill"
+              [class.active]="isSkillActive(facet.value)"
+              (click)="toggleSkill(facet.value)"
+            >
+              {{ facet.value }}
+              <span class="count">{{ facet.count }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
