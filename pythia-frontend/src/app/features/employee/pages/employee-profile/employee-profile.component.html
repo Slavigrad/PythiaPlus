@@ -112,6 +112,64 @@
       </div>
     </div>
 
+    <!-- EDITABLE BASIC INFORMATION SECTION -->
+    <app-section-edit-wrapper
+      [title]="'Basic Information'"
+      [icon]="'person'"
+      [isEditing]="editingBasicInfo()"
+      [loading]="updateLoading()"
+      (edit)="editBasicInfo()"
+      (save)="saveBasicInfo()"
+      (cancel)="cancelBasicInfo()">
+
+      <!-- View Mode -->
+      <div viewMode class="basic-info-view">
+        <div class="info-grid">
+          <div class="info-item">
+            <label class="info-label">Full Name</label>
+            <p class="info-value">{{ emp.fullName }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Title</label>
+            <p class="info-value">{{ emp.title }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Email</label>
+            <p class="info-value">{{ emp.email }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Phone</label>
+            <p class="info-value">{{ emp.phone }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Location</label>
+            <p class="info-value">{{ emp.location }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Department</label>
+            <p class="info-value">{{ emp.department }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Seniority</label>
+            <p class="info-value">{{ emp.seniority }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Years of Experience</label>
+            <p class="info-value">{{ emp.yearsExperience }} years</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Availability</label>
+            <p class="info-value">{{ getAvailabilityLabel(emp.availability) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div editMode>
+        <app-basic-info-edit #basicInfoEdit [employee]="emp" />
+      </div>
+    </app-section-edit-wrapper>
+
     <!-- MAIN CONTENT GRID -->
     <div class="content-grid">
 

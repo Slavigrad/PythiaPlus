@@ -1,9 +1,12 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy, viewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { EmployeeService } from '../../services/employee.service';
-import { Employee } from '../../../../models';
+import { Employee, EmployeeUpdateRequest } from '../../../../models';
+import { SectionEditWrapperComponent } from '../../components/shared/section-edit-wrapper/section-edit-wrapper.component';
+import { BasicInfoEditComponent } from '../../components/edit-sections/basic-info-edit/basic-info-edit.component';
 
 /**
  * Employee Profile Page
@@ -13,7 +16,13 @@ import { Employee } from '../../../../models';
  */
 @Component({
   selector: 'app-employee-profile',
-  imports: [CommonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    SectionEditWrapperComponent,
+    BasicInfoEditComponent
+  ],
   templateUrl: './employee-profile.component.html',
   styleUrl: './employee-profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -21,12 +30,20 @@ import { Employee } from '../../../../models';
 export class EmployeeProfileComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
+  private readonly snackBar = inject(MatSnackBar);
   readonly employeeService = inject(EmployeeService);
+
+  // ViewChild references
+  readonly basicInfoEdit = viewChild<BasicInfoEditComponent>('basicInfoEdit');
 
   // Computed signals from service
   readonly employee = this.employeeService.employee;
   readonly loading = this.employeeService.loading;
   readonly error = this.employeeService.error;
+
+  // Edit mode signals
+  readonly editingBasicInfo = signal(false);
+  readonly updateLoading = this.employeeService.updateLoading;
 
   // Computed values
   readonly topTechnologies = computed(() =>
@@ -242,5 +259,77 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
       'notice_period': 'schedule'
     };
     return icons[availability.toLowerCase()] || 'work_outline';
+  }
+
+  /**
+   * Enable edit mode for basic info section
+   */
+  protected editBasicInfo(): void {
+    this.editingBasicInfo.set(true);
+  }
+
+  /**
+   * Save basic info changes
+   */
+  protected saveBasicInfo(): void {
+    const basicInfoComponent = this.basicInfoEdit();
+    if (!basicInfoComponent || !basicInfoComponent.isValid()) {
+      this.showError('Please correct the form errors before saving');
+      return;
+    }
+
+    const employeeId = this.employee()?.id;
+    if (!employeeId) {
+      this.showError('Employee ID not found');
+      return;
+    }
+
+    const formData = basicInfoComponent.getFormData();
+
+    this.employeeService.updateEmployee(employeeId, formData)
+      .subscribe({
+        next: () => {
+          this.editingBasicInfo.set(false);
+          this.showSuccess('Basic information updated successfully');
+        },
+        error: (error) => {
+          this.showError(error.message || 'Failed to update basic information');
+        }
+      });
+  }
+
+  /**
+   * Cancel basic info editing
+   */
+  protected cancelBasicInfo(): void {
+    const basicInfoComponent = this.basicInfoEdit();
+    if (basicInfoComponent) {
+      basicInfoComponent.reset();
+    }
+    this.editingBasicInfo.set(false);
+  }
+
+  /**
+   * Show success message
+   */
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['success-snackbar']
+    });
+  }
+
+  /**
+   * Show error message
+   */
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['error-snackbar']
+    });
   }
 }

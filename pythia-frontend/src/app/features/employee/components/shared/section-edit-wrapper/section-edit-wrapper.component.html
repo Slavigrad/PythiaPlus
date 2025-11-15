@@ -1,0 +1,51 @@
+<mat-card [class.editing-mode]="isEditing()">
+  <mat-card-header>
+    <mat-card-title>
+      @if (icon()) {
+        <mat-icon class="section-icon">{{ icon() }}</mat-icon>
+      }
+      <span class="title-text">{{ title() }}</span>
+      @if (isEditing()) {
+        <span class="editing-label">(Editing)</span>
+      }
+    </mat-card-title>
+    @if (!isEditing() && canEdit()) {
+      <button
+        mat-icon-button
+        (click)="onEdit()"
+        [attr.aria-label]="'Edit ' + title()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    }
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isEditing()) {
+      <ng-content select="[editMode]"></ng-content>
+    } @else {
+      <ng-content select="[viewMode]"></ng-content>
+    }
+  </mat-card-content>
+
+  @if (isEditing()) {
+    <mat-card-actions align="end">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onSave()"
+        [disabled]="loading()"
+        aria-label="Save changes">
+        <mat-icon>save</mat-icon>
+        {{ loading() ? 'Saving...' : 'Save' }}
+      </button>
+      <button
+        mat-button
+        (click)="onCancel()"
+        [disabled]="loading()"
+        aria-label="Cancel editing">
+        <mat-icon>close</mat-icon>
+        Cancel
+      </button>
+    </mat-card-actions>
+  }
+</mat-card>
