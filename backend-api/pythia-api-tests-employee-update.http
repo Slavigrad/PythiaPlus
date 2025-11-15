@@ -1,0 +1,624 @@
+### ============================================================================
+### Pythia API - Employee Update Endpoint Tests
+### ============================================================================
+###
+### 📖 DEVELOPER GUIDE: Database Tables Affected by Employee Updates
+### ============================================================================
+###
+### This guide explains which PostgreSQL tables are modified when you execute
+### each PUT/PATCH request. Use this to manually verify data integrity after
+### running tests.
+###
+### ============================================================================
+### 🗄️ DATABASE TABLES OVERVIEW
+### ============================================================================
+###
+### PRIMARY TABLE:
+### ┌─────────────────────────────────────────────────────────────────────────┐
+### │ employees                                                               │
+### │ - Stores core employee information (name, title, email, etc.)          │
+### │ - Updated by: ALL PUT/PATCH requests                                   │
+### │ - Verify with: SELECT * FROM employees WHERE id = 1;                   │
+### └─────────────────────────────────────────────────────────────────────────┘
+###
+### JUNCTION TABLES (Many-to-Many Relationships):
+### ┌─────────────────────────────────────────────────────────────────────────┐
+### │ employees_technologies                                                  │
+### │ - Links employees to technologies with proficiency and years           │
+### │ - Updated by: PUT/PATCH with "technologies" field                      │
+### │ - Verify with: SELECT * FROM employees_technologies WHERE employee_id = 1; │
+### │ - Join query: SELECT et.*, mt.name FROM employees_technologies et      │
+### │               JOIN md_technologies mt ON et.technology_id = mt.id      │
+### │               WHERE et.employee_id = 1;                                │
+### └─────────────────────────────────────────────────────────────────────────┘
+###
+### ┌─────────────────────────────────────────────────────────────────────────┐
+### │ employees_skills                                                        │
+### │ - Links employees to skills with proficiency and years                 │
+### │ - Updated by: PUT/PATCH with "skills" field                            │
+### │ - Verify with: SELECT * FROM employees_skills WHERE employee_id = 1;   │
+### │ - Join query: SELECT es.*, s.name FROM employees_skills es             │
+### │               JOIN skills s ON es.skill_id = s.id                      │
+### │               WHERE es.employee_id = 1;                                │
+### └─────────────────────────────────────────────────────────────────────────┘
+###
+### ┌─────────────────────────────────────────────────────────────────────────┐
+### │ employees_certifications                                                │
+### │ - Links employees to certifications with issue/expiry dates            │
+### │ - Updated by: PUT/PATCH with "certifications" field                    │
+### │ - Verify with: SELECT * FROM employees_certifications WHERE employee_id = 1; │
+### │ - Join query: SELECT ec.*, c.name FROM employees_certifications ec     │
+### │               JOIN certifications c ON ec.certification_id = c.id      │
+### │               WHERE ec.employee_id = 1;                                │
+### └─────────────────────────────────────────────────────────────────────────┘
+###
+### ┌─────────────────────────────────────────────────────────────────────────┐
+### │ employees_languages                                                     │
+### │ - Links employees to languages with proficiency level                  │
+### │ - Updated by: PUT/PATCH with "languages" field                         │
+### │ - Verify with: SELECT * FROM employees_languages WHERE employee_id = 1;│
+### │ - Join query: SELECT el.*, l.name FROM employees_languages el          │
+### │               JOIN languages l ON el.language_id = l.id                │
+### │               WHERE el.employee_id = 1;                                │
+### └─────────────────────────────────────────────────────────────────────────┘
+###
+### ONE-TO-MANY TABLES (Owned by Employee):
+### ┌─────────────────────────────────────────────────────────────────────────┐
+### │ work_experiences                                                        │
+### │ - Stores employee work history (company, role, dates, description)     │
+### │ - Updated by: PUT/PATCH with "workExperiences" field                   │
+### │ - Verify with: SELECT * FROM work_experiences WHERE employee_id = 1    │
+### │                ORDER BY start_date DESC;                               │
+### └─────────────────────────────────────────────────────────────────────────┘
+###
+### ┌─────────────────────────────────────────────────────────────────────────┐
+### │ educations                                                              │
+### │ - Stores employee education history (institution, degree, field, years)│
+### │ - Updated by: PUT/PATCH with "educations" field                        │
+### │ - Verify with: SELECT * FROM educations WHERE employee_id = 1          │
+### │                ORDER BY start_year DESC;                               │
+### └─────────────────────────────────────────────────────────────────────────┘
+###
+### ============================================================================
+### 🔄 UPDATE BEHAVIOR BY TEST CASE
+### ============================================================================
+###
+### TEST 2: Update Basic Information (PUT)
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, title, email, phone, location, department,
+###                seniority, years_experience, availability, updated_at)
+###
+### Verification Query:
+###   SELECT id, full_name, title, email, phone, location, department,
+###          seniority, years_experience, availability, updated_at
+###   FROM employees WHERE id = 1;
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 3: Partial Update (PATCH)
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (only fields provided: title, seniority, updated_at)
+###
+### Verification Query:
+###   SELECT id, full_name, title, seniority, updated_at
+###   FROM employees WHERE id = 1;
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 4: Update with Technologies
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, updated_at)
+###   ✓ employees_technologies (DELETE all existing, INSERT new records)
+###
+### Verification Queries:
+###   -- Check employee record
+###   SELECT id, full_name, updated_at FROM employees WHERE id = 1;
+###
+###   -- Check technologies (should show 2 records)
+###   SELECT et.employee_id, et.technology_id, mt.name as technology_name,
+###          et.proficiency, et.years
+###   FROM employees_technologies et
+###   JOIN md_technologies mt ON et.technology_id = mt.id
+###   WHERE et.employee_id = 1
+###   ORDER BY mt.name;
+###
+### Expected Result: 2 rows (React: advanced/5.0 years, React Native: intermediate/3.0 years)
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 5: Update with Skills
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, updated_at)
+###   ✓ employees_skills (DELETE all existing, INSERT new records)
+###
+### Verification Queries:
+###   -- Check employee record
+###   SELECT id, full_name, updated_at FROM employees WHERE id = 1;
+###
+###   -- Check skills (should show 2 records)
+###   SELECT es.employee_id, es.skill_id, s.name as skill_name,
+###          es.proficiency, es.years
+###   FROM employees_skills es
+###   JOIN skills s ON es.skill_id = s.id
+###   WHERE es.employee_id = 1
+###   ORDER BY s.name;
+###
+### Expected Result: 2 rows (System Design: advanced/6.0 years, Distributed Systems: advanced/5.0 years)
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 6: Update with Certifications
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, updated_at)
+###   ✓ employees_certifications (DELETE all existing, INSERT new records)
+###
+### Verification Queries:
+###   -- Check employee record
+###   SELECT id, full_name, updated_at FROM employees WHERE id = 1;
+###
+###   -- Check certifications (should show 1 record)
+###   SELECT ec.employee_id, ec.certification_id, c.name as certification_name,
+###          ec.issued_on, ec.expires_on
+###   FROM employees_certifications ec
+###   JOIN certifications c ON ec.certification_id = c.id
+###   WHERE ec.employee_id = 1;
+###
+### Expected Result: 1 row (issued: 2023-01-15, expires: 2026-01-15)
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 7: Update with Languages
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, updated_at)
+###   ✓ employees_languages (DELETE all existing, INSERT new records)
+###
+### Verification Queries:
+###   -- Check employee record
+###   SELECT id, full_name, updated_at FROM employees WHERE id = 1;
+###
+###   -- Check languages (should show 2 records)
+###   SELECT el.employee_id, el.language_id, l.name as language_name,
+###          el.level
+###   FROM employees_languages el
+###   JOIN languages l ON el.language_id = l.id
+###   WHERE el.employee_id = 1
+###   ORDER BY l.name;
+###
+### Expected Result: 2 rows (language 1: native, language 2: C1)
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 8: Update with Work Experiences
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, updated_at)
+###   ✓ work_experiences (DELETE all existing, INSERT new records)
+###
+### Verification Queries:
+###   -- Check employee record
+###   SELECT id, full_name, updated_at FROM employees WHERE id = 1;
+###
+###   -- Check work experiences (should show 2 records)
+###   SELECT id, employee_id, company, role, start_date, end_date, description
+###   FROM work_experiences
+###   WHERE employee_id = 1
+###   ORDER BY start_date DESC;
+###
+### Expected Result: 2 rows (Tech Corp: 2020-2023, Innovation Labs: 2024-present)
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 9: Update with Educations
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, updated_at)
+###   ✓ educations (DELETE all existing, INSERT new records)
+###
+### Verification Queries:
+###   -- Check employee record
+###   SELECT id, full_name, updated_at FROM employees WHERE id = 1;
+###
+###   -- Check educations (should show 2 records)
+###   SELECT id, employee_id, institution, degree, field, start_year, end_year
+###   FROM educations
+###   WHERE employee_id = 1
+###   ORDER BY start_year DESC;
+###
+### Expected Result: 2 rows (ETH Zurich: 2015-2017, University of Zurich: 2012-2015)
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 10: Complete Employee Update (All Fields)
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (all basic fields)
+###   ✓ employees_technologies (DELETE all, INSERT 1 record)
+###   ✓ employees_skills (DELETE all, INSERT 1 record)
+###   ✓ employees_certifications (DELETE all, INSERT 1 record)
+###   ✓ employees_languages (DELETE all, INSERT 1 record)
+###   ✓ work_experiences (DELETE all, INSERT 1 record)
+###   ✓ educations (DELETE all, INSERT 1 record)
+###
+### Verification Queries:
+###   -- Check all employee data
+###   SELECT * FROM employees WHERE id = 1;
+###
+###   -- Check all relationships (should show 1 record each)
+###   SELECT COUNT(*) as tech_count FROM employees_technologies WHERE employee_id = 1;
+###   SELECT COUNT(*) as skill_count FROM employees_skills WHERE employee_id = 1;
+###   SELECT COUNT(*) as cert_count FROM employees_certifications WHERE employee_id = 1;
+###   SELECT COUNT(*) as lang_count FROM employees_languages WHERE employee_id = 1;
+###   SELECT COUNT(*) as work_count FROM work_experiences WHERE employee_id = 1;
+###   SELECT COUNT(*) as edu_count FROM educations WHERE employee_id = 1;
+###
+### Expected Result: All counts should be 1
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 14: Clear Technologies (Empty Array)
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, updated_at)
+###   ✓ employees_technologies (DELETE all existing records)
+###
+### Verification Query:
+###   SELECT COUNT(*) as tech_count
+###   FROM employees_technologies
+###   WHERE employee_id = 1;
+###
+### Expected Result: 0 rows (all technologies removed)
+###
+### ────────────────────────────────────────────────────────────────────────
+###
+### TEST 15: Clear Skills (Empty Array)
+### ────────────────────────────────────────────────────────────────────────
+### Tables Updated:
+###   ✓ employees (full_name, updated_at)
+###   ✓ employees_skills (DELETE all existing records)
+###
+### Verification Query:
+###   SELECT COUNT(*) as skill_count
+###   FROM employees_skills
+###   WHERE employee_id = 1;
+###
+### Expected Result: 0 rows (all skills removed)
+###
+### ============================================================================
+### 🔍 COMPREHENSIVE VERIFICATION QUERY (After Any Update)
+### ============================================================================
+###
+### Run this query to see the complete employee profile with all relationships:
+###
+### SELECT
+###   e.id,
+###   e.full_name,
+###   e.title,
+###   e.email,
+###   e.updated_at,
+###   (SELECT COUNT(*) FROM employees_technologies WHERE employee_id = e.id) as tech_count,
+###   (SELECT COUNT(*) FROM employees_skills WHERE employee_id = e.id) as skill_count,
+###   (SELECT COUNT(*) FROM employees_certifications WHERE employee_id = e.id) as cert_count,
+###   (SELECT COUNT(*) FROM employees_languages WHERE employee_id = e.id) as lang_count,
+###   (SELECT COUNT(*) FROM work_experiences WHERE employee_id = e.id) as work_count,
+###   (SELECT COUNT(*) FROM educations WHERE employee_id = e.id) as edu_count
+### FROM employees e
+### WHERE e.id = 1;
+###
+### ============================================================================
+### ⚠️ IMPORTANT NOTES
+### ============================================================================
+###
+### 1. UPDATE STRATEGY:
+###    - Junction tables (technologies, skills, certifications, languages):
+###      DELETE all existing records, then INSERT new ones
+###    - One-to-many tables (work_experiences, educations):
+###      DELETE all existing records, then INSERT new ones
+###    - This ensures clean state without orphaned records
+###
+### 2. TIMESTAMPS:
+###    - The 'updated_at' field in 'employees' table is automatically updated
+###      on every PUT/PATCH request
+###
+### 3. NULL vs OMITTED FIELDS:
+###    - PUT: Omitted fields are NOT updated (existing values preserved)
+###    - PATCH: Omitted fields are NOT updated (existing values preserved)
+###    - To clear a field, explicitly set it to null in the request
+###
+### 4. ARRAY FIELDS:
+###    - Empty array [] = DELETE all related records
+###    - Omitted array field = NO CHANGE to related records
+###    - Array with items = DELETE all + INSERT new records
+###
+### 5. MASTER DATA REFERENCES:
+###    - Technology IDs reference: md_technologies table
+###    - Skill IDs reference: skills table
+###    - Certification IDs reference: certifications table
+###    - Language IDs reference: languages table
+###
+### ============================================================================
+### TEST 1: Get employee details before update (Employee ID 1)
+### ============================================================================
+GET {{baseUrl}}/employees/1
+Accept: application/json
+
+### ============================================================================
+### TEST 2: Update employee basic information (PUT)
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky Updated",
+  "title": "Senior Full-Stack Developer",
+  "email": "lubomir.dobrovodsky@example.com",
+  "phone": "+41 79 123 4567",
+  "location": "Zurich, Switzerland",
+  "department": "Engineering",
+  "seniority": "Senior",
+  "yearsExperience": 7.5,
+  "availability": "available"
+}
+
+### ============================================================================
+### TEST 3: Partial update with PATCH (only title and seniority)
+### ============================================================================
+PATCH {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "title": "Lead Full-Stack Developer",
+  "seniority": "Lead"
+}
+
+### ============================================================================
+### TEST 4: Update employee with technologies
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "technologies": [
+    {
+      "technologyId": 1,
+      "proficiency": "advanced",
+      "years": 5.0
+    },
+    {
+      "technologyId": 2,
+      "proficiency": "intermediate",
+      "years": 3.0
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 5: Update employee with skills
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "skills": [
+    {
+      "skillId": 1,
+      "proficiency": "advanced",
+      "years": 6.0
+    },
+    {
+      "skillId": 2,
+      "proficiency": "advanced",
+      "years": 5.0
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 6: Update employee with certifications
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "certifications": [
+    {
+      "certificationId": 1,
+      "issuedOn": "2023-01-15",
+      "expiresOn": "2026-01-15"
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 7: Update employee with languages
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "languages": [
+    {
+      "languageId": 1,
+      "level": "native"
+    },
+    {
+      "languageId": 2,
+      "level": "C1"
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 8: Update employee with work experiences (add new)
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "workExperiences": [
+    {
+      "company": "Tech Corp",
+      "role": "Senior Developer",
+      "startDate": "2020-01-01",
+      "endDate": "2023-12-31",
+      "description": "Led development of microservices architecture"
+    },
+    {
+      "company": "Innovation Labs",
+      "role": "Full-Stack Developer",
+      "startDate": "2024-01-01",
+      "endDate": null,
+      "description": "Current position - working on AI-powered solutions"
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 9: Update employee with educations (add new)
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "educations": [
+    {
+      "institution": "ETH Zurich",
+      "degree": "Master of Science",
+      "field": "Computer Science",
+      "startYear": 2015,
+      "endYear": 2017
+    },
+    {
+      "institution": "University of Zurich",
+      "degree": "Bachelor of Science",
+      "field": "Software Engineering",
+      "startYear": 2012,
+      "endYear": 2015
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 10: Complete employee update (all fields)
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "title": "Senior Full-Stack Developer",
+  "email": "lubomir.dobrovodsky@example.com",
+  "phone": "+41 79 123 4567",
+  "location": "Zurich, Switzerland",
+  "profilePicture": "https://example.com/photos/lubomir.jpg",
+  "summary": "Experienced full-stack developer with expertise in modern web technologies",
+  "department": "Engineering",
+  "seniority": "Senior",
+  "yearsExperience": 7.5,
+  "availability": "available",
+  "technologies": [
+    {
+      "technologyId": 1,
+      "proficiency": "advanced",
+      "years": 5.0
+    }
+  ],
+  "skills": [
+    {
+      "skillId": 1,
+      "proficiency": "advanced",
+      "years": 6.0
+    }
+  ],
+  "certifications": [
+    {
+      "certificationId": 1,
+      "issuedOn": "2023-01-15",
+      "expiresOn": "2026-01-15"
+    }
+  ],
+  "languages": [
+    {
+      "languageId": 1,
+      "level": "native"
+    }
+  ],
+  "workExperiences": [
+    {
+      "company": "Tech Corp",
+      "role": "Senior Developer",
+      "startDate": "2020-01-01",
+      "endDate": null,
+      "description": "Leading development team"
+    }
+  ],
+  "educations": [
+    {
+      "institution": "ETH Zurich",
+      "degree": "Master of Science",
+      "field": "Computer Science",
+      "startYear": 2015,
+      "endYear": 2017
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 11: Verify updated employee details
+### ============================================================================
+GET {{baseUrl}}/employees/1
+Accept: application/json
+
+### ============================================================================
+### TEST 12: Update non-existent employee (should return 400)
+### ============================================================================
+PUT {{baseUrl}}/employees/99999
+Content-Type: application/json
+
+{
+  "fullName": "Non Existent"
+}
+
+### ============================================================================
+### TEST 13: Update with invalid email format (should return 400)
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "email": "invalid-email"
+}
+
+### ============================================================================
+### TEST 14: Update with empty technologies array (clear all technologies)
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "technologies": []
+}
+
+### ============================================================================
+### TEST 15: Update with empty skills array (clear all skills)
+### ============================================================================
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+
+{
+  "fullName": "Lubomir Dobrovodsky",
+  "skills": []
+}
+

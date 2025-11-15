@@ -1,0 +1,292 @@
+###
+### Pythia API - Autocomplete/Type-Ahead Tests
+### GET /api/v1/autocomplete
+###
+### Description: Comprehensive tests for autocomplete/suggestions functionality
+### Author: Pythia Team
+### Date: 2025-11-15
+###
+
+### ============================================================================
+### 1. EMPLOYEE NAME SUGGESTIONS
+### ============================================================================
+
+### Test 1.1: Autocomplete employee names - 'lu'
+# Expected: 200 OK with employee name suggestions starting with 'lu'
+GET http://localhost:8080/api/v1/autocomplete?query=lu&limit=10
+Accept: application/json
+
+### Test 1.2: Autocomplete employee names - 'ar'
+# Expected: 200 OK with employee name suggestions starting with 'ar' (e.g., Ariadna)
+GET http://localhost:8080/api/v1/autocomplete?query=ar&limit=10
+Accept: application/json
+
+### Test 1.3: Autocomplete employee names - 'ri'
+# Expected: 200 OK with employee name suggestions starting with 'ri' (e.g., Ricardo)
+GET http://localhost:8080/api/v1/autocomplete?query=ri&limit=10
+Accept: application/json
+
+### Test 1.4: Autocomplete employee names - case insensitive 'LU'
+# Expected: 200 OK with same results as lowercase 'lu'
+GET http://localhost:8080/api/v1/autocomplete?query=LU&limit=10
+Accept: application/json
+
+### ============================================================================
+### 2. JOB TITLE SUGGESTIONS
+### ============================================================================
+
+### Test 2.1: Autocomplete job titles - 'dev'
+# Expected: 200 OK with job title suggestions starting with 'dev' (e.g., DevOps Engineer)
+GET http://localhost:8080/api/v1/autocomplete?query=dev&limit=10
+Accept: application/json
+
+### Test 2.2: Autocomplete job titles - 'senior'
+# Expected: 200 OK with job title suggestions starting with 'senior'
+GET http://localhost:8080/api/v1/autocomplete?query=senior&limit=10
+Accept: application/json
+
+### Test 2.3: Autocomplete job titles - 'backend'
+# Expected: 200 OK with job title suggestions starting with 'backend'
+GET http://localhost:8080/api/v1/autocomplete?query=backend&limit=10
+Accept: application/json
+
+### Test 2.4: Autocomplete job titles - verify count field
+# Expected: Count field should show number of employees with that title
+GET http://localhost:8080/api/v1/autocomplete?query=engineer&limit=10
+Accept: application/json
+
+### ============================================================================
+### 3. TECHNOLOGY SUGGESTIONS
+### ============================================================================
+
+### Test 3.1: Autocomplete technologies - 'kot'
+# Expected: 200 OK with technology suggestions starting with 'kot' (e.g., Kotlin)
+GET http://localhost:8080/api/v1/autocomplete?query=kot&limit=10
+Accept: application/json
+
+### Test 3.2: Autocomplete technologies - 'java'
+# Expected: 200 OK with technology suggestions starting with 'java' (e.g., Java, JavaScript)
+GET http://localhost:8080/api/v1/autocomplete?query=java&limit=10
+Accept: application/json
+
+### Test 3.3: Autocomplete technologies - 'post'
+# Expected: 200 OK with technology suggestions starting with 'post' (e.g., PostgreSQL)
+GET http://localhost:8080/api/v1/autocomplete?query=post&limit=10
+Accept: application/json
+
+### Test 3.4: Autocomplete technologies - 'react'
+# Expected: 200 OK with technology suggestions starting with 'react'
+GET http://localhost:8080/api/v1/autocomplete?query=react&limit=10
+Accept: application/json
+
+### Test 3.5: Autocomplete technologies - 'docker'
+# Expected: 200 OK with technology suggestions starting with 'docker'
+GET http://localhost:8080/api/v1/autocomplete?query=docker&limit=10
+Accept: application/json
+
+### ============================================================================
+### 4. SKILL SUGGESTIONS
+### ============================================================================
+
+### Test 4.1: Autocomplete skills - 'api'
+# Expected: 200 OK with skill suggestions starting with 'api' (e.g., API Design)
+GET http://localhost:8080/api/v1/autocomplete?query=api&limit=10
+Accept: application/json
+
+### Test 4.2: Autocomplete skills - 'test'
+# Expected: 200 OK with skill suggestions starting with 'test' (e.g., Test-Driven Development)
+GET http://localhost:8080/api/v1/autocomplete?query=test&limit=10
+Accept: application/json
+
+### Test 4.3: Autocomplete skills - 'data'
+# Expected: 200 OK with skill suggestions starting with 'data' (e.g., Data Modeling)
+GET http://localhost:8080/api/v1/autocomplete?query=data&limit=10
+Accept: application/json
+
+### Test 4.4: Autocomplete skills - 'code'
+# Expected: 200 OK with skill suggestions starting with 'code' (e.g., Code Review)
+GET http://localhost:8080/api/v1/autocomplete?query=code&limit=10
+Accept: application/json
+
+### ============================================================================
+### 5. COMPANY SUGGESTIONS
+### ============================================================================
+
+### Test 5.1: Autocomplete companies - 'goo'
+# Expected: 200 OK with company suggestions starting with 'goo' (e.g., Google)
+GET http://localhost:8080/api/v1/autocomplete?query=goo&limit=10
+Accept: application/json
+
+### Test 5.2: Autocomplete companies - 'mic'
+# Expected: 200 OK with company suggestions starting with 'mic' (e.g., Microsoft)
+GET http://localhost:8080/api/v1/autocomplete?query=mic&limit=10
+Accept: application/json
+
+### Test 5.3: Autocomplete companies - 'ama'
+# Expected: 200 OK with company suggestions starting with 'ama' (e.g., Amazon)
+GET http://localhost:8080/api/v1/autocomplete?query=ama&limit=10
+Accept: application/json
+
+### ============================================================================
+### 6. CERTIFICATION SUGGESTIONS
+### ============================================================================
+
+### Test 6.1: Autocomplete certifications - 'aws'
+# Expected: 200 OK with certification suggestions starting with 'aws'
+GET http://localhost:8080/api/v1/autocomplete?query=aws&limit=10
+Accept: application/json
+
+### Test 6.2: Autocomplete certifications - 'istqb'
+# Expected: 200 OK with certification suggestions starting with 'istqb'
+GET http://localhost:8080/api/v1/autocomplete?query=istqb&limit=10
+Accept: application/json
+
+### Test 6.3: Autocomplete certifications - 'certified'
+# Expected: 200 OK with certification suggestions starting with 'certified'
+GET http://localhost:8080/api/v1/autocomplete?query=certified&limit=10
+Accept: application/json
+
+### Test 6.4: Autocomplete certifications - 'google'
+# Expected: 200 OK with certification suggestions starting with 'google'
+GET http://localhost:8080/api/v1/autocomplete?query=google&limit=10
+Accept: application/json
+
+### ============================================================================
+### 7. MULTI-CATEGORY SUGGESTIONS
+### ============================================================================
+
+### Test 7.1: Autocomplete with multiple category matches - 'se'
+# Expected: 200 OK with suggestions from multiple categories (e.g., Senior, Security, etc.)
+GET http://localhost:8080/api/v1/autocomplete?query=se&limit=10
+Accept: application/json
+
+### Test 7.2: Autocomplete with multiple category matches - 'da'
+# Expected: 200 OK with suggestions from multiple categories (e.g., Data, Database, etc.)
+GET http://localhost:8080/api/v1/autocomplete?query=da&limit=10
+Accept: application/json
+
+### Test 7.3: Autocomplete with multiple category matches - 'ma'
+# Expected: 200 OK with suggestions from multiple categories
+GET http://localhost:8080/api/v1/autocomplete?query=ma&limit=10
+Accept: application/json
+
+### ============================================================================
+### 8. LIMIT PARAMETER
+### ============================================================================
+
+### Test 8.1: Autocomplete with limit=5
+# Expected: 200 OK with maximum 5 suggestions per category
+GET http://localhost:8080/api/v1/autocomplete?query=se&limit=5
+Accept: application/json
+
+### Test 8.2: Autocomplete with limit=1
+# Expected: 200 OK with maximum 1 suggestion per category
+GET http://localhost:8080/api/v1/autocomplete?query=se&limit=1
+Accept: application/json
+
+### Test 8.3: Autocomplete with limit=20 (max)
+# Expected: 200 OK with maximum 20 suggestions per category
+GET http://localhost:8080/api/v1/autocomplete?query=se&limit=20
+Accept: application/json
+
+### Test 8.4: Autocomplete with limit=100 (should be capped at 20)
+# Expected: 200 OK with maximum 20 suggestions per category (capped)
+GET http://localhost:8080/api/v1/autocomplete?query=se&limit=100
+Accept: application/json
+
+### Test 8.5: Autocomplete with default limit (no limit parameter)
+# Expected: 200 OK with default limit of 10 suggestions per category
+GET http://localhost:8080/api/v1/autocomplete?query=se
+Accept: application/json
+
+### ============================================================================
+### 9. EDGE CASES
+### ============================================================================
+
+### Test 9.1: Autocomplete with empty query
+# Expected: 200 OK with empty suggestions (query too short)
+GET http://localhost:8080/api/v1/autocomplete?query=
+Accept: application/json
+
+### Test 9.2: Autocomplete with single character query
+# Expected: 200 OK with empty suggestions (query too short, minimum 2 chars)
+GET http://localhost:8080/api/v1/autocomplete?query=a
+Accept: application/json
+
+### Test 9.3: Autocomplete with whitespace query
+# Expected: 200 OK with empty suggestions
+GET http://localhost:8080/api/v1/autocomplete?query=%20%20%20
+Accept: application/json
+
+### Test 9.4: Autocomplete with no matches
+# Expected: 200 OK with empty suggestions
+GET http://localhost:8080/api/v1/autocomplete?query=zzzzzzz&limit=10
+Accept: application/json
+
+### Test 9.5: Autocomplete with special characters
+# Expected: 200 OK with suggestions (should handle special chars gracefully)
+GET http://localhost:8080/api/v1/autocomplete?query=c%2B%2B&limit=10
+Accept: application/json
+
+### ============================================================================
+### 10. RESPONSE STRUCTURE VALIDATION
+### ============================================================================
+
+### Test 10.1: Verify response structure - query field
+# Expected: Response should contain 'query' field matching the request
+GET http://localhost:8080/api/v1/autocomplete?query=kot&limit=10
+Accept: application/json
+
+### Test 10.2: Verify response structure - suggestions array
+# Expected: Response should contain 'suggestions' array
+GET http://localhost:8080/api/v1/autocomplete?query=kot&limit=10
+Accept: application/json
+
+### Test 10.3: Verify suggestion item structure - type field
+# Expected: Each suggestion should have 'type' field (employee_name, job_title, technology, skill, company, certification)
+GET http://localhost:8080/api/v1/autocomplete?query=kot&limit=10
+Accept: application/json
+
+### Test 10.4: Verify suggestion item structure - value field
+# Expected: Each suggestion should have 'value' field with the suggested text
+GET http://localhost:8080/api/v1/autocomplete?query=kot&limit=10
+Accept: application/json
+
+### Test 10.5: Verify suggestion item structure - count field
+# Expected: Suggestions (except employee names) should have 'count' field
+GET http://localhost:8080/api/v1/autocomplete?query=kot&limit=10
+Accept: application/json
+
+### Test 10.6: Verify suggestion item structure - metadata field for employee names
+# Expected: Employee name suggestions should have 'metadata' with 'employeeId'
+GET http://localhost:8080/api/v1/autocomplete?query=lu&limit=10
+Accept: application/json
+
+### ============================================================================
+### 11. PERFORMANCE TESTS
+### ============================================================================
+
+### Test 11.1: Autocomplete with common prefix - 'a'
+# Expected: Fast response (< 500ms) even with many matches
+GET http://localhost:8080/api/v1/autocomplete?query=a&limit=10
+Accept: application/json
+
+### Test 11.2: Autocomplete with common prefix - 's'
+# Expected: Fast response (< 500ms) even with many matches
+GET http://localhost:8080/api/v1/autocomplete?query=s&limit=10
+Accept: application/json
+
+### Test 11.3: Autocomplete with specific prefix - 'kubernetes'
+# Expected: Fast response with specific matches
+GET http://localhost:8080/api/v1/autocomplete?query=kubernetes&limit=10
+Accept: application/json
+
+### ============================================================================
+### END OF TESTS
+### ============================================================================
+
+### Summary:
+### - Total test cases: 50+
+### - Coverage: Employee names, job titles, technologies, skills, companies, certifications, multi-category, limits, edge cases, response structure, performance
+### - All tests should pass with a properly configured Pythia backend with autocomplete enabled
+
