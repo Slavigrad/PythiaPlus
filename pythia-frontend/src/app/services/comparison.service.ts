@@ -5,6 +5,7 @@ import { catchError, of, tap, firstValueFrom } from 'rxjs';
 import { Candidate } from '../models/candidate.model';
 import { CandidateProfile } from '../models/candidate-profile.model';
 import { environment } from '../../environments/environment';
+import { mapEmployeesToProfiles } from './employee-to-profile.mapper';
 
 /**
  * Comparison Service - Multi-Select Candidate Comparison
@@ -183,21 +184,24 @@ export class ComparisonService {
 
       // Fetch uncached profiles
       const response = await firstValueFrom(
-        this.http.post<{ candidates: CandidateProfile[], success: boolean }>(
+        this.http.post<{ candidates: any[], success: boolean }>(
           `${this.apiUrl}/batch-profiles`,
           { ids: uncachedIds }
         ).pipe(
           tap(response => {
             if (response.success) {
+              // Map Employee data to CandidateProfile format
+              const mappedProfiles = mapEmployeesToProfiles(response.candidates);
+
               // Cache newly loaded profiles
-              response.candidates.forEach(profile => {
+              mappedProfiles.forEach(profile => {
                 this.profileCache.set(profile.id, profile);
               });
 
               // Combine cached + newly loaded profiles
               const allProfiles = [
                 ...cachedProfiles,
-                ...response.candidates
+                ...mappedProfiles
               ];
 
               this.candidatesSignal.set(allProfiles);

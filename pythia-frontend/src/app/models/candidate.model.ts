@@ -7,6 +7,7 @@
 export interface Candidate {
   id: string;
   name: string;
+  fullName: string;  // Added for backend compatibility (backend sends 'name', mapped to 'fullName')
   title: string;
   location: string;
   profilePicture: string;

@@ -31,15 +31,21 @@ export class ComparisonTableComponent {
   );
 
   protected readonly experiences = computed(() =>
-    this.candidates().map(c => c.experience)
+    this.candidates().map(c => {
+      const years = c.experienceDetails?.totalYears || c.experience;
+      if (typeof years === 'number') {
+        return years === 1 ? '1 year' : `${years} years`;
+      }
+      return years || '—';
+    })
   );
 
   protected readonly availabilities = computed(() =>
-    this.candidates().map(c => c.availability)
+    this.candidates().map(c => c.availabilityDetails?.status || c.availability)
   );
 
   protected readonly technologies = computed(() =>
-    this.candidates().map(c => c.technologies || [])
+    this.candidates().map(c => c.detailedTechnologies || [])
   );
 
   protected readonly skills = computed(() =>
@@ -47,7 +53,7 @@ export class ComparisonTableComponent {
   );
 
   protected readonly certifications = computed(() =>
-    this.candidates().map(c => c.certifications || [])
+    this.candidates().map(c => c.detailedCertifications || [])
   );
 
   protected readonly currentProjects = computed(() =>
