@@ -1,4 +1,5 @@
 import { Component, input, output, computed, ChangeDetectionStrategy } from '@angular/core';
+import { MatCheckboxModule, MatCheckboxChange } from '@angular/material/checkbox';
 import { Candidate } from '../../models/candidate.model';
 import {
   AVATAR_COLORS,
@@ -11,7 +12,13 @@ import {
  * Candidate Card Component
  *
  * Purpose: Display individual candidate information
- * Features: Colored avatars, match score %, skill pills, clickable for details
+ * Features: Colored avatars, match score %, skill pills, clickable for details, comparison selection
+ *
+ * Comparison Feature:
+ * - Optional selectable mode for multi-candidate comparison
+ * - Checkbox for selection (max 3 candidates)
+ * - Visual feedback when selected
+ * - Disabled state when max selections reached
  *
  * Future Enhancement: Clicking a card will open a detailed candidate modal with:
  * - Full profile information
@@ -22,26 +29,37 @@ import {
  */
 @Component({
   selector: 'app-candidate-card',
-  imports: [],
+  imports: [MatCheckboxModule],
   templateUrl: './candidate-card.component.html',
   styleUrl: './candidate-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '(click)': 'handleCardClick()',
-    '(keydown.enter)': 'handleCardClick()',
+    '(click)': 'handleCardClick($event)',
+    '(keydown.enter)': 'handleCardClick($event)',
     '(keydown.space)': 'handleCardClick($event)',
-    '[attr.tabindex]': '0',
-    '[attr.role]': '"button"',
-    '[attr.aria-label]': '"View details for " + candidate().name'
+    '[attr.tabindex]': 'selectable() ? "-1" : "0"', // Disable tabindex when selectable (checkbox handles focus)
+    '[attr.role]': 'selectable() ? null : "button"',
+    '[attr.aria-label]': 'selectable() ? null : "View details for " + candidate().name',
+    '[class.selectable]': 'selectable()',
+    '[class.selected]': 'isSelected()'
   }
 })
 export class CandidateCardComponent {
   // Signal input (Angular 20)
   readonly candidate = input.required<Candidate>();
 
+  // Selection mode inputs
+  readonly selectable = input<boolean>(false);
+  readonly isSelected = input<boolean>(false);
+  readonly selectionDisabled = input<boolean>(false); // For when max selections reached
+
   // Signal output for card selection (Angular 20)
   // Emits the candidate ID when the card is clicked
   readonly candidateSelected = output<string>();
+
+  // Signal output for selection checkbox toggle
+  // Emits the candidate ID when checkbox is toggled
+  readonly selectionToggle = output<string>();
 
   // Computed signals
   protected readonly initials = computed(() => {
@@ -80,7 +98,8 @@ export class CandidateCardComponent {
 
   /**
    * Handles card click/keyboard interaction
-   * Emits the candidate ID for parent component to handle
+   * In selectable mode, ignores clicks (checkbox handles selection)
+   * In normal mode, emits candidate ID for detail view
    *
    * Future Enhancement: This will trigger opening a detailed candidate modal
    * The modal will fetch additional candidate data from the backend API
@@ -91,6 +110,11 @@ export class CandidateCardComponent {
       event.preventDefault();
     }
 
+    // In selectable mode, don't handle card clicks (checkbox handles it)
+    if (this.selectable()) {
+      return;
+    }
+
     // Emit candidate ID for parent component to handle
     this.candidateSelected.emit(this.candidate().id);
 
@@ -99,5 +123,31 @@ export class CandidateCardComponent {
     // 1. Fetch full candidate profile from API: GET /api/v1/candidates/{id}
     // 2. Open CandidateDetailModal component (to be created)
     // 3. Display comprehensive candidate information
+  }
+
+  /**
+   * Handles checkbox selection toggle
+   * Emits selectionToggle event for parent component
+   */
+  protected handleSelectionToggle(event: MatCheckboxChange): void {
+    // Material checkbox change event has built-in stopPropagation
+    // No need to manually stop propagation
+
+    // Don't toggle if disabled
+    if (this.selectionDisabled() && !this.isSelected()) {
+      return;
+    }
+
+    this.selectionToggle.emit(this.candidate().id);
+  }
+
+  /**
+   * Get ARIA label for selection checkbox
+   */
+  protected getSelectionAriaLabel(): string {
+    if (this.selectionDisabled() && !this.isSelected()) {
+      return `Cannot select ${this.candidate().name} (maximum 3 candidates already selected)`;
+    }
+    return `Select ${this.candidate().name} for comparison`;
   }
 }

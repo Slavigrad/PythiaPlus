@@ -4,6 +4,9 @@
     <h2 class="results-title">
       {{ candidates().length }}
       {{ candidates().length === 1 ? 'candidate' : 'candidates' }} found
+      @if (selectionCount() > 0) {
+        <span class="selection-indicator"> • {{ selectionCount() }} selected</span>
+      }
     </h2>
     <p class="results-subtitle">Sorted by relevance</p>
   </div>
@@ -14,7 +17,11 @@
       @defer (on viewport; prefetch on idle) {
         <app-candidate-card
           [candidate]="candidate"
-          (candidateSelected)="handleCandidateSelected($event)" />
+          [selectable]="selectable()"
+          [isSelected]="isSelected(candidate.id)"
+          [selectionDisabled]="maxSelectionsReached() && !isSelected(candidate.id)"
+          (candidateSelected)="handleCandidateSelected($event)"
+          (selectionToggle)="handleSelectionToggle($event)" />
       } @placeholder {
         <app-skeleton-card />
       } @loading (minimum 100ms) {

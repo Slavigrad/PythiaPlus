@@ -1,0 +1,39 @@
+<div class="comparison-modal">
+  <!-- Modal Header -->
+  <header class="modal-header">
+    <h2 class="modal-title">
+      Compare Talents ({{ comparisonService.selectionCount() }})
+    </h2>
+    <button
+      mat-icon-button
+      class="close-button"
+      (click)="close()"
+      aria-label="Close comparison modal">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <!-- Loading State -->
+  @if (comparisonService.loading()) {
+    <div class="loading-state" role="status" aria-busy="true">
+      <div class="spinner"></div>
+      <p>Loading candidate profiles...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (comparisonService.error()) {
+    <div class="error-state" role="alert">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p class="error-message">{{ comparisonService.error() }}</p>
+      <button mat-stroked-button (click)="close()">Close</button>
+    </div>
+  }
+
+  <!-- Comparison Table -->
+  @if (!comparisonService.loading() && !comparisonService.error() && comparisonService.candidates().length > 0) {
+    <app-comparison-table
+      [candidates]="comparisonService.candidates()"
+      (removeCandidate)="removeCand($event)" />
+  }
+</div>

@@ -1,0 +1,178 @@
+/* Comparison Toolbar */
+:host {
+  display: block;
+  animation: slideInFromTop 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comparison-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+}
+
+/* Selection Info */
+.selection-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.selection-count {
+  font-size: 14px;
+  font-weight: 500;
+  color: #424242;
+}
+
+.max-reached {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.clear-button {
+  color: #757575 !important;
+  font-size: 13px !important;
+}
+
+.clear-button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+}
+
+.clear-button:hover {
+  color: #d32f2f !important;
+  background-color: rgba(211, 47, 47, 0.04) !important;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.compare-button,
+.export-button {
+  font-weight: 500 !important;
+  letter-spacing: 0.5px;
+}
+
+.compare-button mat-icon,
+.export-button mat-icon {
+  margin-right: 6px;
+}
+
+.compare-button {
+  border-color: #757575 !important;
+  color: #424242 !important;
+}
+
+.compare-button:not([disabled]):hover {
+  background-color: rgba(66, 66, 66, 0.04) !important;
+  border-color: #424242 !important;
+}
+
+.export-button {
+  background-color: #d32f2f !important;
+  color: white !important;
+}
+
+.export-button:not([disabled]):hover {
+  background-color: #b71c1c !important;
+  box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3) !important;
+}
+
+/* Disabled states */
+.compare-button[disabled],
+.export-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Focus indicators for keyboard navigation (WCAG AA) */
+.compare-button:focus-visible,
+.export-button:focus-visible,
+.clear-button:focus-visible {
+  outline: 2px solid #d32f2f;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.2);
+}
+
+/* High contrast mode focus indicators */
+@media (prefers-contrast: high) {
+  .compare-button:focus-visible,
+  .export-button:focus-visible,
+  .clear-button:focus-visible {
+    outline: 3px solid #000000;
+    outline-offset: 3px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .comparison-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .selection-info {
+    justify-content: space-between;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .compare-button,
+  .export-button {
+    width: 100%;
+  }
+}
+
+/* Accessibility - High contrast mode */
+@media (prefers-contrast: high) {
+  .comparison-toolbar {
+    border-width: 2px;
+    border-color: #000000;
+  }
+
+  .compare-button,
+  .export-button {
+    border-width: 2px !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    animation: none;
+  }
+
+  .comparison-toolbar,
+  .compare-button,
+  .export-button,
+  .clear-button {
+    transition: none !important;
+  }
+}

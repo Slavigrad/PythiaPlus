@@ -1,0 +1,21 @@
+<div class="comparison-header">
+  <!-- Remove Button -->
+  <button
+    mat-icon-button
+    class="remove-button"
+    (click)="handleRemove()"
+    [attr.aria-label]="'Remove ' + candidate().name + ' from comparison'">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <!-- Avatar -->
+  <div class="avatar" [style.background-color]="avatarColor()" aria-hidden="true">
+    <span class="initials">{{ initials() }}</span>
+  </div>
+
+  <!-- Candidate Info -->
+  <div class="candidate-info">
+    <h3 class="candidate-name">{{ candidate().name }}</h3>
+    <p class="candidate-title">{{ candidate().title }}</p>
+  </div>
+</div>

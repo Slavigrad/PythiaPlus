@@ -24,6 +24,17 @@
     }
   </div>
 
+  <!-- Accessibility: Live region for comparison selection announcements -->
+  <div
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    class="sr-only"
+    id="comparison-selection-status"
+  >
+    {{ comparisonService.getSelectionMessage() }}
+  </div>
+
   <!-- Search Bar -->
   <app-search-bar [initialQuery]="urlQuery()" />
 
@@ -81,11 +92,27 @@
     </div>
   }
 
+  <!-- Comparison Toolbar (shown when candidates are selected) -->
+  @if (comparisonService.hasSelections() && searchService.hasResults()) {
+    <app-comparison-toolbar
+      [selectionCount]="comparisonService.selectionCount()"
+      [canCompare]="comparisonService.canCompare()"
+      [isMaxReached]="comparisonService.isMaxReached()"
+      (compare)="handleCompare()"
+      (exportFormat)="handleExport($event)"
+      (clearSelections)="handleClearSelections()" />
+  }
+
   <!-- Results -->
   @if (searchService.hasResults() && !searchService.loading()) {
     <app-candidate-list
       [candidates]="searchService.searchResults()"
-      (candidateSelected)="handleCandidateSelected($event)" />
+      [selectable]="true"
+      [selectedIds]="comparisonService.selectedIds()"
+      [maxSelectionsReached]="comparisonService.isMaxReached()"
+      [selectionCount]="comparisonService.selectionCount()"
+      (candidateSelected)="handleCandidateSelected($event)"
+      (selectionToggle)="handleSelectionToggle($event)" />
   }
 
   <!-- No Results -->

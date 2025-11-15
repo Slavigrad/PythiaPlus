@@ -1,4 +1,17 @@
 <article class="candidate-card" [attr.aria-label]="'Candidate: ' + candidate().name + ', Match score: ' + matchPercentage() + ' percent'">
+  <!-- Selection Checkbox (only in selectable mode) -->
+  @if (selectable()) {
+    <div class="selection-checkbox">
+      <mat-checkbox
+        [checked]="isSelected()"
+        [disabled]="selectionDisabled() && !isSelected()"
+        [attr.aria-label]="getSelectionAriaLabel()"
+        (change)="handleSelectionToggle($event)"
+        color="primary">
+      </mat-checkbox>
+    </div>
+  }
+
   <!-- Avatar Section -->
   <div class="avatar" [style.background-color]="avatarColor()" aria-hidden="true">
     <span class="initials">{{ initials() }}</span>
