@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, of, tap, firstValueFrom } from 'rxjs';
 import { Candidate } from '../models/candidate.model';
 import { CandidateProfile } from '../models/candidate-profile.model';
 import { environment } from '../../environments/environment';
@@ -157,23 +157,25 @@ export class ComparisonService {
 
     try {
       // Use batch endpoint for better performance
-      const response = await this.http.post<{ candidates: CandidateProfile[], success: boolean }>(
-        `${this.apiUrl}/batch-profiles`,
-        { ids }
-      ).pipe(
-        tap(response => {
-          if (response.success) {
-            this.candidatesSignal.set(response.candidates);
+      const response = await firstValueFrom(
+        this.http.post<{ candidates: CandidateProfile[], success: boolean }>(
+          `${this.apiUrl}/batch-profiles`,
+          { ids }
+        ).pipe(
+          tap(response => {
+            if (response.success) {
+              this.candidatesSignal.set(response.candidates);
+              this.loadingSignal.set(false);
+            }
+          }),
+          catchError(err => {
+            console.error('Failed to load candidate profiles:', err);
+            this.errorSignal.set('Failed to load candidate details. Please try again.');
             this.loadingSignal.set(false);
-          }
-        }),
-        catchError(err => {
-          console.error('Failed to load candidate profiles:', err);
-          this.errorSignal.set('Failed to load candidate details. Please try again.');
-          this.loadingSignal.set(false);
-          return of({ candidates: [], success: false });
-        })
-      ).toPromise() as Promise<{ candidates: CandidateProfile[], success: boolean }>;
+            return of({ candidates: [], success: false });
+          })
+        )
+      );
 
     } catch (err) {
       console.error('Error loading profiles:', err);

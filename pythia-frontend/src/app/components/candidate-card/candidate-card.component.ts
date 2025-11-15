@@ -1,5 +1,5 @@
 import { Component, input, output, computed, ChangeDetectionStrategy } from '@angular/core';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxModule, MatCheckboxChange } from '@angular/material/checkbox';
 import { Candidate } from '../../models/candidate.model';
 import {
   AVATAR_COLORS,
@@ -129,9 +129,9 @@ export class CandidateCardComponent {
    * Handles checkbox selection toggle
    * Emits selectionToggle event for parent component
    */
-  protected handleSelectionToggle(event: Event): void {
-    // Stop propagation to prevent card click
-    event.stopPropagation();
+  protected handleSelectionToggle(event: MatCheckboxChange): void {
+    // Material checkbox change event has built-in stopPropagation
+    // No need to manually stop propagation
 
     // Don't toggle if disabled
     if (this.selectionDisabled() && !this.isSelected()) {

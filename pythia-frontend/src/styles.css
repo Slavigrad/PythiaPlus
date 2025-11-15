@@ -5,7 +5,7 @@
 /* =============================================================================
    CSS CUSTOM PROPERTIES (PYTHIA THEME)
    ============================================================================= */
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+/* Material Icons are loaded via Angular Material - no need to import separately */
 
 :root {
   /* Primary Colors (Swiss Red) */

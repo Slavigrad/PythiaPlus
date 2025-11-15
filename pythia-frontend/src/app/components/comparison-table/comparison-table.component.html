@@ -19,49 +19,49 @@
       <!-- Role -->
       <app-comparison-row
         attribute="Role"
-        [values]="candidates().map(c => c.title)"
+        [values]="titles()"
         rowType="text" />
 
       <!-- Location -->
       <app-comparison-row
         attribute="Location"
-        [values]="candidates().map(c => c.location)"
+        [values]="locations()"
         rowType="text" />
 
       <!-- Experience -->
       <app-comparison-row
         attribute="Experience"
-        [values]="candidates().map(c => c.experience)"
+        [values]="experiences()"
         rowType="text" />
 
       <!-- Availability -->
       <app-comparison-row
         attribute="Availability"
-        [values]="candidates().map(c => c.availability)"
+        [values]="availabilities()"
         rowType="badge" />
 
       <!-- Technologies -->
       <app-comparison-row
         attribute="Technologies"
-        [values]="candidates().map(c => c.technologies || [])"
+        [values]="technologies()"
         rowType="list" />
 
       <!-- Skills (same as technologies for now) -->
       <app-comparison-row
         attribute="Skills"
-        [values]="candidates().map(c => c.skills || [])"
+        [values]="skills()"
         rowType="list" />
 
       <!-- Certifications -->
       <app-comparison-row
         attribute="Certifications"
-        [values]="candidates().map(c => c.certifications || [])"
+        [values]="certifications()"
         rowType="list" />
 
       <!-- Current Project -->
       <app-comparison-row
         attribute="Current Project"
-        [values]="candidates().map(c => c.currentProject?.name || '—')"
+        [values]="currentProjects()"
         rowType="text" />
     </tbody>
   </table>
