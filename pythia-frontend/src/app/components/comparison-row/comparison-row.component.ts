@@ -21,7 +21,7 @@ import { Component, input, computed, ChangeDetectionStrategy } from '@angular/co
 export class ComparisonRowComponent {
   readonly attribute = input.required<string>();
   readonly values = input.required<any[]>();
-  readonly rowType = input<'text' | 'badge' | 'list'>('text');
+  readonly rowType = input<'text' | 'badge' | 'list' | 'tags' | 'project'>('text');
 
   /**
    * Get availability badge class based on status
@@ -87,5 +87,34 @@ export class ComparisonRowComponent {
 
     // Fallback: just return the name
     return name;
+  }
+
+  /**
+   * Format tag item (Technology with inline display)
+   */
+  protected formatTag(item: any): string {
+    if (typeof item === 'string') {
+      return item;
+    }
+
+    const name = item.name || '';
+    const years = item.yearsExperience;
+
+    if (years !== undefined && years > 0) {
+      return `${name} - ${years} years`;
+    }
+
+    return name;
+  }
+
+  /**
+   * Format tags for inline display
+   */
+  protected formatTags(value: any): any[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    return value.filter(item => item && item !== '—');
   }
 }
