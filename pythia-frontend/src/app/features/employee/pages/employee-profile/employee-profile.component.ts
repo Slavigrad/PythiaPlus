@@ -7,6 +7,8 @@ import { EmployeeService } from '../../services/employee.service';
 import { Employee, EmployeeUpdateRequest } from '../../../../models';
 import { SectionEditWrapperComponent } from '../../components/shared/section-edit-wrapper/section-edit-wrapper.component';
 import { BasicInfoEditComponent } from '../../components/edit-sections/basic-info-edit/basic-info-edit.component';
+import { TechnologiesEditComponent } from '../../components/edit-sections/technologies-edit/technologies-edit.component';
+import { SkillsEditComponent } from '../../components/edit-sections/skills-edit/skills-edit.component';
 
 /**
  * Employee Profile Page
@@ -21,7 +23,9 @@ import { BasicInfoEditComponent } from '../../components/edit-sections/basic-inf
     MatIconModule,
     MatSnackBarModule,
     SectionEditWrapperComponent,
-    BasicInfoEditComponent
+    BasicInfoEditComponent,
+    TechnologiesEditComponent,
+    SkillsEditComponent
   ],
   templateUrl: './employee-profile.component.html',
   styleUrl: './employee-profile.component.scss',
@@ -35,6 +39,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
   // ViewChild references
   readonly basicInfoEdit = viewChild<BasicInfoEditComponent>('basicInfoEdit');
+  readonly technologiesEdit = viewChild<TechnologiesEditComponent>('technologiesEdit');
+  readonly skillsEdit = viewChild<SkillsEditComponent>('skillsEdit');
 
   // Computed signals from service
   readonly employee = this.employeeService.employee;
@@ -43,6 +49,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
   // Edit mode signals
   readonly editingBasicInfo = signal(false);
+  readonly editingTechnologies = signal(false);
+  readonly editingSkills = signal(false);
   readonly updateLoading = this.employeeService.updateLoading;
 
   // Computed values
@@ -307,6 +315,106 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
       basicInfoComponent.reset();
     }
     this.editingBasicInfo.set(false);
+  }
+
+  /**
+   * Enable edit mode for technologies section
+   */
+  protected editTechnologies(): void {
+    this.editingTechnologies.set(true);
+  }
+
+  /**
+   * Save technologies changes
+   */
+  protected saveTechnologies(): void {
+    const technologiesComponent = this.technologiesEdit();
+    if (!technologiesComponent || !technologiesComponent.isValid()) {
+      this.showError('Please correct the form errors before saving');
+      return;
+    }
+
+    const employeeId = this.employee()?.id;
+    if (!employeeId) {
+      this.showError('Employee ID not found');
+      return;
+    }
+
+    const formData = technologiesComponent.getFormData();
+
+    // IMPORTANT: Send complete array to backend (DELETE ALL + INSERT)
+    this.employeeService.updateEmployee(employeeId, {
+      technologies: formData
+    }).subscribe({
+      next: () => {
+        this.editingTechnologies.set(false);
+        this.showSuccess('Technologies updated successfully');
+      },
+      error: (error) => {
+        this.showError(error.message || 'Failed to update technologies');
+      }
+    });
+  }
+
+  /**
+   * Cancel technologies editing
+   */
+  protected cancelTechnologies(): void {
+    const technologiesComponent = this.technologiesEdit();
+    if (technologiesComponent) {
+      technologiesComponent.reset();
+    }
+    this.editingTechnologies.set(false);
+  }
+
+  /**
+   * Enable edit mode for skills section
+   */
+  protected editSkills(): void {
+    this.editingSkills.set(true);
+  }
+
+  /**
+   * Save skills changes
+   */
+  protected saveSkills(): void {
+    const skillsComponent = this.skillsEdit();
+    if (!skillsComponent || !skillsComponent.isValid()) {
+      this.showError('Please correct the form errors before saving');
+      return;
+    }
+
+    const employeeId = this.employee()?.id;
+    if (!employeeId) {
+      this.showError('Employee ID not found');
+      return;
+    }
+
+    const formData = skillsComponent.getFormData();
+
+    // IMPORTANT: Send complete array to backend (DELETE ALL + INSERT)
+    this.employeeService.updateEmployee(employeeId, {
+      skills: formData
+    }).subscribe({
+      next: () => {
+        this.editingSkills.set(false);
+        this.showSuccess('Skills updated successfully');
+      },
+      error: (error) => {
+        this.showError(error.message || 'Failed to update skills');
+      }
+    });
+  }
+
+  /**
+   * Cancel skills editing
+   */
+  protected cancelSkills(): void {
+    const skillsComponent = this.skillsEdit();
+    if (skillsComponent) {
+      skillsComponent.reset();
+    }
+    this.editingSkills.set(false);
   }
 
   /**

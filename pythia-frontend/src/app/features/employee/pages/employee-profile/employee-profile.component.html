@@ -170,6 +170,72 @@
       </div>
     </app-section-edit-wrapper>
 
+    <!-- EDITABLE TECHNOLOGIES SECTION -->
+    <app-section-edit-wrapper
+      [title]="'Technologies'"
+      [icon]="'code'"
+      [isEditing]="editingTechnologies()"
+      [loading]="updateLoading()"
+      (edit)="editTechnologies()"
+      (save)="saveTechnologies()"
+      (cancel)="cancelTechnologies()">
+
+      <!-- View Mode -->
+      <div viewMode class="technologies-view">
+        @if (emp.technologies.length > 0) {
+          <div class="technologies-grid">
+            @for (tech of emp.technologies; track tech.id) {
+              <div class="technology-chip">
+                <span class="tech-name">{{ tech.name }}</span>
+                <span class="tech-proficiency">{{ tech.proficiency }}</span>
+                <span class="tech-years">{{ tech.years }}y</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-state">No technologies added yet.</p>
+        }
+      </div>
+
+      <!-- Edit Mode -->
+      <div editMode>
+        <app-technologies-edit #technologiesEdit [employee]="emp" />
+      </div>
+    </app-section-edit-wrapper>
+
+    <!-- EDITABLE SKILLS SECTION -->
+    <app-section-edit-wrapper
+      [title]="'Skills'"
+      [icon]="'build'"
+      [isEditing]="editingSkills()"
+      [loading]="updateLoading()"
+      (edit)="editSkills()"
+      (save)="saveSkills()"
+      (cancel)="cancelSkills()">
+
+      <!-- View Mode -->
+      <div viewMode class="skills-view">
+        @if (emp.skills.length > 0) {
+          <div class="skills-grid">
+            @for (skill of emp.skills; track skill.id) {
+              <div class="skill-chip">
+                <span class="skill-name">{{ skill.name }}</span>
+                <span class="skill-proficiency">{{ skill.proficiency }}</span>
+                <span class="skill-years">{{ skill.years }}y</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-state">No skills added yet.</p>
+        }
+      </div>
+
+      <!-- Edit Mode -->
+      <div editMode>
+        <app-skills-edit #skillsEdit [employee]="emp" />
+      </div>
+    </app-section-edit-wrapper>
+
     <!-- MAIN CONTENT GRID -->
     <div class="content-grid">
 

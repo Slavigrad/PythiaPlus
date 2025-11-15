@@ -1,0 +1,109 @@
+<form [formGroup]="form" class="technologies-form">
+  <div class="technologies-list" formArrayName="technologies">
+    @for (tech of technologies.controls; track $index) {
+      <div class="technology-item" [formGroupName]="$index">
+        <div class="technology-fields">
+          <!-- Technology Autocomplete -->
+          <mat-form-field appearance="outline" class="field-technology">
+            <mat-label>Technology</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="technologyName"
+              [matAutocomplete]="auto"
+              placeholder="Search technology..."
+              required>
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              [displayWith]="displayTechnology.bind(this)"
+              (optionSelected)="onTechnologySelected($index, $event.option.value)">
+              @for (technology of filteredTechnologies(); track technology.id) {
+                <mat-option [value]="technology">
+                  {{ technology.name }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+            @if (tech.get('technologyId')?.hasError('required') && tech.get('technologyId')?.touched) {
+              <mat-error>Technology is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Proficiency Dropdown -->
+          <mat-form-field appearance="outline" class="field-proficiency">
+            <mat-label>Proficiency</mat-label>
+            <mat-select formControlName="proficiency" required>
+              @for (option of proficiencyOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+            @if (tech.get('proficiency')?.hasError('required') && tech.get('proficiency')?.touched) {
+              <mat-error>Proficiency is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Years Input -->
+          <mat-form-field appearance="outline" class="field-years">
+            <mat-label>Years</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="years"
+              min="0"
+              max="50"
+              step="0.5"
+              required>
+            @if (tech.get('years')?.hasError('required') && tech.get('years')?.touched) {
+              <mat-error>Years is required</mat-error>
+            }
+            @if (tech.get('years')?.hasError('min')) {
+              <mat-error>Years must be 0 or greater</mat-error>
+            }
+            @if (tech.get('years')?.hasError('max')) {
+              <mat-error>Years must be 50 or less</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Remove Button -->
+          <button
+            type="button"
+            mat-icon-button
+            color="warn"
+            (click)="removeTechnology($index)"
+            [attr.aria-label]="'Remove technology ' + ($index + 1)"
+            class="btn-remove">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Add Technology Button -->
+  <div class="add-technology-section">
+    <button
+      type="button"
+      mat-stroked-button
+      color="primary"
+      (click)="addTechnology()"
+      aria-label="Add technology">
+      <mat-icon>add_circle</mat-icon>
+      Add Technology
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (masterDataLoading()) {
+    <div class="loading-message">
+      <mat-icon>hourglass_empty</mat-icon>
+      Loading technologies...
+    </div>
+  }
+
+  <!-- Empty State Help -->
+  @if (!hasTechnologies() && technologies.length === 1) {
+    <div class="help-text">
+      <mat-icon>info</mat-icon>
+      Select technologies from the dropdown and specify proficiency level and years of experience.
+    </div>
+  }
+</form>
