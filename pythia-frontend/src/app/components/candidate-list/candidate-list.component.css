@@ -31,6 +31,11 @@
   margin: 0 0 4px 0;
 }
 
+.selection-indicator {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
 .results-subtitle {
   font-size: 14px;
   color: #757575;

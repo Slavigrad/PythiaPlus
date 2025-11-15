@@ -81,11 +81,27 @@
     </div>
   }
 
+  <!-- Comparison Toolbar (shown when candidates are selected) -->
+  @if (comparisonService.hasSelections() && searchService.hasResults()) {
+    <app-comparison-toolbar
+      [selectionCount]="comparisonService.selectionCount()"
+      [canCompare]="comparisonService.canCompare()"
+      [isMaxReached]="comparisonService.isMaxReached()"
+      (compare)="handleCompare()"
+      (export)="handleExport()"
+      (clearSelections)="handleClearSelections()" />
+  }
+
   <!-- Results -->
   @if (searchService.hasResults() && !searchService.loading()) {
     <app-candidate-list
       [candidates]="searchService.searchResults()"
-      (candidateSelected)="handleCandidateSelected($event)" />
+      [selectable]="true"
+      [selectedIds]="comparisonService.selectedIds()"
+      [maxSelectionsReached]="comparisonService.isMaxReached()"
+      [selectionCount]="comparisonService.selectionCount()"
+      (candidateSelected)="handleCandidateSelected($event)"
+      (selectionToggle)="handleSelectionToggle($event)" />
   }
 
   <!-- No Results -->
