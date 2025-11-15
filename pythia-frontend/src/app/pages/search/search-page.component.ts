@@ -79,14 +79,17 @@ export class SearchPageComponent implements OnInit {
 
   /**
    * Handle candidate selection
-   * Navigates to the employee profile page
+   * Navigates to the employee profile page while preserving search query params
    *
-   * Note: Candidate ID is a string, but employee API expects a number
-   * The backend should handle the mapping from candidate ID to employee ID
+   * This allows the user to click "back" and return to the same search results
+   * without having to search again.
    */
   protected handleCandidateSelected(candidateId: string): void {
-    // Navigate to employee profile
-    // Assuming candidate ID maps to employee ID (backend should handle this)
-    this.router.navigate(['/employees', candidateId]);
+    // Preserve current query params so "back" button returns to this search
+    const currentParams = this.route.snapshot.queryParams;
+
+    this.router.navigate(['/employees', candidateId], {
+      queryParams: currentParams
+    });
   }
 }

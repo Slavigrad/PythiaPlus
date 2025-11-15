@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee } from '../../../../models';
 
@@ -19,7 +19,7 @@ import { Employee } from '../../../../models';
 })
 export class EmployeeProfileComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
+  private readonly location = inject(Location);
   readonly employeeService = inject(EmployeeService);
 
   // Computed signals from service
@@ -68,10 +68,11 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Navigate back to search
+   * Navigate back to previous page
+   * Uses browser history to preserve search state and query params
    */
   protected goBack(): void {
-    this.router.navigate(['/']);
+    this.location.back();
   }
 
   /**
