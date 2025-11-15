@@ -3,6 +3,39 @@
   flex: 1;
   overflow: auto;
   padding: 0;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+/* Scroll shadow indicators for horizontal scrolling */
+.comparison-table-container::before,
+.comparison-table-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.comparison-table-container::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.comparison-table-container::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+}
+
+/* Show shadows when scrollable on mobile */
+@media (max-width: 768px) {
+  .comparison-table-container::after {
+    opacity: 1;
+  }
 }
 
 /* Comparison Table */

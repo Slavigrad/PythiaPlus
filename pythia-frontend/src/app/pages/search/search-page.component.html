@@ -24,6 +24,17 @@
     }
   </div>
 
+  <!-- Accessibility: Live region for comparison selection announcements -->
+  <div
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    class="sr-only"
+    id="comparison-selection-status"
+  >
+    {{ comparisonService.getSelectionMessage() }}
+  </div>
+
   <!-- Search Bar -->
   <app-search-bar [initialQuery]="urlQuery()" />
 

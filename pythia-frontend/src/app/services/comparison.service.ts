@@ -21,6 +21,10 @@ export class ComparisonService {
   private readonly apiUrl = `${environment.apiUrl}/candidates`;
   private readonly MAX_SELECTIONS = 3;
 
+  // Profile cache for performance optimization
+  // Caches loaded profiles by ID to avoid re-fetching
+  private readonly profileCache = new Map<string, CandidateProfile>();
+
   // Signal-based state (Angular 20)
   private readonly selectedIdsSignal = signal<Set<string>>(new Set());
   private readonly candidatesSignal = signal<CandidateProfile[]>([]);
@@ -137,7 +141,8 @@ export class ComparisonService {
 
   /**
    * Load detailed profiles for selected candidates
-   * Uses batch API endpoint for efficiency
+   * Uses cache first, then batch API endpoint for efficiency
+   * Performance: Only fetches profiles not in cache
    */
   async loadProfiles(): Promise<void> {
     const ids = this.selectedIdsArray();
@@ -156,15 +161,46 @@ export class ComparisonService {
     this.errorSignal.set(null);
 
     try {
-      // Use batch endpoint for better performance
+      // Check cache first
+      const cachedProfiles: CandidateProfile[] = [];
+      const uncachedIds: string[] = [];
+
+      for (const id of ids) {
+        const cached = this.profileCache.get(id);
+        if (cached) {
+          cachedProfiles.push(cached);
+        } else {
+          uncachedIds.push(id);
+        }
+      }
+
+      // If all profiles are cached, use them
+      if (uncachedIds.length === 0) {
+        this.candidatesSignal.set(cachedProfiles);
+        this.loadingSignal.set(false);
+        return;
+      }
+
+      // Fetch uncached profiles
       const response = await firstValueFrom(
         this.http.post<{ candidates: CandidateProfile[], success: boolean }>(
           `${this.apiUrl}/batch-profiles`,
-          { ids }
+          { ids: uncachedIds }
         ).pipe(
           tap(response => {
             if (response.success) {
-              this.candidatesSignal.set(response.candidates);
+              // Cache newly loaded profiles
+              response.candidates.forEach(profile => {
+                this.profileCache.set(profile.id, profile);
+              });
+
+              // Combine cached + newly loaded profiles
+              const allProfiles = [
+                ...cachedProfiles,
+                ...response.candidates
+              ];
+
+              this.candidatesSignal.set(allProfiles);
               this.loadingSignal.set(false);
             }
           }),

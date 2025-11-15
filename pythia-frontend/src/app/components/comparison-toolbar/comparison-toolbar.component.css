@@ -107,6 +107,25 @@
   cursor: not-allowed;
 }
 
+/* Focus indicators for keyboard navigation (WCAG AA) */
+.compare-button:focus-visible,
+.export-button:focus-visible,
+.clear-button:focus-visible {
+  outline: 2px solid #d32f2f;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.2);
+}
+
+/* High contrast mode focus indicators */
+@media (prefers-contrast: high) {
+  .compare-button:focus-visible,
+  .export-button:focus-visible,
+  .clear-button:focus-visible {
+    outline: 3px solid #000000;
+    outline-offset: 3px;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .comparison-toolbar {

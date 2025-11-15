@@ -38,6 +38,12 @@
   color: #d32f2f !important;
 }
 
+.close-button:focus-visible {
+  outline: 2px solid #d32f2f;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.2);
+}
+
 /* Loading State */
 .loading-state {
   display: flex;
