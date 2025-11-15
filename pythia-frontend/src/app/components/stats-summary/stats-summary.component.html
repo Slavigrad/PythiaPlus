@@ -1,0 +1,41 @@
+@if (searchService.hasResults()) {
+  <div class="stats-summary">
+    <!-- Total Results -->
+    <div class="stat-card">
+      <mat-icon class="stat-icon">search</mat-icon>
+      <div class="stat-content">
+        <div class="stat-value">{{ searchService.totalCount() }}</div>
+        <div class="stat-label">Total Results</div>
+      </div>
+    </div>
+
+    <!-- Showing Results -->
+    <div class="stat-card">
+      <mat-icon class="stat-icon">visibility</mat-icon>
+      <div class="stat-content">
+        <div class="stat-value">{{ searchService.resultCount() }}</div>
+        <div class="stat-label">Showing</div>
+      </div>
+    </div>
+
+    <!-- Average Match Score -->
+    <div class="stat-card">
+      <mat-icon class="stat-icon">star</mat-icon>
+      <div class="stat-content">
+        <div class="stat-value">{{ searchService.averageMatchScore() }}%</div>
+        <div class="stat-label">Avg Match</div>
+      </div>
+    </div>
+
+    <!-- Active Filters -->
+    @if (searchService.activeFilterCount() > 0) {
+      <div class="stat-card filters">
+        <mat-icon class="stat-icon">filter_list</mat-icon>
+        <div class="stat-content">
+          <div class="stat-value">{{ searchService.activeFilterCount() }}</div>
+          <div class="stat-label">Active Filters</div>
+        </div>
+      </div>
+    }
+  </div>
+}

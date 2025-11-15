@@ -1,0 +1,191 @@
+:host {
+  display: block;
+}
+
+.facet-pills-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+}
+
+.clear-filters {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-sm);
+}
+
+.clear-button {
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.clear-button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.facet-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.facet-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-700);
+  letter-spacing: 0.02em;
+}
+
+.facet-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.facet-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-full);
+  background-color: var(--color-neutral-50);
+  color: var(--color-neutral-800);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.facet-pill:hover {
+  border-color: var(--color-primary-500);
+  background-color: var(--color-primary-50);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.facet-pill.active {
+  border-color: var(--color-primary-500);
+  background-color: var(--color-primary-500);
+  color: white;
+  font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-sm);
+}
+
+.facet-pill.active:hover {
+  background-color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
+}
+
+.facet-pill .count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-neutral-200);
+  color: var(--color-neutral-700);
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+.facet-pill.active .count {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.small-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* Availability-specific styling */
+.facet-pill.availability[data-status="success"] {
+  border-color: var(--color-success-300);
+}
+
+.facet-pill.availability[data-status="success"]:hover {
+  background-color: var(--color-success-50);
+  border-color: var(--color-success-400);
+}
+
+.facet-pill.availability[data-status="success"].active {
+  background-color: var(--color-success-500);
+  border-color: var(--color-success-500);
+}
+
+.facet-pill.availability[data-status="warning"] {
+  border-color: var(--color-warning-300);
+}
+
+.facet-pill.availability[data-status="warning"]:hover {
+  background-color: var(--color-warning-50);
+  border-color: var(--color-warning-400);
+}
+
+.facet-pill.availability[data-status="warning"].active {
+  background-color: var(--color-warning-500);
+  border-color: var(--color-warning-500);
+}
+
+.facet-pill.availability[data-status="neutral"] {
+  border-color: var(--color-neutral-400);
+}
+
+.facet-pill.availability[data-status="neutral"]:hover {
+  background-color: var(--color-neutral-100);
+  border-color: var(--color-neutral-500);
+}
+
+.facet-pill.availability[data-status="neutral"].active {
+  background-color: var(--color-neutral-600);
+  border-color: var(--color-neutral-600);
+}
+
+/* Technology pills - purple tint */
+.facet-pill.technology:hover {
+  background-color: #f3e5f5;
+  border-color: #9c27b0;
+}
+
+.facet-pill.technology.active {
+  background-color: #9c27b0;
+  border-color: #9c27b0;
+}
+
+/* Skill pills - teal tint */
+.facet-pill.skill:hover {
+  background-color: #e0f2f1;
+  border-color: #009688;
+}
+
+.facet-pill.skill.active {
+  background-color: #009688;
+  border-color: #009688;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .facet-pills-container {
+    gap: var(--spacing-sm);
+  }
+
+  .facet-pill {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .facet-label {
+    font-size: 12px;
+  }
+}

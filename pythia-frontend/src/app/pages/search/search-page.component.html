@@ -50,6 +50,16 @@
     </div>
   }
 
+  <!-- Stats Summary (only when results exist) -->
+  @if (searchService.hasResults() && !searchService.loading()) {
+    <app-stats-summary />
+  }
+
+  <!-- Facet Pills (only when facets are available) -->
+  @if (searchService.facets() && !searchService.loading()) {
+    <app-facet-pills [facets]="searchService.facets()" />
+  }
+
   <!-- Empty State (before first search) -->
   @if (searchService.isEmpty()) {
     <app-empty-state />
