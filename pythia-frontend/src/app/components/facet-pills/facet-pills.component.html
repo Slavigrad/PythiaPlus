@@ -47,7 +47,7 @@
               (click)="toggleAvailability(facet.value)"
             >
               <mat-icon class="small-icon">{{ getAvailabilityIcon(facet.value) }}</mat-icon>
-              {{ facet.value }}
+              {{ getAvailabilityLabel(facet.value) }}
               <span class="count">{{ facet.count }}</span>
             </button>
           }

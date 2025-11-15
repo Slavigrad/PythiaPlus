@@ -77,17 +77,30 @@ export class FacetPillsComponent {
     this.searchService.clearFilters();
   }
 
+  // Availability display label mapping (backend sends lowercase, we display proper case)
+  protected getAvailabilityLabel(value: string): string {
+    const normalized = value.toLowerCase();
+    if (normalized === 'available') return 'Available';
+    if (normalized === 'notice') return 'Notice Period';
+    if (normalized === 'unavailable') return 'Unavailable';
+    return value; // Fallback to original value
+  }
+
   // Availability icon mapping
   protected getAvailabilityIcon(value: string): string {
-    if (value.toLowerCase().includes('available')) return 'check_circle';
-    if (value.toLowerCase().includes('notice')) return 'schedule';
-    return 'block';
+    const normalized = value.toLowerCase();
+    if (normalized === 'available') return 'check_circle';
+    if (normalized === 'notice') return 'schedule';
+    if (normalized === 'unavailable') return 'block';
+    return 'help_outline';
   }
 
   // Availability color mapping
   protected getAvailabilityColor(value: string): string {
-    if (value.toLowerCase().includes('available')) return 'success';
-    if (value.toLowerCase().includes('notice')) return 'warning';
+    const normalized = value.toLowerCase();
+    if (normalized === 'available') return 'success';
+    if (normalized === 'notice') return 'warning';
+    if (normalized === 'unavailable') return 'neutral';
     return 'neutral';
   }
 }
