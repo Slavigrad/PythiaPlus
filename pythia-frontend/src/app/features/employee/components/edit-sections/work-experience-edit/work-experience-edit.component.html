@@ -1,0 +1,122 @@
+<form [formGroup]="form" class="work-experience-form">
+  <div class="work-experiences-list" formArrayName="workExperiences">
+    @for (work of workExperiences.controls; track $index) {
+      <div class="work-experience-item" [formGroupName]="$index">
+        <div class="item-header">
+          <h4 class="item-number">Work Experience {{ $index + 1 }}</h4>
+          <button
+            type="button"
+            mat-icon-button
+            color="warn"
+            (click)="removeWorkExperience($index)"
+            [attr.aria-label]="'Remove work experience ' + ($index + 1)"
+            class="btn-remove-header">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="work-experience-fields">
+          <!-- Row 1: Company and Role -->
+          <div class="field-row-two">
+            <mat-form-field appearance="outline">
+              <mat-label>Company</mat-label>
+              <input matInput formControlName="company" placeholder="e.g., Tech Corp" required>
+              @if (work.get('company')?.hasError('required') && work.get('company')?.touched) {
+                <mat-error>Company is required</mat-error>
+              }
+              @if (work.get('company')?.hasError('maxlength')) {
+                <mat-error>Company must be less than 255 characters</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Role/Position</mat-label>
+              <input matInput formControlName="role" placeholder="e.g., Senior Developer" required>
+              @if (work.get('role')?.hasError('required') && work.get('role')?.touched) {
+                <mat-error>Role is required</mat-error>
+              }
+              @if (work.get('role')?.hasError('maxlength')) {
+                <mat-error>Role must be less than 255 characters</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Row 2: Dates and Current Position -->
+          <div class="field-row-dates">
+            <mat-form-field appearance="outline">
+              <mat-label>Start Date</mat-label>
+              <input
+                matInput
+                [matDatepicker]="startPicker"
+                formControlName="startDate"
+                placeholder="MM/DD/YYYY"
+                required>
+              <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+              @if (work.get('startDate')?.hasError('required') && work.get('startDate')?.touched) {
+                <mat-error>Start date is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>End Date</mat-label>
+              <input
+                matInput
+                [matDatepicker]="endPicker"
+                formControlName="endDate"
+                placeholder="MM/DD/YYYY"
+                [disabled]="work.get('isCurrent')?.value">
+              <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-checkbox formControlName="isCurrent" class="current-position-checkbox">
+              Current Position
+            </mat-checkbox>
+          </div>
+
+          <!-- Row 3: Description -->
+          <div class="field-row-full">
+            <mat-form-field appearance="outline" class="field-description">
+              <mat-label>Description (Optional)</mat-label>
+              <textarea
+                matInput
+                formControlName="description"
+                placeholder="Brief description of responsibilities and achievements..."
+                rows="3"></textarea>
+            </mat-form-field>
+          </div>
+
+          <!-- Date Range Error -->
+          @if (hasDateRangeError($index)) {
+            <div class="date-range-error">
+              <mat-icon>error</mat-icon>
+              End date must be after start date
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Add Work Experience Button -->
+  <div class="add-work-experience-section">
+    <button
+      type="button"
+      mat-stroked-button
+      color="primary"
+      (click)="addWorkExperience()"
+      aria-label="Add work experience">
+      <mat-icon>add_circle</mat-icon>
+      Add Work Experience
+    </button>
+  </div>
+
+  <!-- Empty State Help -->
+  @if (!hasWorkExperiences() && workExperiences.length === 1) {
+    <div class="help-text">
+      <mat-icon>info</mat-icon>
+      Add your work experience including company, role, dates, and a brief description.
+    </div>
+  }
+</form>

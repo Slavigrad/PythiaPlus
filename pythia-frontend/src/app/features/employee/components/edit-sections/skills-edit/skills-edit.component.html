@@ -1,0 +1,109 @@
+<form [formGroup]="form" class="skills-form">
+  <div class="skills-list" formArrayName="skills">
+    @for (skill of skills.controls; track $index) {
+      <div class="skill-item" [formGroupName]="$index">
+        <div class="skill-fields">
+          <!-- Skill Autocomplete -->
+          <mat-form-field appearance="outline" class="field-skill">
+            <mat-label>Skill</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="skillName"
+              [matAutocomplete]="auto"
+              placeholder="Search skill..."
+              required>
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              [displayWith]="displaySkill.bind(this)"
+              (optionSelected)="onSkillSelected($index, $event.option.value)">
+              @for (skillOption of filteredSkills(); track skillOption.id) {
+                <mat-option [value]="skillOption">
+                  {{ skillOption.name }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+            @if (skill.get('skillId')?.hasError('required') && skill.get('skillId')?.touched) {
+              <mat-error>Skill is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Proficiency Dropdown -->
+          <mat-form-field appearance="outline" class="field-proficiency">
+            <mat-label>Proficiency</mat-label>
+            <mat-select formControlName="proficiency" required>
+              @for (option of proficiencyOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+            @if (skill.get('proficiency')?.hasError('required') && skill.get('proficiency')?.touched) {
+              <mat-error>Proficiency is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Years Input -->
+          <mat-form-field appearance="outline" class="field-years">
+            <mat-label>Years</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="years"
+              min="0"
+              max="50"
+              step="0.5"
+              required>
+            @if (skill.get('years')?.hasError('required') && skill.get('years')?.touched) {
+              <mat-error>Years is required</mat-error>
+            }
+            @if (skill.get('years')?.hasError('min')) {
+              <mat-error>Years must be 0 or greater</mat-error>
+            }
+            @if (skill.get('years')?.hasError('max')) {
+              <mat-error>Years must be 50 or less</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Remove Button -->
+          <button
+            type="button"
+            mat-icon-button
+            color="warn"
+            (click)="removeSkill($index)"
+            [attr.aria-label]="'Remove skill ' + ($index + 1)"
+            class="btn-remove">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Add Skill Button -->
+  <div class="add-skill-section">
+    <button
+      type="button"
+      mat-stroked-button
+      color="primary"
+      (click)="addSkill()"
+      aria-label="Add skill">
+      <mat-icon>add_circle</mat-icon>
+      Add Skill
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (masterDataLoading()) {
+    <div class="loading-message">
+      <mat-icon>hourglass_empty</mat-icon>
+      Loading skills...
+    </div>
+  }
+
+  <!-- Empty State Help -->
+  @if (!hasSkills() && skills.length === 1) {
+    <div class="help-text">
+      <mat-icon>info</mat-icon>
+      Select skills from the dropdown and specify proficiency level and years of experience.
+    </div>
+  }
+</form>

@@ -7,6 +7,7 @@
 
 // Employee models
 export * from './employee.model';
+export * from './employee-update.model';
 
 // Candidate models
 export * from './candidate.model';

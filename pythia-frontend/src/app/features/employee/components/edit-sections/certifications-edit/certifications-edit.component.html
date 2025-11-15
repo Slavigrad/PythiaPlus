@@ -1,0 +1,110 @@
+<form [formGroup]="form" class="certifications-form">
+  <div class="certifications-list" formArrayName="certifications">
+    @for (cert of certifications.controls; track $index) {
+      <div class="certification-item" [formGroupName]="$index">
+        <div class="certification-fields">
+          <!-- Certification Autocomplete -->
+          <mat-form-field appearance="outline" class="field-certification">
+            <mat-label>Certification</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="certificationName"
+              [matAutocomplete]="auto"
+              placeholder="Search certification..."
+              required>
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              [displayWith]="displayCertification.bind(this)"
+              (optionSelected)="onCertificationSelected($index, $event.option.value)">
+              @for (certification of filteredCertifications(); track certification.id) {
+                <mat-option [value]="certification">
+                  {{ certification.name }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+            @if (cert.get('certificationId')?.hasError('required') && cert.get('certificationId')?.touched) {
+              <mat-error>Certification is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Issue Date -->
+          <mat-form-field appearance="outline" class="field-date">
+            <mat-label>Issue Date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="issuePicker"
+              formControlName="issuedOn"
+              placeholder="MM/DD/YYYY"
+              required>
+            <mat-datepicker-toggle matIconSuffix [for]="issuePicker"></mat-datepicker-toggle>
+            <mat-datepicker #issuePicker></mat-datepicker>
+            @if (cert.get('issuedOn')?.hasError('required') && cert.get('issuedOn')?.touched) {
+              <mat-error>Issue date is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Expiry Date -->
+          <mat-form-field appearance="outline" class="field-date">
+            <mat-label>Expiry Date (Optional)</mat-label>
+            <input
+              matInput
+              [matDatepicker]="expiryPicker"
+              formControlName="expiresOn"
+              placeholder="MM/DD/YYYY">
+            <mat-datepicker-toggle matIconSuffix [for]="expiryPicker"></mat-datepicker-toggle>
+            <mat-datepicker #expiryPicker></mat-datepicker>
+          </mat-form-field>
+
+          <!-- Remove Button -->
+          <button
+            type="button"
+            mat-icon-button
+            color="warn"
+            (click)="removeCertification($index)"
+            [attr.aria-label]="'Remove certification ' + ($index + 1)"
+            class="btn-remove">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <!-- Date Range Error -->
+        @if (hasDateRangeError($index)) {
+          <div class="date-range-error">
+            <mat-icon>error</mat-icon>
+            Expiry date must be after issue date
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Add Certification Button -->
+  <div class="add-certification-section">
+    <button
+      type="button"
+      mat-stroked-button
+      color="primary"
+      (click)="addCertification()"
+      aria-label="Add certification">
+      <mat-icon>add_circle</mat-icon>
+      Add Certification
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (masterDataLoading()) {
+    <div class="loading-message">
+      <mat-icon>hourglass_empty</mat-icon>
+      Loading certifications...
+    </div>
+  }
+
+  <!-- Empty State Help -->
+  @if (!hasCertifications() && certifications.length === 1) {
+    <div class="help-text">
+      <mat-icon>info</mat-icon>
+      Select certifications from the dropdown and specify issue and expiry dates.
+    </div>
+  }
+</form>

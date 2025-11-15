@@ -1,0 +1,136 @@
+<form [formGroup]="form" class="education-form">
+  <div class="educations-list" formArrayName="educations">
+    @for (edu of educations.controls; track $index) {
+      <div class="education-item" [formGroupName]="$index">
+        <div class="item-header">
+          <h4 class="item-number">Education {{ $index + 1 }}</h4>
+          <button
+            type="button"
+            mat-icon-button
+            color="warn"
+            (click)="removeEducation($index)"
+            [attr.aria-label]="'Remove education ' + ($index + 1)"
+            class="btn-remove-header">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="education-fields">
+          <!-- Row 1: Institution -->
+          <div class="field-row-full">
+            <mat-form-field appearance="outline">
+              <mat-label>Institution</mat-label>
+              <input matInput formControlName="institution" placeholder="e.g., ETH Zurich" required>
+              @if (edu.get('institution')?.hasError('required') && edu.get('institution')?.touched) {
+                <mat-error>Institution is required</mat-error>
+              }
+              @if (edu.get('institution')?.hasError('maxlength')) {
+                <mat-error>Institution must be less than 255 characters</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Row 2: Degree and Field -->
+          <div class="field-row-two">
+            <mat-form-field appearance="outline">
+              <mat-label>Degree</mat-label>
+              <input matInput formControlName="degree" placeholder="e.g., Master of Science" required>
+              @if (edu.get('degree')?.hasError('required') && edu.get('degree')?.touched) {
+                <mat-error>Degree is required</mat-error>
+              }
+              @if (edu.get('degree')?.hasError('maxlength')) {
+                <mat-error>Degree must be less than 255 characters</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Field of Study</mat-label>
+              <input matInput formControlName="field" placeholder="e.g., Computer Science" required>
+              @if (edu.get('field')?.hasError('required') && edu.get('field')?.touched) {
+                <mat-error>Field is required</mat-error>
+              }
+              @if (edu.get('field')?.hasError('maxlength')) {
+                <mat-error>Field must be less than 255 characters</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Row 3: Years and Ongoing -->
+          <div class="field-row-years">
+            <mat-form-field appearance="outline">
+              <mat-label>Start Year</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="startYear"
+                placeholder="e.g., 2015"
+                min="1950"
+                [max]="currentYear + 10"
+                required>
+              @if (edu.get('startYear')?.hasError('required') && edu.get('startYear')?.touched) {
+                <mat-error>Start year is required</mat-error>
+              }
+              @if (edu.get('startYear')?.hasError('min')) {
+                <mat-error>Year must be 1950 or later</mat-error>
+              }
+              @if (edu.get('startYear')?.hasError('max')) {
+                <mat-error>Year must be {{ currentYear + 10 }} or earlier</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>End Year</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="endYear"
+                placeholder="e.g., 2017"
+                min="1950"
+                [max]="currentYear + 10"
+                [disabled]="edu.get('isOngoing')?.value">
+              @if (edu.get('endYear')?.hasError('min')) {
+                <mat-error>Year must be 1950 or later</mat-error>
+              }
+              @if (edu.get('endYear')?.hasError('max')) {
+                <mat-error>Year must be {{ currentYear + 10 }} or earlier</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-checkbox formControlName="isOngoing" class="ongoing-checkbox">
+              Ongoing
+            </mat-checkbox>
+          </div>
+
+          <!-- Year Range Error -->
+          @if (hasYearRangeError($index)) {
+            <div class="year-range-error">
+              <mat-icon>error</mat-icon>
+              End year must be after start year
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Add Education Button -->
+  <div class="add-education-section">
+    <button
+      type="button"
+      mat-stroked-button
+      color="primary"
+      (click)="addEducation()"
+      aria-label="Add education">
+      <mat-icon>add_circle</mat-icon>
+      Add Education
+    </button>
+  </div>
+
+  <!-- Empty State Help -->
+  @if (!hasEducations() && educations.length === 1) {
+    <div class="help-text">
+      <mat-icon>info</mat-icon>
+      Add your education including institution, degree, field of study, and years attended.
+    </div>
+  }
+</form>

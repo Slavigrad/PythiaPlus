@@ -1,0 +1,87 @@
+<form [formGroup]="form" class="languages-form">
+  <div class="languages-list" formArrayName="languages">
+    @for (lang of languages.controls; track $index) {
+      <div class="language-item" [formGroupName]="$index">
+        <div class="language-fields">
+          <!-- Language Autocomplete -->
+          <mat-form-field appearance="outline" class="field-language">
+            <mat-label>Language</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="languageName"
+              [matAutocomplete]="auto"
+              placeholder="Search language..."
+              required>
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              [displayWith]="displayLanguage.bind(this)"
+              (optionSelected)="onLanguageSelected($index, $event.option.value)">
+              @for (language of filteredLanguages(); track language.id) {
+                <mat-option [value]="language">
+                  {{ language.name }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+            @if (lang.get('languageId')?.hasError('required') && lang.get('languageId')?.touched) {
+              <mat-error>Language is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Proficiency Level Dropdown -->
+          <mat-form-field appearance="outline" class="field-level">
+            <mat-label>Proficiency Level</mat-label>
+            <mat-select formControlName="level" required>
+              @for (option of proficiencyLevels; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+            @if (lang.get('level')?.hasError('required') && lang.get('level')?.touched) {
+              <mat-error>Proficiency level is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Remove Button -->
+          <button
+            type="button"
+            mat-icon-button
+            color="warn"
+            (click)="removeLanguage($index)"
+            [attr.aria-label]="'Remove language ' + ($index + 1)"
+            class="btn-remove">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Add Language Button -->
+  <div class="add-language-section">
+    <button
+      type="button"
+      mat-stroked-button
+      color="primary"
+      (click)="addLanguage()"
+      aria-label="Add language">
+      <mat-icon>add_circle</mat-icon>
+      Add Language
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (masterDataLoading()) {
+    <div class="loading-message">
+      <mat-icon>hourglass_empty</mat-icon>
+      Loading languages...
+    </div>
+  }
+
+  <!-- Empty State Help -->
+  @if (!hasLanguages() && languages.length === 1) {
+    <div class="help-text">
+      <mat-icon>info</mat-icon>
+      Select languages from the dropdown and specify proficiency level (A1-C2 or Native).
+    </div>
+  }
+</form>

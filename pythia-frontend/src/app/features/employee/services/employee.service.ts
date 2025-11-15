@@ -1,8 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { Employee } from '../../../models';
+import { catchError, tap, map } from 'rxjs/operators';
+import { of, Observable } from 'rxjs';
+import { Employee, EmployeeUpdateRequest, EmployeeUpdateResponse } from '../../../models';
 
 /**
  * Employee Service
@@ -23,6 +23,10 @@ export class EmployeeService {
   readonly employee = signal<Employee | null>(null);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+
+  // Update operation state
+  readonly updateLoading = signal(false);
+  readonly updateError = signal<string | null>(null);
 
   /**
    * Fetch employee by ID
@@ -52,6 +56,64 @@ export class EmployeeService {
   clearEmployee(): void {
     this.employee.set(null);
     this.error.set(null);
+  }
+
+  /**
+   * Update employee (PUT)
+   * Sends only the fields provided, preserves omitted fields
+   *
+   * @param id Employee ID
+   * @param data Employee update data
+   * @returns Observable of updated employee
+   */
+  updateEmployee(id: number, data: EmployeeUpdateRequest): Observable<Employee> {
+    this.updateLoading.set(true);
+    this.updateError.set(null);
+
+    return this.http.put<EmployeeUpdateResponse>(
+      `${this.API_BASE_URL}/employees/${id}`,
+      data
+    ).pipe(
+      tap(response => {
+        this.employee.set(response.employee);
+        this.updateLoading.set(false);
+      }),
+      map(response => response.employee),
+      catchError((error: HttpErrorResponse) => {
+        this.updateError.set(this.getErrorMessage(error));
+        this.updateLoading.set(false);
+        throw error;
+      })
+    );
+  }
+
+  /**
+   * Partial update employee (PATCH)
+   * Same behavior as PUT in our API - preserves omitted fields
+   *
+   * @param id Employee ID
+   * @param data Partial employee update data
+   * @returns Observable of updated employee
+   */
+  patchEmployee(id: number, data: Partial<EmployeeUpdateRequest>): Observable<Employee> {
+    this.updateLoading.set(true);
+    this.updateError.set(null);
+
+    return this.http.patch<EmployeeUpdateResponse>(
+      `${this.API_BASE_URL}/employees/${id}`,
+      data
+    ).pipe(
+      tap(response => {
+        this.employee.set(response.employee);
+        this.updateLoading.set(false);
+      }),
+      map(response => response.employee),
+      catchError((error: HttpErrorResponse) => {
+        this.updateError.set(this.getErrorMessage(error));
+        this.updateLoading.set(false);
+        throw error;
+      })
+    );
   }
 
   /**

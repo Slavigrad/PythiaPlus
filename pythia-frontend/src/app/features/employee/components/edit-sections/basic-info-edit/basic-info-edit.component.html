@@ -1,0 +1,101 @@
+<form [formGroup]="form" class="basic-info-form">
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="form-field-full">
+      <mat-label>Full Name</mat-label>
+      <input matInput formControlName="fullName" placeholder="Enter full name" required>
+      @if (form.get('fullName')?.hasError('required') && form.get('fullName')?.touched) {
+        <mat-error>Full name is required</mat-error>
+      }
+      @if (form.get('fullName')?.hasError('maxlength')) {
+        <mat-error>Full name must be less than 255 characters</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="form-field-full">
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" placeholder="e.g., Senior Full-Stack Developer" required>
+      @if (form.get('title')?.hasError('required') && form.get('title')?.touched) {
+        <mat-error>Title is required</mat-error>
+      }
+      @if (form.get('title')?.hasError('maxlength')) {
+        <mat-error>Title must be less than 255 characters</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-row-two-col">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="email@example.com" required>
+      @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+        <mat-error>Email is required</mat-error>
+      }
+      @if (form.get('email')?.hasError('email')) {
+        <mat-error>Please enter a valid email address</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Phone</mat-label>
+      <input matInput formControlName="phone" placeholder="+41 79 123 4567">
+      @if (form.get('phone')?.hasError('maxlength')) {
+        <mat-error>Phone must be less than 50 characters</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="form-field-full">
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" placeholder="e.g., Zurich, Switzerland">
+      @if (form.get('location')?.hasError('maxlength')) {
+        <mat-error>Location must be less than 255 characters</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-row-two-col">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Department</mat-label>
+      <input matInput formControlName="department" placeholder="e.g., Engineering">
+      @if (form.get('department')?.hasError('maxlength')) {
+        <mat-error>Department must be less than 100 characters</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Seniority</mat-label>
+      <input matInput formControlName="seniority" placeholder="e.g., Senior">
+      @if (form.get('seniority')?.hasError('maxlength')) {
+        <mat-error>Seniority must be less than 50 characters</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-row-two-col">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Years of Experience</mat-label>
+      <input matInput type="number" formControlName="yearsExperience" min="0" max="50">
+      @if (form.get('yearsExperience')?.hasError('min')) {
+        <mat-error>Years must be 0 or greater</mat-error>
+      }
+      @if (form.get('yearsExperience')?.hasError('max')) {
+        <mat-error>Years must be 50 or less</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Availability</mat-label>
+      <mat-select formControlName="availability" required>
+        @for (option of availabilityOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+      @if (form.get('availability')?.hasError('required') && form.get('availability')?.touched) {
+        <mat-error>Availability is required</mat-error>
+      }
+    </mat-form-field>
+  </div>
+</form>
