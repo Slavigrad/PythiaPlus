@@ -9,6 +9,10 @@ import { SectionEditWrapperComponent } from '../../components/shared/section-edi
 import { BasicInfoEditComponent } from '../../components/edit-sections/basic-info-edit/basic-info-edit.component';
 import { TechnologiesEditComponent } from '../../components/edit-sections/technologies-edit/technologies-edit.component';
 import { SkillsEditComponent } from '../../components/edit-sections/skills-edit/skills-edit.component';
+import { CertificationsEditComponent } from '../../components/edit-sections/certifications-edit/certifications-edit.component';
+import { LanguagesEditComponent } from '../../components/edit-sections/languages-edit/languages-edit.component';
+import { WorkExperienceEditComponent } from '../../components/edit-sections/work-experience-edit/work-experience-edit.component';
+import { EducationEditComponent } from '../../components/edit-sections/education-edit/education-edit.component';
 
 /**
  * Employee Profile Page
@@ -25,7 +29,11 @@ import { SkillsEditComponent } from '../../components/edit-sections/skills-edit/
     SectionEditWrapperComponent,
     BasicInfoEditComponent,
     TechnologiesEditComponent,
-    SkillsEditComponent
+    SkillsEditComponent,
+    CertificationsEditComponent,
+    LanguagesEditComponent,
+    WorkExperienceEditComponent,
+    EducationEditComponent
   ],
   templateUrl: './employee-profile.component.html',
   styleUrl: './employee-profile.component.scss',
@@ -41,6 +49,10 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   readonly basicInfoEdit = viewChild<BasicInfoEditComponent>('basicInfoEdit');
   readonly technologiesEdit = viewChild<TechnologiesEditComponent>('technologiesEdit');
   readonly skillsEdit = viewChild<SkillsEditComponent>('skillsEdit');
+  readonly certificationsEdit = viewChild<CertificationsEditComponent>('certificationsEdit');
+  readonly languagesEdit = viewChild<LanguagesEditComponent>('languagesEdit');
+  readonly workExperienceEdit = viewChild<WorkExperienceEditComponent>('workExperienceEdit');
+  readonly educationEdit = viewChild<EducationEditComponent>('educationEdit');
 
   // Computed signals from service
   readonly employee = this.employeeService.employee;
@@ -51,6 +63,10 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   readonly editingBasicInfo = signal(false);
   readonly editingTechnologies = signal(false);
   readonly editingSkills = signal(false);
+  readonly editingCertifications = signal(false);
+  readonly editingLanguages = signal(false);
+  readonly editingWorkExperience = signal(false);
+  readonly editingEducation = signal(false);
   readonly updateLoading = this.employeeService.updateLoading;
 
   // Computed values
@@ -415,6 +431,202 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
       skillsComponent.reset();
     }
     this.editingSkills.set(false);
+  }
+
+  /**
+   * Enable edit mode for certifications section
+   */
+  protected editCertifications(): void {
+    this.editingCertifications.set(true);
+  }
+
+  /**
+   * Save certifications changes
+   */
+  protected saveCertifications(): void {
+    const certificationsComponent = this.certificationsEdit();
+    if (!certificationsComponent || !certificationsComponent.isValid()) {
+      this.showError('Please correct the form errors before saving');
+      return;
+    }
+
+    const employeeId = this.employee()?.id;
+    if (!employeeId) {
+      this.showError('Employee ID not found');
+      return;
+    }
+
+    const formData = certificationsComponent.getFormData();
+
+    this.employeeService.updateEmployee(employeeId, {
+      certifications: formData
+    }).subscribe({
+      next: () => {
+        this.editingCertifications.set(false);
+        this.showSuccess('Certifications updated successfully');
+      },
+      error: (error) => {
+        this.showError(error.message || 'Failed to update certifications');
+      }
+    });
+  }
+
+  /**
+   * Cancel certifications editing
+   */
+  protected cancelCertifications(): void {
+    const certificationsComponent = this.certificationsEdit();
+    if (certificationsComponent) {
+      certificationsComponent.reset();
+    }
+    this.editingCertifications.set(false);
+  }
+
+  /**
+   * Enable edit mode for languages section
+   */
+  protected editLanguages(): void {
+    this.editingLanguages.set(true);
+  }
+
+  /**
+   * Save languages changes
+   */
+  protected saveLanguages(): void {
+    const languagesComponent = this.languagesEdit();
+    if (!languagesComponent || !languagesComponent.isValid()) {
+      this.showError('Please correct the form errors before saving');
+      return;
+    }
+
+    const employeeId = this.employee()?.id;
+    if (!employeeId) {
+      this.showError('Employee ID not found');
+      return;
+    }
+
+    const formData = languagesComponent.getFormData();
+
+    this.employeeService.updateEmployee(employeeId, {
+      languages: formData
+    }).subscribe({
+      next: () => {
+        this.editingLanguages.set(false);
+        this.showSuccess('Languages updated successfully');
+      },
+      error: (error) => {
+        this.showError(error.message || 'Failed to update languages');
+      }
+    });
+  }
+
+  /**
+   * Cancel languages editing
+   */
+  protected cancelLanguages(): void {
+    const languagesComponent = this.languagesEdit();
+    if (languagesComponent) {
+      languagesComponent.reset();
+    }
+    this.editingLanguages.set(false);
+  }
+
+  /**
+   * Enable edit mode for work experience section
+   */
+  protected editWorkExperience(): void {
+    this.editingWorkExperience.set(true);
+  }
+
+  /**
+   * Save work experience changes
+   */
+  protected saveWorkExperience(): void {
+    const workExperienceComponent = this.workExperienceEdit();
+    if (!workExperienceComponent || !workExperienceComponent.isValid()) {
+      this.showError('Please correct the form errors before saving');
+      return;
+    }
+
+    const employeeId = this.employee()?.id;
+    if (!employeeId) {
+      this.showError('Employee ID not found');
+      return;
+    }
+
+    const formData = workExperienceComponent.getFormData();
+
+    this.employeeService.updateEmployee(employeeId, {
+      workExperiences: formData
+    }).subscribe({
+      next: () => {
+        this.editingWorkExperience.set(false);
+        this.showSuccess('Work experience updated successfully');
+      },
+      error: (error) => {
+        this.showError(error.message || 'Failed to update work experience');
+      }
+    });
+  }
+
+  /**
+   * Cancel work experience editing
+   */
+  protected cancelWorkExperience(): void {
+    const workExperienceComponent = this.workExperienceEdit();
+    if (workExperienceComponent) {
+      workExperienceComponent.reset();
+    }
+    this.editingWorkExperience.set(false);
+  }
+
+  /**
+   * Enable edit mode for education section
+   */
+  protected editEducation(): void {
+    this.editingEducation.set(true);
+  }
+
+  /**
+   * Save education changes
+   */
+  protected saveEducation(): void {
+    const educationComponent = this.educationEdit();
+    if (!educationComponent || !educationComponent.isValid()) {
+      this.showError('Please correct the form errors before saving');
+      return;
+    }
+
+    const employeeId = this.employee()?.id;
+    if (!employeeId) {
+      this.showError('Employee ID not found');
+      return;
+    }
+
+    const formData = educationComponent.getFormData();
+
+    this.employeeService.updateEmployee(employeeId, {
+      educations: formData
+    }).subscribe({
+      next: () => {
+        this.editingEducation.set(false);
+        this.showSuccess('Education updated successfully');
+      },
+      error: (error) => {
+        this.showError(error.message || 'Failed to update education');
+      }
+    });
+  }
+
+  /**
+   * Cancel education editing
+   */
+  protected cancelEducation(): void {
+    const educationComponent = this.educationEdit();
+    if (educationComponent) {
+      educationComponent.reset();
+    }
+    this.editingEducation.set(false);
   }
 
   /**

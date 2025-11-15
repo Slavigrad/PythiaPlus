@@ -236,6 +236,155 @@
       </div>
     </app-section-edit-wrapper>
 
+    <!-- EDITABLE CERTIFICATIONS SECTION -->
+    <app-section-edit-wrapper
+      [title]="'Certifications'"
+      [icon]="'workspace_premium'"
+      [isEditing]="editingCertifications()"
+      [loading]="updateLoading()"
+      (edit)="editCertifications()"
+      (save)="saveCertifications()"
+      (cancel)="cancelCertifications()">
+
+      <!-- View Mode -->
+      <div viewMode class="certifications-view">
+        @if (emp.certifications.length > 0) {
+          <div class="certifications-list-view">
+            @for (cert of emp.certifications; track cert.id) {
+              <div class="certification-card">
+                <div class="cert-name">{{ cert.name }}</div>
+                <div class="cert-details">
+                  <span class="cert-date">Issued: {{ cert.issuedOn | date:'MMM yyyy' }}</span>
+                  @if (cert.expiresOn) {
+                    <span class="cert-separator">•</span>
+                    <span class="cert-date">Expires: {{ cert.expiresOn | date:'MMM yyyy' }}</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-state">No certifications added yet.</p>
+        }
+      </div>
+
+      <!-- Edit Mode -->
+      <div editMode>
+        <app-certifications-edit #certificationsEdit [employee]="emp" />
+      </div>
+    </app-section-edit-wrapper>
+
+    <!-- EDITABLE LANGUAGES SECTION -->
+    <app-section-edit-wrapper
+      [title]="'Languages'"
+      [icon]="'language'"
+      [isEditing]="editingLanguages()"
+      [loading]="updateLoading()"
+      (edit)="editLanguages()"
+      (save)="saveLanguages()"
+      (cancel)="cancelLanguages()">
+
+      <!-- View Mode -->
+      <div viewMode class="languages-view">
+        @if (emp.languages.length > 0) {
+          <div class="languages-grid">
+            @for (lang of emp.languages; track lang.id) {
+              <div class="language-chip">
+                <span class="lang-name">{{ lang.name }}</span>
+                <span class="lang-level">{{ lang.level || lang.proficiency }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-state">No languages added yet.</p>
+        }
+      </div>
+
+      <!-- Edit Mode -->
+      <div editMode>
+        <app-languages-edit #languagesEdit [employee]="emp" />
+      </div>
+    </app-section-edit-wrapper>
+
+    <!-- EDITABLE WORK EXPERIENCE SECTION -->
+    <app-section-edit-wrapper
+      [title]="'Work Experience'"
+      [icon]="'work'"
+      [isEditing]="editingWorkExperience()"
+      [loading]="updateLoading()"
+      (edit)="editWorkExperience()"
+      (save)="saveWorkExperience()"
+      (cancel)="cancelWorkExperience()">
+
+      <!-- View Mode -->
+      <div viewMode class="work-experience-view">
+        @if (emp.workExperiences.length > 0) {
+          <div class="work-experiences-list-view">
+            @for (work of emp.workExperiences; track work.id) {
+              <div class="work-card">
+                <h4 class="work-role">{{ work.role }}</h4>
+                <div class="work-company">{{ work.company }}</div>
+                <div class="work-dates">
+                  {{ work.startDate | date:'MMM yyyy' }} -
+                  @if (work.endDate) {
+                    {{ work.endDate | date:'MMM yyyy' }}
+                  } @else {
+                    <span class="current">Present</span>
+                  }
+                </div>
+                @if (work.description) {
+                  <p class="work-description">{{ work.description }}</p>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-state">No work experience added yet.</p>
+        }
+      </div>
+
+      <!-- Edit Mode -->
+      <div editMode>
+        <app-work-experience-edit #workExperienceEdit [employee]="emp" />
+      </div>
+    </app-section-edit-wrapper>
+
+    <!-- EDITABLE EDUCATION SECTION -->
+    <app-section-edit-wrapper
+      [title]="'Education'"
+      [icon]="'school'"
+      [isEditing]="editingEducation()"
+      [loading]="updateLoading()"
+      (edit)="editEducation()"
+      (save)="saveEducation()"
+      (cancel)="cancelEducation()">
+
+      <!-- View Mode -->
+      <div viewMode class="education-view">
+        @if (emp.educations.length > 0) {
+          <div class="educations-list-view">
+            @for (edu of emp.educations; track edu.id) {
+              <div class="education-card">
+                <h4 class="edu-degree">{{ edu.degree }}</h4>
+                <div class="edu-institution">{{ edu.institution }}</div>
+                <div class="edu-field">{{ edu.field }}</div>
+                <div class="edu-years">
+                  {{ edu.startYear }} - {{ edu.endYear || 'Present' }}
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-state">No education added yet.</p>
+        }
+      </div>
+
+      <!-- Edit Mode -->
+      <div editMode>
+        <app-education-edit #educationEdit [employee]="emp" />
+      </div>
+    </app-section-edit-wrapper>
+
     <!-- MAIN CONTENT GRID -->
     <div class="content-grid">
 
