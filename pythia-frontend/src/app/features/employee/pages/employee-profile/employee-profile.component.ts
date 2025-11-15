@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetection
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EmployeeService } from '../../services/employee.service';
+import { NotificationService } from '../../services/notification.service';
 import { Employee, EmployeeUpdateRequest } from '../../../../models';
 import { SectionEditWrapperComponent } from '../../components/shared/section-edit-wrapper/section-edit-wrapper.component';
 import { BasicInfoEditComponent } from '../../components/edit-sections/basic-info-edit/basic-info-edit.component';
@@ -13,6 +14,7 @@ import { CertificationsEditComponent } from '../../components/edit-sections/cert
 import { LanguagesEditComponent } from '../../components/edit-sections/languages-edit/languages-edit.component';
 import { WorkExperienceEditComponent } from '../../components/edit-sections/work-experience-edit/work-experience-edit.component';
 import { EducationEditComponent } from '../../components/edit-sections/education-edit/education-edit.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../components/shared/confirm-dialog/confirm-dialog.component';
 
 /**
  * Employee Profile Page
@@ -25,7 +27,7 @@ import { EducationEditComponent } from '../../components/edit-sections/education
   imports: [
     CommonModule,
     MatIconModule,
-    MatSnackBarModule,
+    MatDialogModule,
     SectionEditWrapperComponent,
     BasicInfoEditComponent,
     TechnologiesEditComponent,
@@ -42,7 +44,8 @@ import { EducationEditComponent } from '../../components/edit-sections/education
 export class EmployeeProfileComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
+  private readonly notificationService = inject(NotificationService);
   readonly employeeService = inject(EmployeeService);
 
   // ViewChild references
@@ -633,23 +636,26 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
    * Show success message
    */
   private showSuccess(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 3000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: ['success-snackbar']
-    });
+    this.notificationService.success(message);
   }
 
   /**
    * Show error message
    */
   private showError(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 5000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: ['error-snackbar']
+    this.notificationService.error(message);
+  }
+
+  /**
+   * Show confirmation dialog for destructive actions
+   */
+  protected confirmAction(data: ConfirmDialogData): Promise<boolean> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data,
+      width: '400px',
+      disableClose: false
     });
+
+    return dialogRef.afterClosed().toPromise().then(result => result === true);
   }
 }

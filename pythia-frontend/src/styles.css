@@ -212,3 +212,63 @@ body {
   white-space: nowrap;
   width: 1px;
 }
+
+/* =============================================================================
+   SNACKBAR NOTIFICATIONS
+   ============================================================================= */
+
+/* Success snackbar */
+.snackbar-success {
+  --mdc-snackbar-container-color: var(--color-success-600) !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+}
+
+.snackbar-success .mdc-snackbar__surface {
+  background-color: var(--color-success-600) !important;
+}
+
+.snackbar-success .mat-mdc-snack-bar-label {
+  color: #ffffff !important;
+}
+
+/* Error snackbar */
+.snackbar-error {
+  --mdc-snackbar-container-color: var(--color-error) !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+}
+
+.snackbar-error .mdc-snackbar__surface {
+  background-color: var(--color-error) !important;
+}
+
+.snackbar-error .mat-mdc-snack-bar-label {
+  color: #ffffff !important;
+}
+
+/* Warning snackbar */
+.snackbar-warning {
+  --mdc-snackbar-container-color: var(--color-warning-600) !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+}
+
+.snackbar-warning .mdc-snackbar__surface {
+  background-color: var(--color-warning-600) !important;
+}
+
+.snackbar-warning .mat-mdc-snack-bar-label {
+  color: #ffffff !important;
+}
+
+/* Info snackbar */
+.snackbar-info {
+  --mdc-snackbar-container-color: var(--color-info) !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+}
+
+.snackbar-info .mdc-snackbar__surface {
+  background-color: var(--color-info) !important;
+}
+
+.snackbar-info .mat-mdc-snack-bar-label {
+  color: #ffffff !important;
+}

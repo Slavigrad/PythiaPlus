@@ -1,0 +1,53 @@
+:host {
+  display: block;
+}
+
+.confirm-dialog {
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+
+      &.icon-primary {
+        color: var(--color-primary-600);
+      }
+
+      &.icon-accent {
+        color: var(--color-accent-600);
+      }
+
+      &.icon-warn {
+        color: var(--color-error-600);
+      }
+    }
+
+    h2 {
+      margin: 0;
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+}
+
+mat-dialog-content {
+  padding: var(--spacing-md) 0;
+  min-width: 300px;
+
+  p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-neutral-700);
+  }
+}
+
+mat-dialog-actions {
+  padding: var(--spacing-md) 0 0;
+  gap: var(--spacing-sm);
+}

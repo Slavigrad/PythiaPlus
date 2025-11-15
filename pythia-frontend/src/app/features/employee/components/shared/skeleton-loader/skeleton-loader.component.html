@@ -1,0 +1,13 @@
+@for (item of items; track $index) {
+  <div
+    class="skeleton-loader"
+    [class.skeleton-circle]="type() === 'circle'"
+    [class.skeleton-rectangle]="type() === 'rectangle'"
+    [style.height.px]="height()"
+    [style.width]="width()"
+    [style.border-radius]="type() === 'circle' ? '50%' : borderRadius()"
+    role="status"
+    aria-label="Loading content">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+}
