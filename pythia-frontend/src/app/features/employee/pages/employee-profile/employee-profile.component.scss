@@ -910,3 +910,136 @@
     font-size: var(--font-size-base);
   }
 }
+
+// ==============================
+// MATERIAL ICONS STYLING
+// ==============================
+
+// Section title icons (24px with Pythia red)
+.section-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: var(--color-primary-500);
+  opacity: 0.8;
+  vertical-align: middle;
+  margin-right: var(--spacing-xs);
+}
+
+// Stat icons (18px with Pythia red)
+.stat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--color-primary-500);
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+// Contact icons (18px with neutral color)
+.contact-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--color-neutral-600);
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+// Badge icon (16px for status badges)
+.badge-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+// Button icons (small - 18px)
+.icon-sm {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  margin-right: var(--spacing-xs);
+}
+
+// Tiny icons (16px for inline use)
+.icon-xs {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+// Error icon (large red)
+.error-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: var(--color-danger-500);
+  margin-bottom: var(--spacing-md);
+}
+
+// Context-specific icon colors
+.status-available .badge-icon {
+  color: var(--color-success-600);
+}
+
+.status-notice-period .badge-icon {
+  color: var(--color-warning-700);
+}
+
+.status-busy .badge-icon {
+  color: var(--color-neutral-600);
+}
+
+.status-unavailable .badge-icon {
+  color: var(--color-danger-600);
+}
+
+// Certification warning icon
+.cert-warning .icon-xs {
+  color: var(--color-warning-600);
+  vertical-align: middle;
+}
+
+// Certification check icon
+.cert-no-expiry {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-success-600);
+  font-weight: var(--font-weight-medium);
+}
+
+.cert-no-expiry .icon-xs {
+  color: var(--color-success-600);
+}
+
+// Back button icon
+.back-button .icon-xs {
+  margin-right: var(--spacing-xs);
+}
+
+// Action button icons
+.btn-secondary .icon-sm,
+.btn-primary .icon-sm {
+  margin-right: var(--spacing-xs);
+}
+
+// Responsive adjustments for icons
+@media (max-width: 768px) {
+  .section-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .stat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}

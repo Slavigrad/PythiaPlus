@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee } from '../../../../models';
 
@@ -8,11 +9,11 @@ import { Employee } from '../../../../models';
  * Employee Profile Page
  *
  * Displays comprehensive employee information with Swiss UX/UI design
- * Features: Visual timeline, proficiency bars, status indicators, responsive layout
+ * Features: Visual timeline, proficiency bars, status indicators, responsive layout, Material Icons
  */
 @Component({
   selector: 'app-employee-profile',
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './employee-profile.component.html',
   styleUrl: './employee-profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -231,15 +232,15 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get availability status icon
+   * Get availability status icon (Material Icon name)
    */
   protected getAvailabilityIcon(availability: string): string {
     const icons: Record<string, string> = {
-      'available': '🟢',
-      'busy': '⚪',
-      'unavailable': '🔴',
-      'notice_period': '🟡'
+      'available': 'check_circle',
+      'busy': 'work_outline',
+      'unavailable': 'cancel',
+      'notice_period': 'schedule'
     };
-    return icons[availability.toLowerCase()] || '⚪';
+    return icons[availability.toLowerCase()] || 'work_outline';
   }
 }
