@@ -28,3 +28,5 @@ yarn-debug.log*
 yarn-error.log*
 /.idea/
 /pythia-frontend/node_modules/
+/pythia-frontend/dist/
+

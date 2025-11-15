@@ -5,20 +5,15 @@
  * Used for displaying detailed employee information in the talent search system
  */
 
-/**
- * Proficiency levels for technologies and skills
- */
-export type Proficiency = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+import {
+  Proficiency,
+  Availability,
+  Seniority,
+  LanguageProficiency
+} from '../core/constants/employee.constants';
 
-/**
- * Employee availability status
- */
-export type Availability = 'available' | 'busy' | 'unavailable' | 'notice_period';
-
-/**
- * Seniority levels
- */
-export type Seniority = 'Junior' | 'Mid-Level' | 'Senior' | 'Lead' | 'Principal' | 'Staff';
+// Re-export types for backward compatibility
+export type { Proficiency, Availability, Seniority, LanguageProficiency };
 
 /**
  * Technology expertise with proficiency and years of experience
@@ -56,7 +51,7 @@ export interface Certification {
 export interface Language {
   id: number;
   name: string;
-  proficiency: 'native' | 'fluent' | 'advanced' | 'intermediate' | 'beginner';
+  proficiency: LanguageProficiency;
   level?: string;  // e.g., "C2", "B2", etc.
 }
 
