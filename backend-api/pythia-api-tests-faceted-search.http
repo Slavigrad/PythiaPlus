@@ -1,0 +1,265 @@
+###
+### Pythia API - Faceted Search Tests
+### GET /api/v1/search with facets
+###
+### Description: Comprehensive tests for faceted search functionality
+### Author: Pythia Team
+### Date: 2025-11-15
+###
+
+### ============================================================================
+### 1. BASIC FACETED SEARCH
+### ============================================================================
+
+### Test 1.1: Search with facets - no filters
+# Expected: 200 OK with facets showing all available locations, availabilities, technologies, skills, certifications
+GET http://localhost:8080/api/v1/search?query=developer
+Accept: application/json
+
+### Test 1.2: Search with facets - verify facet structure
+# Expected: facets object with locations, availabilities, technologies, skills, certifications arrays
+GET http://localhost:8080/api/v1/search?query=engineer
+Accept: application/json
+
+### Test 1.3: Search with facets - verify facet item structure
+# Expected: Each facet item should have 'value' and 'count' fields
+GET http://localhost:8080/api/v1/search?query=backend
+Accept: application/json
+
+### ============================================================================
+### 2. FACETS WITH LOCATION FILTER
+### ============================================================================
+
+### Test 2.1: Filter by location - facets should update
+# Expected: Facets show only data for Zurich employees
+GET http://localhost:8080/api/v1/search?query=developer&location=Zurich
+Accept: application/json
+
+### Test 2.2: Filter by location - verify location facets exclude current filter
+# Expected: Location facets should still show all locations (not just Zurich)
+GET http://localhost:8080/api/v1/search?query=engineer&location=Barcelona
+Accept: application/json
+
+### Test 2.3: Filter by location - verify technology facets update
+# Expected: Technology facets should only show technologies of employees in Berlin
+GET http://localhost:8080/api/v1/search?query=developer&location=Berlin
+Accept: application/json
+
+### ============================================================================
+### 3. FACETS WITH AVAILABILITY FILTER
+### ============================================================================
+
+### Test 3.1: Filter by availability - facets should update
+# Expected: Facets show only data for available employees
+GET http://localhost:8080/api/v1/search?query=developer&availability=available
+Accept: application/json
+
+### Test 3.2: Filter by availability - verify availability facets exclude current filter
+# Expected: Availability facets should still show all statuses
+GET http://localhost:8080/api/v1/search?query=engineer&availability=notice
+Accept: application/json
+
+### Test 3.3: Filter by availability - verify location facets update
+# Expected: Location facets should only show locations of unavailable employees
+GET http://localhost:8080/api/v1/search?query=developer&availability=unavailable
+Accept: application/json
+
+### ============================================================================
+### 4. FACETS WITH TECHNOLOGY FILTER
+### ============================================================================
+
+### Test 4.1: Filter by technology - facets should update
+# Expected: Facets show only data for employees with Java
+GET http://localhost:8080/api/v1/search?query=developer&technologies=Java
+Accept: application/json
+
+### Test 4.2: Filter by technology - verify technology facets exclude current filter
+# Expected: Technology facets should still show all technologies
+GET http://localhost:8080/api/v1/search?query=engineer&technologies=React
+Accept: application/json
+
+### Test 4.3: Filter by multiple technologies - facets should update
+# Expected: Facets show only data for employees with both Kotlin AND PostgreSQL
+GET http://localhost:8080/api/v1/search?query=developer&technologies=Kotlin&technologies=PostgreSQL
+Accept: application/json
+
+### ============================================================================
+### 5. FACETS WITH SKILL FILTER
+### ============================================================================
+
+### Test 5.1: Filter by skill - facets should update
+# Expected: Facets show only data for employees with TDD skill
+GET http://localhost:8080/api/v1/search?query=developer&skills=Test-Driven Development
+Accept: application/json
+
+### Test 5.2: Filter by skill - verify skill facets exclude current filter
+# Expected: Skill facets should still show all skills
+GET http://localhost:8080/api/v1/search?query=engineer&skills=API Design
+Accept: application/json
+
+### Test 5.3: Filter by multiple skills - facets should update
+# Expected: Facets show only data for employees with both skills
+GET http://localhost:8080/api/v1/search?query=developer&skills=CI/CD&skills=Code Review
+Accept: application/json
+
+### ============================================================================
+### 6. FACETS WITH CERTIFICATION FILTER
+### ============================================================================
+
+### Test 6.1: Filter by certification - facets should update
+# Expected: Facets show only data for employees with AWS certification
+GET http://localhost:8080/api/v1/search?query=developer&certifications=AWS Certified Developer – Associate
+Accept: application/json
+
+### Test 6.2: Filter by certification - verify certification facets exclude current filter
+# Expected: Certification facets should still show all certifications
+GET http://localhost:8080/api/v1/search?query=engineer&certifications=ISTQB Certified Tester – Foundation Level
+Accept: application/json
+
+### ============================================================================
+### 7. FACETS WITH COMBINED FILTERS
+### ============================================================================
+
+### Test 7.1: Combine location + availability filters
+# Expected: Facets show only data for available employees in Zurich
+GET http://localhost:8080/api/v1/search?query=developer&location=Zurich&availability=available
+Accept: application/json
+
+### Test 7.2: Combine location + technology filters
+# Expected: Facets show only data for employees in Barcelona with React
+GET http://localhost:8080/api/v1/search?query=engineer&location=Barcelona&technologies=React
+Accept: application/json
+
+### Test 7.3: Combine availability + technology + skill filters
+# Expected: Facets show only data for available employees with Java and TDD
+GET http://localhost:8080/api/v1/search?query=developer&availability=available&technologies=Java&skills=Test-Driven Development
+Accept: application/json
+
+### Test 7.4: Combine all filter types
+# Expected: Facets show only data matching all filters
+GET http://localhost:8080/api/v1/search?query=developer&location=Zurich&availability=available&technologies=Kotlin&skills=API Design&certifications=AWS Certified Developer – Associate
+Accept: application/json
+
+### ============================================================================
+### 8. FACET COUNTS VALIDATION
+### ============================================================================
+
+### Test 8.1: Verify location facet counts are accurate
+# Expected: Sum of location counts should match total employees
+GET http://localhost:8080/api/v1/search?query=developer
+Accept: application/json
+
+### Test 8.2: Verify availability facet counts are accurate
+# Expected: Sum of availability counts should match total employees
+GET http://localhost:8080/api/v1/search?query=engineer
+Accept: application/json
+
+### Test 8.3: Verify technology facet counts are accurate
+# Expected: Technology counts should reflect actual employee-technology associations
+GET http://localhost:8080/api/v1/search?query=backend
+Accept: application/json
+
+### Test 8.4: Verify facet counts update with filters
+# Expected: Facet counts should decrease when filters are applied
+GET http://localhost:8080/api/v1/search?query=developer&location=Zurich
+Accept: application/json
+
+### ============================================================================
+### 9. FACETS WITH PAGINATION
+### ============================================================================
+
+### Test 9.1: Facets with pagination - page 0
+# Expected: Facets should be the same regardless of page number
+GET http://localhost:8080/api/v1/search?query=developer&page=0&size=5
+Accept: application/json
+
+### Test 9.2: Facets with pagination - page 1
+# Expected: Facets should be identical to page 0 (facets are global, not per-page)
+GET http://localhost:8080/api/v1/search?query=developer&page=1&size=5
+Accept: application/json
+
+### Test 9.3: Verify facets reflect total dataset, not just current page
+# Expected: Facet counts should be based on all matching employees, not just the current page
+GET http://localhost:8080/api/v1/search?query=engineer&page=0&size=2
+Accept: application/json
+
+### ============================================================================
+### 10. FACETS WITH SORTING
+### ============================================================================
+
+### Test 10.1: Facets with sorting by name
+# Expected: Facets should be the same regardless of sort order
+GET http://localhost:8080/api/v1/search?query=developer&sortBy=name&sortOrder=asc
+Accept: application/json
+
+### Test 10.2: Facets with sorting by experience
+# Expected: Facets should be the same regardless of sort field
+GET http://localhost:8080/api/v1/search?query=engineer&sortBy=experience&sortOrder=desc
+Accept: application/json
+
+### ============================================================================
+### 11. FACET ORDERING
+### ============================================================================
+
+### Test 11.1: Verify location facets are ordered by count (descending)
+# Expected: Locations with more employees should appear first
+GET http://localhost:8080/api/v1/search?query=developer
+Accept: application/json
+
+### Test 11.2: Verify technology facets are ordered by count (descending)
+# Expected: Most common technologies should appear first
+GET http://localhost:8080/api/v1/search?query=engineer
+Accept: application/json
+
+### Test 11.3: Verify skill facets are ordered by count (descending)
+# Expected: Most common skills should appear first
+GET http://localhost:8080/api/v1/search?query=backend
+Accept: application/json
+
+### ============================================================================
+### 12. EDGE CASES
+### ============================================================================
+
+### Test 12.1: Search with no results - facets should be empty
+# Expected: Empty facet arrays when no employees match
+GET http://localhost:8080/api/v1/search?query=nonexistent&location=Mars
+Accept: application/json
+
+### Test 12.2: Search with very specific filters - minimal facets
+# Expected: Very few facet options when filters are highly restrictive
+GET http://localhost:8080/api/v1/search?query=developer&location=Zurich&availability=available&technologies=Kotlin
+Accept: application/json
+
+### Test 12.3: Verify facets with minYearsExperience filter
+# Expected: Facets should only include employees with >= 5 years experience
+GET http://localhost:8080/api/v1/search?query=senior&minYearsExperience=5
+Accept: application/json
+
+### ============================================================================
+### 13. FACET LIMITS
+### ============================================================================
+
+### Test 13.1: Verify technology facets are limited to top 50
+# Expected: Maximum 50 technology facets returned
+GET http://localhost:8080/api/v1/search?query=developer
+Accept: application/json
+
+### Test 13.2: Verify skill facets are limited to top 50
+# Expected: Maximum 50 skill facets returned
+GET http://localhost:8080/api/v1/search?query=engineer
+Accept: application/json
+
+### Test 13.3: Verify certification facets are limited to top 50
+# Expected: Maximum 50 certification facets returned
+GET http://localhost:8080/api/v1/search?query=backend
+Accept: application/json
+
+### ============================================================================
+### END OF TESTS
+### ============================================================================
+
+### Summary:
+### - Total test cases: 40+
+### - Coverage: Basic facets, location filters, availability filters, technology filters, skill filters, certification filters, combined filters, count validation, pagination, sorting, ordering, edge cases, limits
+### - All tests should pass with a properly configured Pythia backend with faceted search enabled
+
