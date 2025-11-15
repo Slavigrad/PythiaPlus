@@ -70,14 +70,6 @@
         <span class="contact-icon">📞</span>
         <a [href]="'tel:' + emp.phone" class="contact-value">{{ emp.phone }}</a>
       </div>
-      <div class="contact-item">
-        <span class="contact-icon">📍</span>
-        <span class="contact-value">{{ emp.location }}</span>
-      </div>
-      <div class="contact-item">
-        <span class="contact-icon">🏢</span>
-        <span class="contact-value">{{ emp.department }}</span>
-      </div>
     </div>
 
     <!-- Summary -->
@@ -126,11 +118,11 @@
       <!-- LEFT COLUMN -->
       <div class="left-column">
 
-        <!-- WORK EXPERIENCE TIMELINE -->
+        <!-- PROJECT HISTORY TIMELINE -->
         @if (sortedWorkExperiences().length > 0) {
-          <section class="profile-section" aria-labelledby="work-experience-heading">
-            <h2 id="work-experience-heading" class="section-title">
-              💼 Work Experience
+          <section class="profile-section" aria-labelledby="project-history-heading">
+            <h2 id="project-history-heading" class="section-title">
+              💼 Project History
             </h2>
 
             <div class="timeline">
