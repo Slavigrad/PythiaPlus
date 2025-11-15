@@ -42,7 +42,7 @@
 ┌────────────────────────────┬────────────────────────────────────────┐
 │   LEFT COLUMN (40%)        │   RIGHT COLUMN (60%)                   │
 │                            │                                        │
-│   📋 WORK EXPERIENCE       │   💻 TECHNOLOGIES                      │
+│   📋 PROJECT HISTORY       │   💻 TECHNOLOGIES                      │
 │   (Visual Timeline)        │   (Visual Proficiency Bars)            │
 │                            │                                        │
 │   🎓 EDUCATION             │   🛠️ SKILLS                            │
@@ -73,11 +73,10 @@
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  [DP]  Daniel Park                               [Export CV] │
-│        Full Stack Engineer                      [Contact  ] │
-│        [🟢 Available]                           [Compare  ] │
+│        Full Stack Engineer                                   │
+│        [🟢 Available]                                        │
 │                                                               │
 │  📧 daniel.park@company.com    📞 +49 30 12345678            │
-│  📍 Berlin, Germany            💼 Engineering Dept.          │
 │                                                               │
 │  Experienced full-stack engineer with expertise in React,    │
 │  TypeScript, and Node.js. Passionate about building          │
@@ -90,8 +89,8 @@
 **Visual Enhancements**:
 - ✅ **Larger avatar** (120px) with subtle shadow and border
 - ✅ **Status badge** with color coding (green=available, yellow=notice period, red=busy)
-- ✅ **Contact info grid** (2x2) with icons for scannability
-- ✅ **Action buttons** grouped in top-right (Export CV, Contact, Compare)
+- ✅ **Contact info grid** (email & phone only) - location/department shown in stats bar to avoid duplication
+- ✅ **Action buttons** grouped in top-right (Export CV)
 - ✅ **Summary** with readable line-length (max 80ch)
 - ✅ **Background**: Subtle gradient or pattern for depth
 
@@ -183,7 +182,7 @@ Skills                                                 [Edit ✏️]
 
 ---
 
-### 5. **Work Experience** - Visual Timeline
+### 5. **Project History** - Visual Timeline
 
 **Current Issues**:
 - Simple list, dates not prominent
@@ -192,7 +191,7 @@ Skills                                                 [Edit ✏️]
 
 **Swiss UX Solution**:
 ```
-Work Experience                                        [Edit ✏️]
+Project History                                        [Edit ✏️]
 ┌──────────────────────────────────────────────────────────────┐
 │                                                               │
 │  ● ─────────────────────────────────────────────── Present   │
@@ -487,7 +486,7 @@ const AVAILABILITY = {
   </header>
 
   <section aria-labelledby="work-experience-heading">
-    <h2 id="work-experience-heading">Work Experience</h2>
+    <h2 id="project-history-heading">Project History</h2>
     ...
   </section>
 </article>
@@ -718,7 +717,7 @@ export class EmployeeProfile {
 | **Header** | Sparse layout, disconnected actions | Compact hero area, grouped actions, status badge |
 | **Technologies** | Simple badges with years | Visual proficiency bars, color categories, sortable |
 | **Skills** | Flat list | Categorized (Technical/Soft/Methods), proficiency labels |
-| **Work Experience** | Text list | Visual timeline with duration calculation |
+| **Project History** | Text list | Visual timeline with duration calculation |
 | **Certifications** | Bullet list | Status cards with expiry warnings, color coding |
 | **Languages** | CEFR badges only | Proficiency bars + descriptive labels |
 | **Education** | Simple list | Rich degree cards with optional details |

@@ -83,7 +83,9 @@
 
   <!-- Results -->
   @if (searchService.hasResults() && !searchService.loading()) {
-    <app-candidate-list [candidates]="searchService.searchResults()" />
+    <app-candidate-list
+      [candidates]="searchService.searchResults()"
+      (candidateSelected)="handleCandidateSelected($event)" />
   }
 
   <!-- No Results -->

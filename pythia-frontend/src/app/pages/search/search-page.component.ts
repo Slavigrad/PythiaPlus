@@ -1,5 +1,5 @@
 import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatRippleModule } from '@angular/material/core';
 import { SearchService } from '../../services/search.service';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
@@ -13,7 +13,7 @@ import { StatsSummaryComponent } from '../../components/stats-summary/stats-summ
  * Search Page Component
  *
  * Purpose: Main search interface for Pythia+ with faceted search
- * Features: Search bar, facet filters, stats summary, advanced options, results display, URL persistence
+ * Features: Search bar, facet filters, stats summary, advanced options, results display, URL persistence, candidate navigation
  */
 @Component({
   selector: 'app-search-page',
@@ -33,6 +33,7 @@ import { StatsSummaryComponent } from '../../components/stats-summary/stats-summ
 export class SearchPageComponent implements OnInit {
   protected readonly searchService = inject(SearchService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   // Signals for URL-driven state
   readonly urlQuery = signal<string>('');
@@ -73,6 +74,22 @@ export class SearchPageComponent implements OnInit {
           minYearsExperience
         }, false);
       }
+    });
+  }
+
+  /**
+   * Handle candidate selection
+   * Navigates to the employee profile page while preserving search query params
+   *
+   * This allows the user to click "back" and return to the same search results
+   * without having to search again.
+   */
+  protected handleCandidateSelected(candidateId: string): void {
+    // Preserve current query params so "back" button returns to this search
+    const currentParams = this.route.snapshot.queryParams;
+
+    this.router.navigate(['/employees', candidateId], {
+      queryParams: currentParams
     });
   }
 }

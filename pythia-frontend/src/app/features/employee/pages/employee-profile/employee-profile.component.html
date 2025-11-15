@@ -9,11 +9,11 @@
 <!-- Error State -->
 @else if (error()) {
   <div class="error-container">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon"><mat-icon class="error-icon">warning</mat-icon></div>
     <h2>Unable to load profile</h2>
     <p class="error-message">{{ error() }}</p>
     <button class="btn-primary" (click)="goBack()">
-      ← Back to Search
+      <mat-icon class="icon-xs">arrow_back</mat-icon> Back to Search
     </button>
   </div>
 }
@@ -24,7 +24,7 @@
 
     <!-- Back Button -->
     <button class="back-button" (click)="goBack()" aria-label="Back to search">
-      ← Back to Search
+      <mat-icon class="icon-xs">arrow_back</mat-icon> Back to Search
     </button>
 
     <!-- HEADER SECTION -->
@@ -48,14 +48,14 @@
             [class]="getAvailabilityClass(emp.availability)"
             role="status"
             [attr.aria-label]="'Employment status: ' + getAvailabilityLabel(emp.availability)">
-            {{ getAvailabilityIcon(emp.availability) }} {{ getAvailabilityLabel(emp.availability) }}
+            <mat-icon class="badge-icon">{{ getAvailabilityIcon(emp.availability) }}</mat-icon> {{ getAvailabilityLabel(emp.availability) }}
           </span>
         </div>
       </div>
 
       <div class="header-actions">
         <button class="btn-secondary" (click)="exportCV()" aria-label="Export CV">
-          📥 Export CV
+          <mat-icon class="icon-sm">download</mat-icon> Export CV
         </button>
       </div>
     </header>
@@ -63,20 +63,12 @@
     <!-- Contact Info Grid -->
     <div class="contact-grid">
       <div class="contact-item">
-        <span class="contact-icon">📧</span>
+        <mat-icon class="contact-icon">email</mat-icon>
         <a [href]="'mailto:' + emp.email" class="contact-value">{{ emp.email }}</a>
       </div>
       <div class="contact-item">
-        <span class="contact-icon">📞</span>
+        <mat-icon class="contact-icon">phone</mat-icon>
         <a [href]="'tel:' + emp.phone" class="contact-value">{{ emp.phone }}</a>
-      </div>
-      <div class="contact-item">
-        <span class="contact-icon">📍</span>
-        <span class="contact-value">{{ emp.location }}</span>
-      </div>
-      <div class="contact-item">
-        <span class="contact-icon">🏢</span>
-        <span class="contact-value">{{ emp.department }}</span>
       </div>
     </div>
 
@@ -90,32 +82,32 @@
     <!-- QUICK STATS BAR -->
     <div class="quick-stats-bar" role="region" aria-label="Quick statistics">
       <div class="stat-item">
-        <span class="stat-icon">📍</span>
+        <mat-icon class="stat-icon">location_on</mat-icon>
         <span class="stat-value">{{ emp.location }}</span>
       </div>
       <div class="stat-divider">•</div>
       <div class="stat-item">
-        <span class="stat-icon">💼</span>
+        <mat-icon class="stat-icon">work</mat-icon>
         <span class="stat-value">{{ emp.yearsExperience }} years</span>
       </div>
       <div class="stat-divider">•</div>
       <div class="stat-item">
-        <span class="stat-icon">🏢</span>
+        <mat-icon class="stat-icon">business</mat-icon>
         <span class="stat-value">{{ emp.department }}</span>
       </div>
       <div class="stat-divider">•</div>
       <div class="stat-item">
-        <span class="stat-icon">⭐</span>
+        <mat-icon class="stat-icon">star</mat-icon>
         <span class="stat-value">{{ emp.seniority }}</span>
       </div>
       <div class="stat-divider">•</div>
       <div class="stat-item">
-        <span class="stat-icon">💻</span>
+        <mat-icon class="stat-icon">code</mat-icon>
         <span class="stat-value">{{ emp.technologies.length }} Technologies</span>
       </div>
       <div class="stat-divider">•</div>
       <div class="stat-item">
-        <span class="stat-icon">🌐</span>
+        <mat-icon class="stat-icon">language</mat-icon>
         <span class="stat-value">{{ emp.languages.length }} Languages</span>
       </div>
     </div>
@@ -126,11 +118,11 @@
       <!-- LEFT COLUMN -->
       <div class="left-column">
 
-        <!-- WORK EXPERIENCE TIMELINE -->
+        <!-- PROJECT HISTORY TIMELINE -->
         @if (sortedWorkExperiences().length > 0) {
-          <section class="profile-section" aria-labelledby="work-experience-heading">
-            <h2 id="work-experience-heading" class="section-title">
-              💼 Work Experience
+          <section class="profile-section" aria-labelledby="project-history-heading">
+            <h2 id="project-history-heading" class="section-title">
+              <mat-icon class="section-icon">business_center</mat-icon> Project History
             </h2>
 
             <div class="timeline">
@@ -174,7 +166,7 @@
         @if (emp.educations.length > 0) {
           <section class="profile-section" aria-labelledby="education-heading">
             <h2 id="education-heading" class="section-title">
-              🎓 Education
+              <mat-icon class="section-icon">school</mat-icon> Education
             </h2>
 
             @for (edu of emp.educations; track edu.id) {
@@ -193,7 +185,7 @@
         @if (emp.languages.length > 0) {
           <section class="profile-section" aria-labelledby="languages-heading">
             <h2 id="languages-heading" class="section-title">
-              🌐 Languages
+              <mat-icon class="section-icon">language</mat-icon> Languages
             </h2>
 
             @for (lang of emp.languages; track lang.id) {
@@ -232,7 +224,7 @@
         @if (topTechnologies().length > 0) {
           <section class="profile-section" aria-labelledby="technologies-heading">
             <h2 id="technologies-heading" class="section-title">
-              💻 Technologies
+              <mat-icon class="section-icon">code</mat-icon> Technologies
             </h2>
 
             <div class="tech-list">
@@ -272,7 +264,7 @@
         @if (emp.skills.length > 0) {
           <section class="profile-section" aria-labelledby="skills-heading">
             <h2 id="skills-heading" class="section-title">
-              🛠️ Skills
+              <mat-icon class="section-icon">build</mat-icon> Skills
             </h2>
 
             <div class="skills-grid">
@@ -293,7 +285,7 @@
         @if (emp.certifications.length > 0) {
           <section class="profile-section" aria-labelledby="certifications-heading">
             <h2 id="certifications-heading" class="section-title">
-              📜 Certifications
+              <mat-icon class="section-icon">workspace_premium</mat-icon> Certifications
             </h2>
 
             @for (cert of emp.certifications; track cert.id) {
@@ -327,12 +319,12 @@
 
                     @if (isExpiringSoon(cert.expiresOn) && !isExpired(cert.expiresOn)) {
                       <p class="cert-warning" role="alert">
-                        ⚠️ Expires in {{ getMonthsUntilExpiry(cert.expiresOn) }} months
+                        <mat-icon class="error-icon">warning</mat-icon> Expires in {{ getMonthsUntilExpiry(cert.expiresOn) }} months
                       </p>
                     }
                   } @else {
                     <div class="cert-date-item">
-                      <span class="cert-no-expiry">✓ Lifetime certification</span>
+                      <span class="cert-no-expiry"><mat-icon class="icon-xs">check_circle</mat-icon> Lifetime certification</span>
                     </div>
                   }
                 </div>

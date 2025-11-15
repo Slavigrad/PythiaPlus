@@ -12,7 +12,9 @@
   <div class="candidate-list" role="region" aria-label="Search results">
     @for (candidate of candidates(); track candidate.id) {
       @defer (on viewport; prefetch on idle) {
-        <app-candidate-card [candidate]="candidate" />
+        <app-candidate-card
+          [candidate]="candidate"
+          (candidateSelected)="handleCandidateSelected($event)" />
       } @placeholder {
         <app-skeleton-card />
       } @loading (minimum 100ms) {
