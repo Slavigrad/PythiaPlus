@@ -272,3 +272,47 @@ body {
 .snackbar-info .mat-mdc-snack-bar-label {
   color: #ffffff !important;
 }
+
+/* =============================================================================
+   COMPARISON MODAL DIALOG
+   ============================================================================= */
+
+/* Modal backdrop (dark overlay) */
+.comparison-modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Modal panel */
+.comparison-modal-panel .mat-mdc-dialog-container {
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 8px !important;
+}
+
+.comparison-modal-panel .mat-mdc-dialog-surface {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Remove default Material dialog animation, use custom */
+.comparison-modal-panel {
+  animation: slideInModal 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInModal {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .comparison-modal-panel {
+    animation: none;
+  }
+}

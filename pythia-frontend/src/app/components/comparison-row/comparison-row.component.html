@@ -1,0 +1,34 @@
+<tr class="comparison-row">
+  <!-- Attribute Name Column -->
+  <td class="attribute-cell">{{ attribute() }}</td>
+
+  <!-- Value Columns -->
+  @for (value of values(); track $index) {
+    <td class="value-cell">
+      <!-- Text Type -->
+      @if (rowType() === 'text') {
+        <span class="text-value">{{ value || '—' }}</span>
+      }
+
+      <!-- Badge Type (for Availability) -->
+      @if (rowType() === 'badge') {
+        <span class="badge" [class]="getAvailabilityClass(value)">
+          {{ value || 'Unknown' }}
+        </span>
+      }
+
+      <!-- List Type (for Technologies, Skills, Certifications) -->
+      @if (rowType() === 'list') {
+        @if (isArray(value) && formatList(value).length > 0) {
+          <ul class="value-list">
+            @for (item of formatList(value); track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        } @else {
+          <span class="text-value">—</span>
+        }
+      }
+    </td>
+  }
+</tr>

@@ -1,0 +1,68 @@
+<div class="comparison-table-container">
+  <table class="comparison-table" role="table" aria-label="Candidate comparison">
+    <!-- Header Row with Candidate Avatars and Names -->
+    <thead>
+      <tr>
+        <th class="attribute-column" scope="col">Attribute</th>
+        @for (candidate of candidates(); track candidate.id) {
+          <th class="candidate-column" scope="col">
+            <app-comparison-header
+              [candidate]="candidate"
+              (remove)="handleRemove($event)" />
+          </th>
+        }
+      </tr>
+    </thead>
+
+    <!-- Comparison Rows -->
+    <tbody>
+      <!-- Role -->
+      <app-comparison-row
+        attribute="Role"
+        [values]="candidates().map(c => c.title)"
+        rowType="text" />
+
+      <!-- Location -->
+      <app-comparison-row
+        attribute="Location"
+        [values]="candidates().map(c => c.location)"
+        rowType="text" />
+
+      <!-- Experience -->
+      <app-comparison-row
+        attribute="Experience"
+        [values]="candidates().map(c => c.experience)"
+        rowType="text" />
+
+      <!-- Availability -->
+      <app-comparison-row
+        attribute="Availability"
+        [values]="candidates().map(c => c.availability)"
+        rowType="badge" />
+
+      <!-- Technologies -->
+      <app-comparison-row
+        attribute="Technologies"
+        [values]="candidates().map(c => c.technologies || [])"
+        rowType="list" />
+
+      <!-- Skills (same as technologies for now) -->
+      <app-comparison-row
+        attribute="Skills"
+        [values]="candidates().map(c => c.skills || [])"
+        rowType="list" />
+
+      <!-- Certifications -->
+      <app-comparison-row
+        attribute="Certifications"
+        [values]="candidates().map(c => c.certifications || [])"
+        rowType="list" />
+
+      <!-- Current Project -->
+      <app-comparison-row
+        attribute="Current Project"
+        [values]="candidates().map(c => c.currentProject?.name || '—')"
+        rowType="text" />
+    </tbody>
+  </table>
+</div>

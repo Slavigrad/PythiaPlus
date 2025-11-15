@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
 import { catchError, of, tap } from 'rxjs';
 import { Candidate } from '../models/candidate.model';
 import { CandidateProfile } from '../models/candidate-profile.model';
@@ -16,6 +17,7 @@ import { environment } from '../../environments/environment';
 })
 export class ComparisonService {
   private readonly http = inject(HttpClient);
+  private readonly dialog = inject(MatDialog);
   private readonly apiUrl = `${environment.apiUrl}/candidates`;
   private readonly MAX_SELECTIONS = 3;
 
@@ -202,6 +204,26 @@ export class ComparisonService {
     // Check if loading was successful
     if (!this.error()) {
       this.isComparingSignal.set(true);
+
+      // Open the comparison modal
+      // Lazy load the component to reduce initial bundle
+      const { ComparisonModalComponent } = await import('../components/comparison-modal/comparison-modal.component');
+
+      const dialogRef = this.dialog.open(ComparisonModalComponent, {
+        width: '95vw',
+        maxWidth: '1200px',
+        height: '90vh',
+        maxHeight: '900px',
+        panelClass: 'comparison-modal-panel',
+        disableClose: false,
+        hasBackdrop: true,
+        backdropClass: 'comparison-modal-backdrop'
+      });
+
+      // When dialog closes, update comparison state
+      dialogRef.afterClosed().subscribe(() => {
+        this.isComparingSignal.set(false);
+      });
     }
   }
 
