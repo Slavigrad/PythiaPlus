@@ -58,17 +58,31 @@
 
 /* Selectable mode styles */
 .candidate-card.selectable {
-  cursor: pointer; /* Card is clickable for selection */
+  cursor: pointer; /* Card is clickable to view profile */
 }
 
 .candidate-card.selectable::after {
-  display: none; /* Hide arrow in selectable mode */
+  content: 'View Profile'; /* Show "View Profile" text instead of arrow */
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  font-weight: 500;
+  color: #d32f2f;
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none; /* Don't interfere with clicks */
 }
 
 .candidate-card.selectable:hover {
-  border-color: rgba(211, 47, 47, 0.3); /* Subtle Pythia red border on hover */
+  border-color: #d32f2f; /* Pythia red border on hover */
   transform: translateY(-2px); /* Slight lift on hover */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.candidate-card.selectable:hover::after {
+  opacity: 0.8; /* Show "View Profile" hint on hover */
 }
 
 .candidate-card.selected {

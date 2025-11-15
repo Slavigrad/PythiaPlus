@@ -38,9 +38,8 @@ import {
     '(keydown.enter)': 'handleCardClick($event)',
     '(keydown.space)': 'handleCardClick($event)',
     '[attr.tabindex]': '0', // Always keyboard accessible
-    '[attr.role]': '"button"', // Always a button (either for selection or detail view)
-    '[attr.aria-label]': 'selectable() ? (isSelected() ? "Deselect " + candidate().name + " for comparison" : "Select " + candidate().name + " for comparison") : "View details for " + candidate().name',
-    '[attr.aria-pressed]': 'selectable() ? isSelected() : null', // Toggle button state when selectable
+    '[attr.role]': '"button"', // Always a button for viewing details
+    '[attr.aria-label]': '"View profile for " + candidate().name',
     '[class.selectable]': 'selectable()',
     '[class.selected]': 'isSelected()'
   }
@@ -99,8 +98,7 @@ export class CandidateCardComponent {
 
   /**
    * Handles card click/keyboard interaction
-   * In selectable mode, toggles selection (entire card is clickable)
-   * In normal mode, emits candidate ID for detail view
+   * Always opens profile detail view - checkbox handles comparison selection separately
    *
    * Future Enhancement: This will trigger opening a detailed candidate modal
    * The modal will fetch additional candidate data from the backend API
@@ -111,17 +109,8 @@ export class CandidateCardComponent {
       event.preventDefault();
     }
 
-    // In selectable mode, toggle selection on card click
-    if (this.selectable()) {
-      // Don't toggle if disabled (max selections reached and not selected)
-      if (this.selectionDisabled() && !this.isSelected()) {
-        return;
-      }
-      this.selectionToggle.emit(this.candidate().id);
-      return;
-    }
-
-    // In normal mode, emit candidate ID for detail view
+    // Always emit candidate ID for detail view
+    // Checkbox handles comparison selection separately
     this.candidateSelected.emit(this.candidate().id);
 
     // TODO: Future enhancement - Open candidate detail modal
@@ -136,15 +125,20 @@ export class CandidateCardComponent {
    * Emits selectionToggle event for parent component
    */
   protected handleSelectionToggle(event: MatCheckboxChange): void {
-    // Material checkbox change event has built-in stopPropagation
-    // No need to manually stop propagation
-
     // Don't toggle if disabled
     if (this.selectionDisabled() && !this.isSelected()) {
       return;
     }
 
     this.selectionToggle.emit(this.candidate().id);
+  }
+
+  /**
+   * Prevents click events on checkbox from bubbling to card
+   * This allows checkbox to handle selection while card handles detail view
+   */
+  protected handleCheckboxClick(event: Event): void {
+    event.stopPropagation();
   }
 
   /**
