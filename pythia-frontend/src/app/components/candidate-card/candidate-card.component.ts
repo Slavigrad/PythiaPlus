@@ -37,9 +37,10 @@ import {
     '(click)': 'handleCardClick($event)',
     '(keydown.enter)': 'handleCardClick($event)',
     '(keydown.space)': 'handleCardClick($event)',
-    '[attr.tabindex]': 'selectable() ? "-1" : "0"', // Disable tabindex when selectable (checkbox handles focus)
-    '[attr.role]': 'selectable() ? null : "button"',
-    '[attr.aria-label]': 'selectable() ? null : "View details for " + candidate().name',
+    '[attr.tabindex]': '0', // Always keyboard accessible
+    '[attr.role]': '"button"', // Always a button (either for selection or detail view)
+    '[attr.aria-label]': 'selectable() ? (isSelected() ? "Deselect " + candidate().name + " for comparison" : "Select " + candidate().name + " for comparison") : "View details for " + candidate().name',
+    '[attr.aria-pressed]': 'selectable() ? isSelected() : null', // Toggle button state when selectable
     '[class.selectable]': 'selectable()',
     '[class.selected]': 'isSelected()'
   }
@@ -98,7 +99,7 @@ export class CandidateCardComponent {
 
   /**
    * Handles card click/keyboard interaction
-   * In selectable mode, ignores clicks (checkbox handles selection)
+   * In selectable mode, toggles selection (entire card is clickable)
    * In normal mode, emits candidate ID for detail view
    *
    * Future Enhancement: This will trigger opening a detailed candidate modal
@@ -110,12 +111,17 @@ export class CandidateCardComponent {
       event.preventDefault();
     }
 
-    // In selectable mode, don't handle card clicks (checkbox handles it)
+    // In selectable mode, toggle selection on card click
     if (this.selectable()) {
+      // Don't toggle if disabled (max selections reached and not selected)
+      if (this.selectionDisabled() && !this.isSelected()) {
+        return;
+      }
+      this.selectionToggle.emit(this.candidate().id);
       return;
     }
 
-    // Emit candidate ID for parent component to handle
+    // In normal mode, emit candidate ID for detail view
     this.candidateSelected.emit(this.candidate().id);
 
     // TODO: Future enhancement - Open candidate detail modal

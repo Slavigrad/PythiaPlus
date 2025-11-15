@@ -58,7 +58,7 @@
 
 /* Selectable mode styles */
 .candidate-card.selectable {
-  cursor: default;
+  cursor: pointer; /* Card is clickable for selection */
 }
 
 .candidate-card.selectable::after {
@@ -66,9 +66,9 @@
 }
 
 .candidate-card.selectable:hover {
-  border-color: #e0e0e0; /* Less aggressive hover in selectable mode */
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-color: rgba(211, 47, 47, 0.3); /* Subtle Pythia red border on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
 }
 
 .candidate-card.selected {
