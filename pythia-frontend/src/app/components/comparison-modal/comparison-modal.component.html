@@ -7,6 +7,7 @@
     <button
       mat-icon-button
       class="close-button"
+      type="button"
       (click)="close()"
       aria-label="Close comparison modal">
       <mat-icon>close</mat-icon>
@@ -26,14 +27,158 @@
     <div class="error-state" role="alert">
       <mat-icon class="error-icon">error_outline</mat-icon>
       <p class="error-message">{{ comparisonService.error() }}</p>
-      <button mat-stroked-button (click)="close()">Close</button>
+      <button mat-stroked-button type="button" (click)="close()">Close</button>
     </div>
   }
 
   <!-- Comparison Table -->
-  @if (!comparisonService.loading() && !comparisonService.error() && comparisonService.candidates().length > 0) {
-    <app-comparison-table
-      [candidates]="comparisonService.candidates()"
-      (removeCandidate)="removeCand($event)" />
+  @if (!comparisonService.loading() && !comparisonService.error() && candidates().length > 0) {
+    <div
+      class="comparison-table-container"
+      role="region"
+      aria-label="Compare selected talents">
+      <table class="comparison-table" aria-label="Candidate comparison">
+        <thead>
+          <tr>
+            <th scope="col" class="attribute-col">Attribute</th>
+            @for (candidate of candidates(); track candidate.id) {
+              <th scope="col" class="candidate-col">
+                <div class="candidate-header">
+                  <button
+                    mat-icon-button
+                    class="candidate-remove"
+                    type="button"
+                    (click)="removeCand(candidate.id)"
+                    [attr.aria-label]="'Remove ' + candidate.fullName + ' from comparison'">
+                    <mat-icon>close</mat-icon>
+                  </button>
+
+                  <div class="candidate-avatar" aria-hidden="true">
+                    <span>{{ initials(candidate.fullName) }}</span>
+                  </div>
+
+                  <div class="candidate-meta">
+                    <div class="candidate-name">
+                      {{ candidate.fullName }}
+                    </div>
+                    <div class="candidate-title">
+                      {{ candidate.title }}
+                    </div>
+                  </div>
+                </div>
+              </th>
+            }
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- Role -->
+          <tr>
+            <th scope="row" class="attribute-cell">Role</th>
+            @for (candidate of candidates(); track candidate.id) {
+              <td class="value-cell">
+                {{ candidate.title || 'N/A' }}
+              </td>
+            }
+          </tr>
+
+          <!-- Location -->
+          <tr>
+            <th scope="row" class="attribute-cell">Location</th>
+            @for (candidate of candidates(); track candidate.id) {
+              <td class="value-cell">
+                {{ candidate.location || 'N/A' }}
+              </td>
+            }
+          </tr>
+
+          <!-- Experience -->
+          <tr>
+            <th scope="row" class="attribute-cell">Experience</th>
+            @for (candidate of candidates(); track candidate.id) {
+              <td class="value-cell">
+                {{ formatExperience(candidate) }}
+              </td>
+            }
+          </tr>
+
+          <!-- Availability -->
+          <tr>
+            <th scope="row" class="attribute-cell">Availability</th>
+            @for (candidate of candidates(); track candidate.id) {
+              <td class="value-cell">
+                @if (candidate.availabilityDetails?.status) {
+                  <span
+                    class="availability-badge"
+                    [class.availability-badge--available]="candidate.availabilityDetails.status === 'Available'"
+                    [class.availability-badge--busy]="candidate.availabilityDetails.status === 'Busy'"
+                    [class.availability-badge--unavailable]="candidate.availabilityDetails.status === 'Not Available'">
+                    {{ candidate.availabilityDetails.status }}
+                  </span>
+                } @else {
+                  <span class="value-placeholder">N/A</span>
+                }
+              </td>
+            }
+          </tr>
+
+          <!-- Technologies -->
+          <tr>
+            <th scope="row" class="attribute-cell">Technologies</th>
+            @for (candidate of candidates(); track candidate.id) {
+              <td class="value-cell">
+                @if (candidate.detailedTechnologies?.length) {
+                  <div class="tag-list" role="list">
+                    @for (tech of candidate.detailedTechnologies; track tech.name) {
+                      <span class="tag" role="listitem">
+                        {{ formatTechnology(tech) }}
+                      </span>
+                    }
+                  </div>
+                } @else {
+                  <span class="value-placeholder">N/A</span>
+                }
+              </td>
+            }
+          </tr>
+
+          <!-- Trainings -->
+          <tr>
+            <th scope="row" class="attribute-cell">Trainings</th>
+            @for (candidate of candidates(); track candidate.id) {
+              <td class="value-cell">
+                @if (candidate.trainings?.length) {
+                  <ul class="value-list">
+                    @for (training of candidate.trainings; track training.name) {
+                      <li>{{ formatTraining(training) }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <span class="value-placeholder">N/A</span>
+                }
+              </td>
+            }
+          </tr>
+
+          <!-- Certifications -->
+          <tr>
+            <th scope="row" class="attribute-cell">Certifications</th>
+            @for (candidate of candidates(); track candidate.id) {
+              <td class="value-cell">
+                @if (candidate.detailedCertifications?.length) {
+                  <ul class="value-list">
+                    @for (certification of candidate.detailedCertifications; track certification.name) {
+                      <li>{{ formatCertification(certification) }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <span class="value-placeholder">N/A</span>
+                }
+              </td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
   }
 </div>
