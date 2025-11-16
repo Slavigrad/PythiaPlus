@@ -47,6 +47,9 @@ export class SearchPageComponent implements OnInit {
   readonly urlTopK = signal<number>(10);
   readonly urlMinScore = signal<number>(0.7);
 
+  // Signal for facets visibility (default: hidden)
+  protected readonly showFacets = signal<boolean>(false);
+
   ngOnInit(): void {
     // Read URL params and restore search state with filters
     this.route.queryParams.subscribe(params => {
@@ -151,5 +154,13 @@ export class SearchPageComponent implements OnInit {
    */
   protected handleClearSelections(): void {
     this.comparisonService.clearSelections();
+  }
+
+  /**
+   * Toggle facets visibility
+   * Shows or hides the facet pills section
+   */
+  protected toggleFacets(): void {
+    this.showFacets.update(visible => !visible);
   }
 }
