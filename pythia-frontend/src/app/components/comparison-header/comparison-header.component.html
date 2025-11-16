@@ -4,7 +4,7 @@
     mat-icon-button
     class="remove-button"
     (click)="handleRemove()"
-    [attr.aria-label]="'Remove ' + candidate().name + ' from comparison'">
+    [attr.aria-label]="'Remove ' + candidate().fullName + ' from comparison'">
     <mat-icon>close</mat-icon>
   </button>
 
@@ -15,7 +15,7 @@
 
   <!-- Candidate Info -->
   <div class="candidate-info">
-    <h3 class="candidate-name">{{ candidate().name }}</h3>
+    <h3 class="candidate-name">{{ candidate().fullName }}</h3>
     <p class="candidate-title">{{ candidate().title }}</p>
   </div>
 </div>

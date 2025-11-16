@@ -10,6 +10,11 @@
         <span class="text-value">{{ value || '—' }}</span>
       }
 
+      <!-- Project Type (for Current Project - styled in red) -->
+      @if (rowType() === 'project') {
+        <span class="project-value">{{ value || '—' }}</span>
+      }
+
       <!-- Badge Type (for Availability) -->
       @if (rowType() === 'badge') {
         <span class="badge" [class]="getAvailabilityClass(value)">
@@ -17,7 +22,7 @@
         </span>
       }
 
-      <!-- List Type (for Technologies, Skills, Certifications) -->
+      <!-- List Type (for Skills, Certifications) -->
       @if (rowType() === 'list') {
         @if (isArray(value) && formatList(value).length > 0) {
           <ul class="value-list">
@@ -25,6 +30,19 @@
               <li>{{ item }}</li>
             }
           </ul>
+        } @else {
+          <span class="text-value">—</span>
+        }
+      }
+
+      <!-- Tags Type (for Technologies - inline badges) -->
+      @if (rowType() === 'tags') {
+        @if (isArray(value) && formatTags(value).length > 0) {
+          <div class="tech-tags">
+            @for (item of formatTags(value); track $index) {
+              <span class="tech-tag">{{ formatTag(item) }}</span>
+            }
+          </div>
         } @else {
           <span class="text-value">—</span>
         }
