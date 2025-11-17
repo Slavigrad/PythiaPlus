@@ -1,0 +1,297 @@
+/**
+ * Technology Edit Dialog Styles
+ *
+ * Professional, user-friendly dialog design
+ * Optimized for HR/Managers with clear visual hierarchy
+ */
+
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+// =============================================================================
+// DIALOG HEADER
+// =============================================================================
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+
+  .title-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: var(--color-primary);
+  }
+}
+
+.close-button {
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    color: var(--color-text-primary);
+    background-color: var(--color-background-hover);
+  }
+}
+
+// =============================================================================
+// DIALOG CONTENT
+// =============================================================================
+
+.dialog-content {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  overflow-y: auto;
+  max-height: 60vh;
+
+  ::ng-deep {
+    &.mat-mdc-dialog-content {
+      max-height: 60vh;
+    }
+  }
+}
+
+// =============================================================================
+// FORM FIELDS
+// =============================================================================
+
+.full-width {
+  width: 100%;
+}
+
+.field-icon {
+  color: var(--color-text-hint);
+  margin-right: var(--spacing-xs);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+::ng-deep {
+  // Form field styling
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: var(--color-surface);
+    }
+
+    // Label styling
+    .mat-mdc-floating-label {
+      color: var(--color-text-secondary);
+    }
+
+    // Input styling
+    .mat-mdc-input-element {
+      color: var(--color-text-primary);
+    }
+
+    // Outline styling
+    .mdc-notched-outline {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: var(--color-border-medium);
+      }
+    }
+
+    // Hover state
+    &:hover:not(.mat-form-field-disabled) {
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: var(--color-text-primary);
+        }
+      }
+    }
+
+    // Focused state
+    &.mat-focused {
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: var(--color-primary);
+          border-width: 2px;
+        }
+      }
+    }
+
+    // Error state
+    &.mat-form-field-invalid {
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: var(--color-error);
+        }
+      }
+    }
+  }
+
+  // Hint and error text
+  .mat-mdc-form-field-hint,
+  .mat-mdc-form-field-error {
+    font-size: 12px;
+  }
+
+  .mat-mdc-form-field-hint {
+    color: var(--color-text-hint);
+  }
+
+  .mat-mdc-form-field-error {
+    color: var(--color-error);
+  }
+}
+
+// =============================================================================
+// INFO SECTION
+// =============================================================================
+
+.info-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-light);
+}
+
+.info-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: var(--color-primary);
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.info-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+// =============================================================================
+// DIALOG ACTIONS
+// =============================================================================
+
+.dialog-actions {
+  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  background-color: var(--color-background);
+
+  ::ng-deep {
+    &.mat-mdc-dialog-actions {
+      padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+    }
+  }
+}
+
+.cancel-button {
+  min-width: 100px;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-background-hover);
+    color: var(--color-text-primary);
+  }
+}
+
+.submit-button {
+  min-width: 120px;
+  font-weight: 600;
+  box-shadow: var(--elevation-2);
+  transition: all var(--transition-normal);
+
+  &:hover:not(:disabled) {
+    box-shadow: var(--elevation-3);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+
+  mat-icon {
+    margin-right: var(--spacing-xs);
+  }
+}
+
+// =============================================================================
+// RESPONSIVE DESIGN
+// =============================================================================
+
+@media (max-width: 600px) {
+  .dialog-header {
+    padding: var(--spacing-md);
+  }
+
+  .dialog-title {
+    font-size: 20px;
+
+    .title-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .dialog-content {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .dialog-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// =============================================================================
+// ACCESSIBILITY
+// =============================================================================
+
+// Focus styles for keyboard navigation
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

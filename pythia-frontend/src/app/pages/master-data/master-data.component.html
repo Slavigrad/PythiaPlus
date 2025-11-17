@@ -1,0 +1,172 @@
+<div class="master-data-page">
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">settings</mat-icon>
+          Master Data Management
+        </h1>
+        <p class="page-subtitle">
+          Manage projects and reference data lists for technologies, roles, training, certificates, and languages
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs for different master data categories -->
+  <mat-tab-group
+    class="mdm-tabs"
+    [(selectedIndex)]="activeTabIndex"
+    animationDuration="300ms"
+    preserveContent>
+
+    <!-- Technologies Tab -->
+    <mat-tab label="Technologies">
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">code</mat-icon>
+        Technologies
+        <span class="item-count">{{ technologyService.total() }}</span>
+      </ng-template>
+
+      <div class="tab-content">
+        <!-- Header with Add Button -->
+        <div class="tab-header">
+          <h2 class="tab-title">Technologies</h2>
+          <button
+            mat-raised-button
+            color="primary"
+            class="add-button"
+            (click)="addTechnology()"
+            aria-label="Add new technology">
+            <mat-icon>add</mat-icon>
+            Add Technology
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        @if (technologyService.loading()) {
+          <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p class="loading-text">Loading technologies...</p>
+          </div>
+        }
+
+        <!-- Error State -->
+        @if (technologyService.error()) {
+          <div class="error-container" role="alert">
+            <mat-icon class="error-icon">error</mat-icon>
+            <p class="error-text">{{ technologyService.error() }}</p>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="loadTechnologies()">
+              Retry
+            </button>
+          </div>
+        }
+
+        <!-- Technology Cards Grid -->
+        @if (!technologyService.loading() && !technologyService.error()) {
+          <div class="cards-grid" role="list">
+            @for (tech of technologyService.technologies(); track tech.id) {
+              <mat-card class="mdm-card" role="listitem">
+                <mat-card-header>
+                  <div class="card-header-content">
+                    <div class="card-title-section">
+                      <mat-card-title class="card-title">
+                        {{ tech.name }}
+                      </mat-card-title>
+                      <mat-chip class="category-chip" [highlighted]="true">
+                        <mat-icon class="chip-icon">label</mat-icon>
+                        {{ tech.category }}
+                      </mat-chip>
+                    </div>
+                    <div class="card-actions">
+                      <button
+                        mat-icon-button
+                        class="action-button edit-button"
+                        (click)="editTechnology(tech)"
+                        [attr.aria-label]="'Edit ' + tech.name"
+                        matTooltip="Edit technology"
+                        matTooltipPosition="above">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        class="action-button delete-button"
+                        (click)="deleteTechnology(tech)"
+                        [attr.aria-label]="'Delete ' + tech.name"
+                        matTooltip="Delete technology"
+                        matTooltipPosition="above">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                  <p class="description">{{ tech.description }}</p>
+                  <div class="metadata">
+                    <span class="metadata-item">
+                      <mat-icon class="metadata-icon">access_time</mat-icon>
+                      Updated {{ tech.updatedAt | date: 'MMM d, y' }}
+                    </span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            } @empty {
+              <div class="empty-state">
+                <mat-icon class="empty-icon">storage</mat-icon>
+                <h3>No technologies found</h3>
+                <p>Get started by adding your first technology.</p>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="addTechnology()">
+                  <mat-icon>add</mat-icon>
+                  Add Technology
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- Roles Tab (Placeholder) -->
+    <mat-tab label="Roles" disabled>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">work</mat-icon>
+        Roles
+        <span class="item-count">0</span>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Training Tab (Placeholder) -->
+    <mat-tab label="Training" disabled>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">school</mat-icon>
+        Training
+        <span class="item-count">0</span>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Certificates Tab (Placeholder) -->
+    <mat-tab label="Certificates" disabled>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">verified</mat-icon>
+        Certificates
+        <span class="item-count">0</span>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Languages & Skills Tab (Placeholder) -->
+    <mat-tab label="Languages & Skills" disabled>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">translate</mat-icon>
+        Languages & Skills
+        <span class="item-count">0</span>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

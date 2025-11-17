@@ -1,0 +1,161 @@
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TechnologyService } from '../../services/technology.service';
+import { Technology } from '../../models/technology.model';
+import { TechnologyEditDialogComponent } from './components/technology-edit-dialog/technology-edit-dialog.component';
+
+/**
+ * Master Data Management Component
+ *
+ * Purpose: Central hub for managing master data (technologies, roles, skills, etc.)
+ * Features:
+ * - Tabbed interface for different data categories
+ * - CRUD operations for each category
+ * - Professional, corporate design optimized for HR/Managers
+ * - Material Design 3 with Pythia+ brand theme
+ */
+@Component({
+  selector: 'app-master-data',
+  imports: [
+    CommonModule,
+    MatTabsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatChipsModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatTooltipModule
+  ],
+  templateUrl: './master-data.component.html',
+  styleUrl: './master-data.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class MasterDataComponent implements OnInit {
+  protected readonly technologyService = inject(TechnologyService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
+
+  // Active tab index
+  protected readonly activeTabIndex = signal(0);
+
+  ngOnInit(): void {
+    // Load technologies on component initialization
+    this.loadTechnologies();
+  }
+
+  /**
+   * Load technologies from API
+   */
+  protected loadTechnologies(): void {
+    this.technologyService.loadTechnologies().subscribe({
+      error: (error) => {
+        this.showError('Failed to load technologies');
+        console.error('Error loading technologies:', error);
+      }
+    });
+  }
+
+  /**
+   * Open dialog to add new technology
+   */
+  protected addTechnology(): void {
+    const dialogRef = this.dialog.open(TechnologyEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.technologyService.createTechnology(result).subscribe({
+          next: () => {
+            this.showSuccess('Technology added successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to add technology');
+            console.error('Error creating technology:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Open dialog to edit existing technology
+   */
+  protected editTechnology(technology: Technology): void {
+    const dialogRef = this.dialog.open(TechnologyEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'edit', technology }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.technologyService.updateTechnology(technology.id, result).subscribe({
+          next: () => {
+            this.showSuccess('Technology updated successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to update technology');
+            console.error('Error updating technology:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Delete technology with confirmation
+   */
+  protected deleteTechnology(technology: Technology): void {
+    const confirmed = confirm(
+      `Are you sure you want to delete "${technology.name}"?\n\nThis action cannot be undone.`
+    );
+
+    if (confirmed) {
+      this.technologyService.deleteTechnology(technology.id).subscribe({
+        next: () => {
+          this.showSuccess('Technology deleted successfully');
+        },
+        error: (error) => {
+          this.showError('Failed to delete technology');
+          console.error('Error deleting technology:', error);
+        }
+      });
+    }
+  }
+
+  /**
+   * Show success notification
+   */
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['success-snackbar']
+    });
+  }
+
+  /**
+   * Show error notification
+   */
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['error-snackbar']
+    });
+  }
+}

@@ -163,4 +163,11 @@ export class SearchPageComponent implements OnInit {
   protected toggleFacets(): void {
     this.showFacets.update(visible => !visible);
   }
+
+  /**
+   * Navigate to Master Data Management page
+   */
+  protected navigateToMasterData(): void {
+    this.router.navigate(['/master-data']);
+  }
 }
