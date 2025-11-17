@@ -580,5 +580,117 @@
         }
       </div>
     </mat-tab>
+
+    <!-- Skills Tab -->
+    <mat-tab label="Skills">
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">star</mat-icon>
+        Skills
+        <span class="item-count">{{ skillService.total() }}</span>
+      </ng-template>
+
+      <div class="tab-content">
+        <!-- Header with Add Button -->
+        <div class="tab-header">
+          <h2 class="tab-title">Skills</h2>
+          <button
+            mat-raised-button
+            color="primary"
+            class="add-button"
+            (click)="addSkill()"
+            aria-label="Add new skill">
+            <mat-icon>add</mat-icon>
+            Add Skill
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        @if (skillService.loading()) {
+          <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p class="loading-text">Loading skills...</p>
+          </div>
+        }
+
+        <!-- Error State -->
+        @if (skillService.error()) {
+          <div class="error-container" role="alert">
+            <mat-icon class="error-icon">error</mat-icon>
+            <p class="error-text">{{ skillService.error() }}</p>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="loadSkills()">
+              Retry
+            </button>
+          </div>
+        }
+
+        <!-- Skill Cards Grid -->
+        @if (!skillService.loading() && !skillService.error()) {
+          <div class="cards-grid" role="list">
+            @for (skill of skillService.skills(); track skill.id) {
+              <mat-card class="mdm-card" role="listitem">
+                <mat-card-header>
+                  <div class="card-header-content">
+                    <div class="card-title-section">
+                      <mat-card-title class="card-title">
+                        {{ skill.name }}
+                      </mat-card-title>
+                      <mat-chip class="category-chip" [highlighted]="true">
+                        <mat-icon class="chip-icon">label</mat-icon>
+                        {{ skill.category }}
+                      </mat-chip>
+                    </div>
+                    <div class="card-actions">
+                      <button
+                        mat-icon-button
+                        class="action-button edit-button"
+                        (click)="editSkill(skill)"
+                        [attr.aria-label]="'Edit ' + skill.name"
+                        matTooltip="Edit skill"
+                        matTooltipPosition="above">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        class="action-button delete-button"
+                        (click)="deleteSkill(skill)"
+                        [attr.aria-label]="'Delete ' + skill.name"
+                        matTooltip="Delete skill"
+                        matTooltipPosition="above">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                  <p class="description">{{ skill.description }}</p>
+                  <div class="metadata">
+                    <span class="metadata-item">
+                      <mat-icon class="metadata-icon">access_time</mat-icon>
+                      Updated {{ skill.updatedAt | date: 'MMM d, y' }}
+                    </span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            } @empty {
+              <div class="empty-state">
+                <mat-icon class="empty-icon">star</mat-icon>
+                <h3>No skills found</h3>
+                <p>Get started by adding your first skill.</p>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="addSkill()">
+                  <mat-icon>add</mat-icon>
+                  Add Skill
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </mat-tab>
   </mat-tab-group>
 </div>
