@@ -59,6 +59,10 @@ export class LanguageEditDialogComponent implements OnInit {
         language?.name || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(100)]
       ],
+      code: [
+        language?.code || '',
+        [Validators.maxLength(50)]
+      ],
       description: [
         language?.description || '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(500)]
@@ -85,8 +89,10 @@ export class LanguageEditDialogComponent implements OnInit {
    */
   protected onSubmit(): void {
     if (this.languageForm.valid) {
+      const codeValue = this.languageForm.value.code?.trim();
       const request: LanguageRequest = {
         name: this.languageForm.value.name.trim(),
+        code: codeValue || undefined,
         description: this.languageForm.value.description.trim(),
         category: 'Languages'
       };

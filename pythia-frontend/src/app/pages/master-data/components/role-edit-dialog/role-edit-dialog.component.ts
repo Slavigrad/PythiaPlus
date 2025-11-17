@@ -59,6 +59,10 @@ export class RoleEditDialogComponent implements OnInit {
         role?.name || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(100)]
       ],
+      code: [
+        role?.code || '',
+        [Validators.maxLength(50)]
+      ],
       description: [
         role?.description || '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(500)]
@@ -85,8 +89,10 @@ export class RoleEditDialogComponent implements OnInit {
    */
   protected onSubmit(): void {
     if (this.roleForm.valid) {
+      const codeValue = this.roleForm.value.code?.trim();
       const request: RoleRequest = {
         name: this.roleForm.value.name.trim(),
+        code: codeValue || undefined,
         description: this.roleForm.value.description.trim(),
         category: 'Roles'
       };

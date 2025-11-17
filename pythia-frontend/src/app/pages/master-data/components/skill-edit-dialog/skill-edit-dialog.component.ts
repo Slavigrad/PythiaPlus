@@ -59,6 +59,10 @@ export class SkillEditDialogComponent implements OnInit {
         skill?.name || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(100)]
       ],
+      code: [
+        skill?.code || '',
+        [Validators.maxLength(50)]
+      ],
       description: [
         skill?.description || '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(500)]
@@ -85,8 +89,10 @@ export class SkillEditDialogComponent implements OnInit {
    */
   protected onSubmit(): void {
     if (this.skillForm.valid) {
+      const codeValue = this.skillForm.value.code?.trim();
       const request: SkillRequest = {
         name: this.skillForm.value.name.trim(),
+        code: codeValue || undefined,
         description: this.skillForm.value.description.trim(),
         category: 'Skills'
       };

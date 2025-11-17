@@ -235,6 +235,29 @@
   line-height: 1.4;
 }
 
+.code-chip {
+  font-size: 12px;
+  font-weight: 600;
+  height: 24px;
+  background-color: #2196F3; // Material Blue 500
+  color: white;
+  margin-right: var(--spacing-xs);
+
+  .chip-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+  }
+
+  ::ng-deep {
+    .mat-mdc-chip-action-label {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
 .category-chip {
   font-size: 12px;
   font-weight: 600;

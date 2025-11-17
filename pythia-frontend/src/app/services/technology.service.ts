@@ -50,7 +50,8 @@ export class TechnologyService {
     return items.filter(tech =>
       tech.name.toLowerCase().includes(query) ||
       tech.description.toLowerCase().includes(query) ||
-      tech.category.toLowerCase().includes(query)
+      tech.category.toLowerCase().includes(query) ||
+      (tech.code?.toLowerCase().includes(query) ?? false)
     );
   });
 

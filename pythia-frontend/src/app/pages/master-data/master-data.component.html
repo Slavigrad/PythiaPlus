@@ -90,6 +90,12 @@
                       <mat-card-title class="card-title">
                         {{ tech.name }}
                       </mat-card-title>
+                      @if (tech.code) {
+                        <mat-chip class="code-chip" [highlighted]="true">
+                          <mat-icon class="chip-icon">tag</mat-icon>
+                          {{ tech.code }}
+                        </mat-chip>
+                      }
                       <mat-chip class="category-chip" [highlighted]="true">
                         <mat-icon class="chip-icon">label</mat-icon>
                         {{ tech.category }}
@@ -231,6 +237,12 @@
                       <mat-card-title class="card-title">
                         {{ role.name }}
                       </mat-card-title>
+                      @if (role.code) {
+                        <mat-chip class="code-chip" [highlighted]="true">
+                          <mat-icon class="chip-icon">tag</mat-icon>
+                          {{ role.code }}
+                        </mat-chip>
+                      }
                       <mat-chip class="category-chip" [highlighted]="true">
                         <mat-icon class="chip-icon">label</mat-icon>
                         {{ role.category }}
@@ -372,6 +384,12 @@
                       <mat-card-title class="card-title">
                         {{ training.name }}
                       </mat-card-title>
+                      @if (training.code) {
+                        <mat-chip class="code-chip" [highlighted]="true">
+                          <mat-icon class="chip-icon">tag</mat-icon>
+                          {{ training.code }}
+                        </mat-chip>
+                      }
                       <mat-chip class="category-chip" [highlighted]="true">
                         <mat-icon class="chip-icon">label</mat-icon>
                         {{ training.category }}
@@ -513,6 +531,12 @@
                       <mat-card-title class="card-title">
                         {{ certificate.name }}
                       </mat-card-title>
+                      @if (certificate.code) {
+                        <mat-chip class="code-chip" [highlighted]="true">
+                          <mat-icon class="chip-icon">tag</mat-icon>
+                          {{ certificate.code }}
+                        </mat-chip>
+                      }
                       <mat-chip class="category-chip" [highlighted]="true">
                         <mat-icon class="chip-icon">label</mat-icon>
                         {{ certificate.category }}
@@ -654,6 +678,12 @@
                       <mat-card-title class="card-title">
                         {{ language.name }}
                       </mat-card-title>
+                      @if (language.code) {
+                        <mat-chip class="code-chip" [highlighted]="true">
+                          <mat-icon class="chip-icon">tag</mat-icon>
+                          {{ language.code }}
+                        </mat-chip>
+                      }
                       <mat-chip class="category-chip" [highlighted]="true">
                         <mat-icon class="chip-icon">label</mat-icon>
                         {{ language.category }}
@@ -795,6 +825,12 @@
                       <mat-card-title class="card-title">
                         {{ skill.name }}
                       </mat-card-title>
+                      @if (skill.code) {
+                        <mat-chip class="code-chip" [highlighted]="true">
+                          <mat-icon class="chip-icon">tag</mat-icon>
+                          {{ skill.code }}
+                        </mat-chip>
+                      }
                       <mat-chip class="category-chip" [highlighted]="true">
                         <mat-icon class="chip-icon">label</mat-icon>
                         {{ skill.category }}

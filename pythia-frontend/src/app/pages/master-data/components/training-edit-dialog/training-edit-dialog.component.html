@@ -35,6 +35,23 @@
         }
       </mat-form-field>
 
+      <!-- Code Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Code</mat-label>
+        <input
+          matInput
+          formControlName="code"
+          placeholder="e.g., REACT_ADV, SPRING_MICRO, K8S"
+          maxlength="50"
+          autocomplete="off"
+          [attr.aria-label]="'Training code'">
+        <mat-icon matPrefix class="field-icon">tag</mat-icon>
+        <mat-hint align="end">{{ trainingForm.get('code')?.value?.length || 0 }}/50</mat-hint>
+        @if (getErrorMessage('code')) {
+          <mat-error id="code-error">{{ getErrorMessage('code') }}</mat-error>
+        }
+      </mat-form-field>
+
       <!-- Description Field -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Description</mat-label>

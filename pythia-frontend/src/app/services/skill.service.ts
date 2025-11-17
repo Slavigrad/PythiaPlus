@@ -50,7 +50,8 @@ export class SkillService {
     return items.filter(skill =>
       skill.name.toLowerCase().includes(query) ||
       skill.description.toLowerCase().includes(query) ||
-      skill.category.toLowerCase().includes(query)
+      skill.category.toLowerCase().includes(query) ||
+      (skill.code?.toLowerCase().includes(query) ?? false)
     );
   });
 

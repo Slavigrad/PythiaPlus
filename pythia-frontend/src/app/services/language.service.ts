@@ -50,7 +50,8 @@ export class LanguageService {
     return items.filter(lang =>
       lang.name.toLowerCase().includes(query) ||
       lang.description.toLowerCase().includes(query) ||
-      lang.category.toLowerCase().includes(query)
+      lang.category.toLowerCase().includes(query) ||
+      (lang.code?.toLowerCase().includes(query) ?? false)
     );
   });
 
