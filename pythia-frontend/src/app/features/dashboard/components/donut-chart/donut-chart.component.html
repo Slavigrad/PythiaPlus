@@ -1,0 +1,21 @@
+<div class="donut-chart-container">
+  <div class="donut-chart-wrapper">
+    <canvas
+      baseChart
+      [type]="chartType"
+      [data]="data()"
+      [options]="chartOptions()"
+      (chartClick)="onChartClick($event)"
+      [attr.aria-label]="'Donut chart showing ' + (centerText() || 'distribution')"
+      role="img"
+    >
+    </canvas>
+
+    @if (centerText()) {
+      <div class="donut-center-text">
+        <div class="donut-center-value">{{ totalCount }}</div>
+        <div class="donut-center-label">{{ centerText() }}</div>
+      </div>
+    }
+  </div>
+</div>

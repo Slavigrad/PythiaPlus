@@ -1,0 +1,27 @@
+<mat-card class="summary-card" [class]="'summary-card--' + color()">
+  <mat-card-content>
+    <div class="summary-card__header">
+      <div class="summary-card__icon">
+        <mat-icon>{{ icon() }}</mat-icon>
+      </div>
+      @if (trendValue()) {
+        <div class="summary-card__trend" [class]="'trend--' + trend()">
+          @if (trend() === 'up') {
+            <mat-icon>trending_up</mat-icon>
+          } @else if (trend() === 'down') {
+            <mat-icon>trending_down</mat-icon>
+          }
+          <span>{{ trendValue() }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="summary-card__body">
+      <div class="summary-card__value">{{ value() }}</div>
+      <div class="summary-card__title">{{ title() }}</div>
+      @if (subtitle()) {
+        <div class="summary-card__subtitle">{{ subtitle() }}</div>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

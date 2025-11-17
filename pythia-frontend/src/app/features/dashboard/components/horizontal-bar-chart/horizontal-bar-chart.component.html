@@ -1,0 +1,12 @@
+<div class="bar-chart-container" [style.height.px]="height()">
+  <canvas
+    baseChart
+    [type]="chartType"
+    [data]="data()"
+    [options]="chartOptions()"
+    (chartClick)="onChartClick($event)"
+    [attr.aria-label]="'Horizontal bar chart'"
+    role="img"
+  >
+  </canvas>
+</div>
