@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { Role, RoleResponse, RoleRequest } from '../models/role.model';
  * - DELETE: Remove role
  *
  * Uses signals for reactive state management
+ * Includes client-side search/filter functionality
  */
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,29 @@ export class RoleService {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly total = signal(0);
+
+  // Search/filter state
+  readonly searchQuery = signal('');
+
+  /**
+   * Filtered roles based on search query
+   * Searches across: name, description, category
+   * Case-insensitive partial matching
+   */
+  readonly filteredRoles = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const items = this.roles();
+
+    if (!query) {
+      return items;
+    }
+
+    return items.filter(role =>
+      role.name.toLowerCase().includes(query) ||
+      role.description.toLowerCase().includes(query) ||
+      role.category.toLowerCase().includes(query)
+    );
+  });
 
   /**
    * Fetch all roles from the API
@@ -119,6 +143,13 @@ export class RoleService {
    */
   clearError(): void {
     this.error.set(null);
+  }
+
+  /**
+   * Reset search query to show all roles
+   */
+  resetSearch(): void {
+    this.searchQuery.set('');
   }
 
   /**

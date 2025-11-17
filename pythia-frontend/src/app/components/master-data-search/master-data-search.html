@@ -1,0 +1,33 @@
+<div class="search-container">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>{{ placeholder() }}</mat-label>
+
+    <!-- Search icon prefix -->
+    <mat-icon matIconPrefix>search</mat-icon>
+
+    <!-- Search input -->
+    <input
+      matInput
+      type="search"
+      [(ngModel)]="searchQuery"
+      [placeholder]="placeholder()"
+      [attr.aria-label]="placeholder()"
+      autocomplete="off"
+      spellcheck="false"
+    />
+
+    <!-- Clear button suffix (only shown when there's text) -->
+    @if (searchQuery()) {
+      <button
+        matIconSuffix
+        mat-icon-button
+        (click)="onClear()"
+        [attr.aria-label]="'Clear search'"
+        type="button"
+        class="clear-button"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+</div>
