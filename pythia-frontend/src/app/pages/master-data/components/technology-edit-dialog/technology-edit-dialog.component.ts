@@ -59,6 +59,10 @@ export class TechnologyEditDialogComponent implements OnInit {
         technology?.name || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(100)]
       ],
+      code: [
+        technology?.code || '',
+        [Validators.maxLength(50)]
+      ],
       description: [
         technology?.description || '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(500)]
@@ -85,8 +89,10 @@ export class TechnologyEditDialogComponent implements OnInit {
    */
   protected onSubmit(): void {
     if (this.technologyForm.valid) {
+      const codeValue = this.technologyForm.value.code?.trim();
       const request: TechnologyRequest = {
         name: this.technologyForm.value.name.trim(),
+        code: codeValue || undefined,
         description: this.technologyForm.value.description.trim(),
         category: 'Technologies'
       };

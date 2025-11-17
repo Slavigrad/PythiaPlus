@@ -6,6 +6,7 @@
 export interface Role {
   id: number;
   name: string;
+  code: string | null;
   description: string;
   category: string;
   createdAt: string;
@@ -30,6 +31,7 @@ export interface RoleResponse {
  */
 export interface RoleRequest {
   name: string;
+  code?: string; // Optional - unique identifier code
   description: string;
   category?: string; // Optional - defaults to "Roles" on backend
 }

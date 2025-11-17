@@ -50,7 +50,8 @@ export class RoleService {
     return items.filter(role =>
       role.name.toLowerCase().includes(query) ||
       role.description.toLowerCase().includes(query) ||
-      role.category.toLowerCase().includes(query)
+      role.category.toLowerCase().includes(query) ||
+      (role.code?.toLowerCase().includes(query) ?? false)
     );
   });
 

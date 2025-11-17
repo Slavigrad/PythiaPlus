@@ -6,6 +6,7 @@
 export interface Technology {
   id: number;
   name: string;
+  code: string | null;
   description: string;
   category: string;
   createdAt: string;
@@ -30,6 +31,7 @@ export interface TechnologyResponse {
  */
 export interface TechnologyRequest {
   name: string;
+  code?: string; // Optional - unique identifier code
   description: string;
   category?: string; // Optional - defaults to "Technologies" on backend
 }

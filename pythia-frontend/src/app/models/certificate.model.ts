@@ -6,6 +6,7 @@
 export interface Certificate {
   id: number;
   name: string;
+  code: string | null;
   description: string;
   category: string;
   createdAt: string;
@@ -30,6 +31,7 @@ export interface CertificateResponse {
  */
 export interface CertificateRequest {
   name: string;
+  code?: string; // Optional - unique identifier code
   description: string;
   category?: string; // Optional - defaults to "Certificates" on backend
 }

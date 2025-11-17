@@ -59,6 +59,10 @@ export class TrainingEditDialogComponent implements OnInit {
         training?.name || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(100)]
       ],
+      code: [
+        training?.code || '',
+        [Validators.maxLength(50)]
+      ],
       description: [
         training?.description || '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(500)]
@@ -85,8 +89,10 @@ export class TrainingEditDialogComponent implements OnInit {
    */
   protected onSubmit(): void {
     if (this.trainingForm.valid) {
+      const codeValue = this.trainingForm.value.code?.trim();
       const request: TrainingRequest = {
         name: this.trainingForm.value.name.trim(),
+        code: codeValue || undefined,
         description: this.trainingForm.value.description.trim(),
         category: 'Trainings'
       };

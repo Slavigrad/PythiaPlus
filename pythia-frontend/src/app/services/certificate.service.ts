@@ -50,7 +50,8 @@ export class CertificateService {
     return items.filter(cert =>
       cert.name.toLowerCase().includes(query) ||
       cert.description.toLowerCase().includes(query) ||
-      cert.category.toLowerCase().includes(query)
+      cert.category.toLowerCase().includes(query) ||
+      (cert.code?.toLowerCase().includes(query) ?? false)
     );
   });
 

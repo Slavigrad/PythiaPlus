@@ -35,6 +35,23 @@
         }
       </mat-form-field>
 
+      <!-- Code Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Code</mat-label>
+        <input
+          matInput
+          formControlName="code"
+          placeholder="e.g., BACKEND, FRONTEND, MOBILE"
+          maxlength="50"
+          autocomplete="off"
+          [attr.aria-label]="'Technology code'">
+        <mat-icon matPrefix class="field-icon">tag</mat-icon>
+        <mat-hint align="end">{{ technologyForm.get('code')?.value?.length || 0 }}/50</mat-hint>
+        @if (getErrorMessage('code')) {
+          <mat-error id="code-error">{{ getErrorMessage('code') }}</mat-error>
+        }
+      </mat-form-field>
+
       <!-- Description Field -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Description</mat-label>

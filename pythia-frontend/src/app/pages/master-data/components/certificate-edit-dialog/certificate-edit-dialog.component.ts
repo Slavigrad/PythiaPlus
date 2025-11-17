@@ -59,6 +59,10 @@ export class CertificateEditDialogComponent implements OnInit {
         certificate?.name || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(100)]
       ],
+      code: [
+        certificate?.code || '',
+        [Validators.maxLength(50)]
+      ],
       description: [
         certificate?.description || '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(500)]
@@ -85,8 +89,10 @@ export class CertificateEditDialogComponent implements OnInit {
    */
   protected onSubmit(): void {
     if (this.certificateForm.valid) {
+      const codeValue = this.certificateForm.value.code?.trim();
       const request: CertificateRequest = {
         name: this.certificateForm.value.name.trim(),
+        code: codeValue || undefined,
         description: this.certificateForm.value.description.trim(),
         category: 'Certificates'
       };

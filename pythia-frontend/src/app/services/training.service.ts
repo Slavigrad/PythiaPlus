@@ -50,7 +50,8 @@ export class TrainingService {
     return items.filter(training =>
       training.name.toLowerCase().includes(query) ||
       training.description.toLowerCase().includes(query) ||
-      training.category.toLowerCase().includes(query)
+      training.category.toLowerCase().includes(query) ||
+      (training.code?.toLowerCase().includes(query) ?? false)
     );
   });
 
