@@ -1,0 +1,88 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title class="dialog-title">
+      <mat-icon class="title-icon">{{ isEditMode ? 'edit' : 'add_circle' }}</mat-icon>
+      {{ dialogTitle }}
+    </h2>
+    <button
+      mat-icon-button
+      class="close-button"
+      (click)="onCancel()"
+      aria-label="Close dialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="certificateForm" (ngSubmit)="onSubmit()">
+    <mat-dialog-content class="dialog-content">
+      <!-- Name Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Certificate Name</mat-label>
+        <input
+          matInput
+          formControlName="name"
+          placeholder="e.g., AWS Solutions Architect, Google Cloud Professional"
+          maxlength="100"
+          required
+          autocomplete="off"
+          [attr.aria-label]="'Certificate name'"
+          [attr.aria-describedby]="hasError('name', 'required') || hasError('name', 'minlength') ? 'name-error' : null"
+          [attr.aria-invalid]="certificateForm.get('name')?.invalid && certificateForm.get('name')?.touched">
+        <mat-icon matPrefix class="field-icon">workspace_premium</mat-icon>
+        <mat-hint align="end">{{ certificateForm.get('name')?.value?.length || 0 }}/100</mat-hint>
+        @if (getErrorMessage('name')) {
+          <mat-error id="name-error">{{ getErrorMessage('name') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Description Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          formControlName="description"
+          placeholder="Brief description of the certificate and what it validates"
+          rows="4"
+          maxlength="500"
+          required
+          [attr.aria-label]="'Certificate description'"
+          [attr.aria-describedby]="hasError('description', 'required') || hasError('description', 'minlength') ? 'description-error' : null"
+          [attr.aria-invalid]="certificateForm.get('description')?.invalid && certificateForm.get('description')?.touched">
+        </textarea>
+        <mat-icon matPrefix class="field-icon">description</mat-icon>
+        <mat-hint align="end">{{ certificateForm.get('description')?.value?.length || 0 }}/500</mat-hint>
+        @if (getErrorMessage('description')) {
+          <mat-error id="description-error">{{ getErrorMessage('description') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Category Display (Read-only) -->
+      <div class="info-section">
+        <mat-icon class="info-icon">label</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Category</span>
+          <span class="info-value">Certificates</span>
+        </div>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+      <button
+        mat-button
+        type="button"
+        class="cancel-button"
+        (click)="onCancel()">
+        Cancel
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        class="submit-button"
+        [disabled]="certificateForm.invalid">
+        <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+        {{ submitButtonText }}
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>
