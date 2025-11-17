@@ -45,9 +45,10 @@ export class DashboardService {
     }
 
     // Fetch fresh data from API
+    // Note: Using a broad search term to get all facets
     return this.http.get<FacetsResponse>(this.apiUrl, {
       params: {
-        query: '',
+        query: 'a', // Broad search to return most/all candidates with facets
         topK: '100'
       }
     }).pipe(
