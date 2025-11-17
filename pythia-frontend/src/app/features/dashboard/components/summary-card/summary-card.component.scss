@@ -1,0 +1,117 @@
+@use '../../../../../styles/themes/pythia-theme' as theme;
+
+.summary-card {
+  height: 100%;
+  transition: var(--transition-normal);
+  cursor: default;
+  border-radius: var(--border-radius-lg);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--elevation-3);
+  }
+
+  // Color variants
+  &--primary .summary-card__icon {
+    background: linear-gradient(135deg, #d32f2f, #c62828);
+    color: white;
+  }
+
+  &--accent .summary-card__icon {
+    background: linear-gradient(135deg, #757575, #616161);
+    color: white;
+  }
+
+  &--success .summary-card__icon {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+  }
+
+  &--warning .summary-card__icon {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+  }
+
+  mat-card-content {
+    padding: var(--spacing-lg);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-md);
+  }
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--elevation-2);
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  &__trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &.trend--up {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    &.trend--down {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    &.trend--neutral {
+      background: rgba(117, 117, 117, 0.1);
+      color: #757575;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__value {
+    font-size: 36px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: 1.2;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  &__title {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  &__subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+}
