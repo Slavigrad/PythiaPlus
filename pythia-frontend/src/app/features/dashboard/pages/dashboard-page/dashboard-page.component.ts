@@ -73,8 +73,8 @@ export class DashboardPageComponent implements OnInit {
   // Computed signals for chart data
   protected readonly availabilityChartData = computed<ChartData | null>(() => {
     const data = this.facetsData();
-    if (!data || !data.facets.availability) return null;
-    return this.dashboardService.getAvailabilityChartData(data.facets.availability);
+    if (!data || !data.facets.availabilities) return null;
+    return this.dashboardService.getAvailabilityChartData(data.facets.availabilities);
   });
 
   protected readonly locationsChartData = computed<ChartData | null>(() => {

@@ -19,7 +19,7 @@ export interface FacetsResponse {
   results: any[]; // Search results (ignored for dashboard)
   totalCount: number;
   facets: {
-    availability: Facet[];
+    availabilities: Facet[]; // Note: plural form from backend API
     cities: Facet[];
     countries: Facet[];
     skills: Facet[];
