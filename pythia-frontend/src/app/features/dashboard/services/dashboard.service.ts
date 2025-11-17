@@ -62,11 +62,11 @@ export class DashboardService {
    * Calculate summary statistics from facets data
    */
   calculateSummaryStats(data: FacetsResponse): SummaryStats {
-    const availability = data.facets.availability || [];
+    const availabilities = data.facets.availabilities || [];
     const cities = data.facets.cities || [];
 
-    const availableNow = availability.find(f => f.value === 'available')?.count || 0;
-    const onNotice = availability.find(f => f.value === 'notice')?.count || 0;
+    const availableNow = availabilities.find(f => f.value === 'available')?.count || 0;
+    const onNotice = availabilities.find(f => f.value === 'notice')?.count || 0;
     const citiesCovered = cities.length;
 
     return {
