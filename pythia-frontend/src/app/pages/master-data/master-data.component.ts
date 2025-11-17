@@ -21,6 +21,9 @@ import { TrainingEditDialogComponent } from './components/training-edit-dialog/t
 import { CertificateService } from '../../services/certificate.service';
 import { Certificate } from '../../models/certificate.model';
 import { CertificateEditDialogComponent } from './components/certificate-edit-dialog/certificate-edit-dialog.component';
+import { LanguageService } from '../../services/language.service';
+import { Language } from '../../models/language.model';
+import { LanguageEditDialogComponent } from './components/language-edit-dialog/language-edit-dialog.component';
 
 /**
  * Master Data Management Component
@@ -55,6 +58,7 @@ export class MasterDataComponent implements OnInit {
   protected readonly roleService = inject(RoleService);
   protected readonly trainingService = inject(TrainingService);
   protected readonly certificateService = inject(CertificateService);
+  protected readonly languageService = inject(LanguageService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
 
@@ -70,6 +74,8 @@ export class MasterDataComponent implements OnInit {
     this.loadTrainings();
     // Load certificates on component initialization
     this.loadCertificates();
+    // Load languages on component initialization
+    this.loadLanguages();
   }
 
   /**
@@ -415,6 +421,87 @@ export class MasterDataComponent implements OnInit {
         error: (error) => {
           this.showError('Failed to delete certificate');
           console.error('Error deleting certificate:', error);
+        }
+      });
+    }
+  }
+
+  /**
+   * Load languages from API
+   */
+  protected loadLanguages(): void {
+    this.languageService.loadLanguages().subscribe({
+      error: (error) => {
+        this.showError('Failed to load languages');
+        console.error('Error loading languages:', error);
+      }
+    });
+  }
+
+  /**
+   * Open dialog to add new language
+   */
+  protected addLanguage(): void {
+    const dialogRef = this.dialog.open(LanguageEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.languageService.createLanguage(result).subscribe({
+          next: () => {
+            this.showSuccess('Language added successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to add language');
+            console.error('Error creating language:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Open dialog to edit existing language
+   */
+  protected editLanguage(language: Language): void {
+    const dialogRef = this.dialog.open(LanguageEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'edit', language }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.languageService.updateLanguage(language.id, result).subscribe({
+          next: () => {
+            this.showSuccess('Language updated successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to update language');
+            console.error('Error updating language:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Delete language with confirmation
+   */
+  protected deleteLanguage(language: Language): void {
+    const confirmed = confirm(
+      `Are you sure you want to delete "${language.name}"?\n\nThis action cannot be undone.`
+    );
+
+    if (confirmed) {
+      this.languageService.deleteLanguage(language.id).subscribe({
+        next: () => {
+          this.showSuccess('Language deleted successfully');
+        },
+        error: (error) => {
+          this.showError('Failed to delete language');
+          console.error('Error deleting language:', error);
         }
       });
     }

@@ -8,7 +8,7 @@
           Master Data Management
         </h1>
         <p class="page-subtitle">
-          Manage projects and reference data lists for technologies, roles, trainings, certificates, and languages
+          Manage projects and reference data lists for technologies, roles, trainings, certificates, languages, and skills
         </p>
       </div>
     </div>
@@ -469,13 +469,116 @@
       </div>
     </mat-tab>
 
-    <!-- Languages & Skills Tab (Placeholder) -->
-    <mat-tab label="Languages & Skills" disabled>
+    <!-- Languages Tab -->
+    <mat-tab label="Languages">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">translate</mat-icon>
-        Languages & Skills
-        <span class="item-count">0</span>
+        Languages
+        <span class="item-count">{{ languageService.total() }}</span>
       </ng-template>
+
+      <div class="tab-content">
+        <!-- Header with Add Button -->
+        <div class="tab-header">
+          <h2 class="tab-title">Languages</h2>
+          <button
+            mat-raised-button
+            color="primary"
+            class="add-button"
+            (click)="addLanguage()"
+            aria-label="Add new language">
+            <mat-icon>add</mat-icon>
+            Add Language
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        @if (languageService.loading()) {
+          <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p class="loading-text">Loading languages...</p>
+          </div>
+        }
+
+        <!-- Error State -->
+        @if (languageService.error()) {
+          <div class="error-container" role="alert">
+            <mat-icon class="error-icon">error</mat-icon>
+            <p class="error-text">{{ languageService.error() }}</p>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="loadLanguages()">
+              Retry
+            </button>
+          </div>
+        }
+
+        <!-- Language Cards Grid -->
+        @if (!languageService.loading() && !languageService.error()) {
+          <div class="cards-grid" role="list">
+            @for (language of languageService.languages(); track language.id) {
+              <mat-card class="mdm-card" role="listitem">
+                <mat-card-header>
+                  <div class="card-header-content">
+                    <div class="card-title-section">
+                      <mat-card-title class="card-title">
+                        {{ language.name }}
+                      </mat-card-title>
+                      <mat-chip class="category-chip" [highlighted]="true">
+                        <mat-icon class="chip-icon">label</mat-icon>
+                        {{ language.category }}
+                      </mat-chip>
+                    </div>
+                    <div class="card-actions">
+                      <button
+                        mat-icon-button
+                        class="action-button edit-button"
+                        (click)="editLanguage(language)"
+                        [attr.aria-label]="'Edit ' + language.name"
+                        matTooltip="Edit language"
+                        matTooltipPosition="above">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        class="action-button delete-button"
+                        (click)="deleteLanguage(language)"
+                        [attr.aria-label]="'Delete ' + language.name"
+                        matTooltip="Delete language"
+                        matTooltipPosition="above">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                  <p class="description">{{ language.description }}</p>
+                  <div class="metadata">
+                    <span class="metadata-item">
+                      <mat-icon class="metadata-icon">access_time</mat-icon>
+                      Updated {{ language.updatedAt | date: 'MMM d, y' }}
+                    </span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            } @empty {
+              <div class="empty-state">
+                <mat-icon class="empty-icon">translate</mat-icon>
+                <h3>No languages found</h3>
+                <p>Get started by adding your first language.</p>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="addLanguage()">
+                  <mat-icon>add</mat-icon>
+                  Add Language
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
     </mat-tab>
   </mat-tab-group>
 </div>
