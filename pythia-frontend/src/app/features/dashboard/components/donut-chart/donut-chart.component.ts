@@ -76,12 +76,13 @@ export class DonutChartComponent {
 
   /**
    * Handle chart click events from ng2-charts
-   * Event structure: { event?: ChartEvent, active?: ActiveElement[] }
+   * Event structure: { event?: ChartEvent, active?: object[] }
+   * Note: ng2-charts types active as object[], but they are ActiveElement at runtime
    */
-  protected onChartClick(event: { event?: ChartEvent; active?: ActiveElement[] }): void {
+  protected onChartClick(event: { event?: ChartEvent; active?: object[] }): void {
     if (!this.clickable()) return;
 
-    const activeElements = event.active;
+    const activeElements = event.active as ActiveElement[] | undefined;
     if (activeElements && activeElements.length > 0) {
       const element = activeElements[0];
       const index = element.index;
