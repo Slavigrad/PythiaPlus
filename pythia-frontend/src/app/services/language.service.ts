@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { Language, LanguageResponse, LanguageRequest } from '../models/language.
  * - DELETE: Remove language
  *
  * Uses signals for reactive state management
+ * Includes client-side search/filter functionality
  */
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,29 @@ export class LanguageService {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly total = signal(0);
+
+  // Search/filter state
+  readonly searchQuery = signal('');
+
+  /**
+   * Filtered languages based on search query
+   * Searches across: name, description, category
+   * Case-insensitive partial matching
+   */
+  readonly filteredLanguages = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const items = this.languages();
+
+    if (!query) {
+      return items;
+    }
+
+    return items.filter(lang =>
+      lang.name.toLowerCase().includes(query) ||
+      lang.description.toLowerCase().includes(query) ||
+      lang.category.toLowerCase().includes(query)
+    );
+  });
 
   /**
    * Fetch all languages from the API
@@ -119,6 +143,13 @@ export class LanguageService {
    */
   clearError(): void {
     this.error.set(null);
+  }
+
+  /**
+   * Reset search query to show all languages
+   */
+  resetSearch(): void {
+    this.searchQuery.set('');
   }
 
   /**

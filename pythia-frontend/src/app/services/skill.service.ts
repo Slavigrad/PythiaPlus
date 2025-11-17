@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { Skill, SkillResponse, SkillRequest } from '../models/skill.model';
  * - DELETE: Remove skill
  *
  * Uses signals for reactive state management
+ * Includes client-side search/filter functionality
  */
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,29 @@ export class SkillService {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly total = signal(0);
+
+  // Search/filter state
+  readonly searchQuery = signal('');
+
+  /**
+   * Filtered skills based on search query
+   * Searches across: name, description, category
+   * Case-insensitive partial matching
+   */
+  readonly filteredSkills = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const items = this.skills();
+
+    if (!query) {
+      return items;
+    }
+
+    return items.filter(skill =>
+      skill.name.toLowerCase().includes(query) ||
+      skill.description.toLowerCase().includes(query) ||
+      skill.category.toLowerCase().includes(query)
+    );
+  });
 
   /**
    * Fetch all skills from the API
@@ -119,6 +143,13 @@ export class SkillService {
    */
   clearError(): void {
     this.error.set(null);
+  }
+
+  /**
+   * Reset search query to show all skills
+   */
+  resetSearch(): void {
+    this.searchQuery.set('');
   }
 
   /**

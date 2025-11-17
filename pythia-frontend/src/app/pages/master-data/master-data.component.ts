@@ -27,6 +27,7 @@ import { LanguageEditDialogComponent } from './components/language-edit-dialog/l
 import { SkillService } from '../../services/skill.service';
 import { Skill } from '../../models/skill.model';
 import { SkillEditDialogComponent } from './components/skill-edit-dialog/skill-edit-dialog.component';
+import { MasterDataSearch } from '../../components/master-data-search/master-data-search';
 
 /**
  * Master Data Management Component
@@ -35,6 +36,7 @@ import { SkillEditDialogComponent } from './components/skill-edit-dialog/skill-e
  * Features:
  * - Tabbed interface for different data categories
  * - CRUD operations for each category
+ * - Search/filter functionality for all categories
  * - Professional, corporate design optimized for HR/Managers
  * - Material Design 3 with Pythia+ brand theme
  */
@@ -50,7 +52,8 @@ import { SkillEditDialogComponent } from './components/skill-edit-dialog/skill-e
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MasterDataSearch
   ],
   templateUrl: './master-data.component.html',
   styleUrl: './master-data.component.scss',

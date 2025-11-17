@@ -422,6 +422,28 @@
   margin: 0 0 var(--spacing-lg) 0;
 }
 
+.empty-hint {
+  font-size: 13px;
+  color: var(--color-text-hint);
+  font-style: italic;
+}
+
+// =============================================================================
+// RESULT COUNT
+// =============================================================================
+
+.result-count {
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background-color: var(--color-neutral-50, #fafafa);
+  border-radius: var(--radius-md, 8px);
+  border-left: 3px solid var(--color-primary, #d32f2f);
+  font-weight: 500;
+}
+
 // =============================================================================
 // RESPONSIVE DESIGN
 // =============================================================================

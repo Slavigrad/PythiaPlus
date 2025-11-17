@@ -44,6 +44,19 @@
           </button>
         </div>
 
+        <!-- Search Component -->
+        <app-master-data-search
+          [(searchQuery)]="technologyService.searchQuery"
+          [placeholder]="'Search technologies by name, description, or category...'"
+        />
+
+        <!-- Result Count -->
+        @if (!technologyService.loading() && !technologyService.error() && technologyService.technologies().length > 0) {
+          <div class="result-count" role="status" aria-live="polite">
+            Showing {{ technologyService.filteredTechnologies().length }} of {{ technologyService.total() }} technologies
+          </div>
+        }
+
         <!-- Loading State -->
         @if (technologyService.loading()) {
           <div class="loading-container">
@@ -69,7 +82,7 @@
         <!-- Technology Cards Grid -->
         @if (!technologyService.loading() && !technologyService.error()) {
           <div class="cards-grid" role="list">
-            @for (tech of technologyService.technologies(); track tech.id) {
+            @for (tech of technologyService.filteredTechnologies(); track tech.id) {
               <mat-card class="mdm-card" role="listitem">
                 <mat-card-header>
                   <div class="card-header-content">
@@ -116,16 +129,32 @@
               </mat-card>
             } @empty {
               <div class="empty-state">
-                <mat-icon class="empty-icon">storage</mat-icon>
-                <h3>No technologies found</h3>
-                <p>Get started by adding your first technology.</p>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="addTechnology()">
-                  <mat-icon>add</mat-icon>
-                  Add Technology
-                </button>
+                @if (technologyService.searchQuery()) {
+                  <!-- No Search Results -->
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <h3>No technologies match your search</h3>
+                  <p>No technologies found for "{{ technologyService.searchQuery() }}"</p>
+                  <p class="empty-hint">Try adjusting your search terms or clear the search to see all technologies.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="technologyService.resetSearch()">
+                    <mat-icon>clear</mat-icon>
+                    Clear Search
+                  </button>
+                } @else {
+                  <!-- No Data -->
+                  <mat-icon class="empty-icon">storage</mat-icon>
+                  <h3>No technologies found</h3>
+                  <p>Get started by adding your first technology.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="addTechnology()">
+                    <mat-icon>add</mat-icon>
+                    Add Technology
+                  </button>
+                }
               </div>
             }
           </div>
@@ -156,6 +185,19 @@
           </button>
         </div>
 
+        <!-- Search Component -->
+        <app-master-data-search
+          [(searchQuery)]="roleService.searchQuery"
+          [placeholder]="'Search roles by name, description, or category...'"
+        />
+
+        <!-- Result Count -->
+        @if (!roleService.loading() && !roleService.error() && roleService.roles().length > 0) {
+          <div class="result-count" role="status" aria-live="polite">
+            Showing {{ roleService.filteredRoles().length }} of {{ roleService.total() }} roles
+          </div>
+        }
+
         <!-- Loading State -->
         @if (roleService.loading()) {
           <div class="loading-container">
@@ -181,7 +223,7 @@
         <!-- Role Cards Grid -->
         @if (!roleService.loading() && !roleService.error()) {
           <div class="cards-grid" role="list">
-            @for (role of roleService.roles(); track role.id) {
+            @for (role of roleService.filteredRoles(); track role.id) {
               <mat-card class="mdm-card" role="listitem">
                 <mat-card-header>
                   <div class="card-header-content">
@@ -228,16 +270,32 @@
               </mat-card>
             } @empty {
               <div class="empty-state">
-                <mat-icon class="empty-icon">work</mat-icon>
-                <h3>No roles found</h3>
-                <p>Get started by adding your first role.</p>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="addRole()">
-                  <mat-icon>add</mat-icon>
-                  Add Role
-                </button>
+                @if (roleService.searchQuery()) {
+                  <!-- No Search Results -->
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <h3>No roles match your search</h3>
+                  <p>No roles found for "{{ roleService.searchQuery() }}"</p>
+                  <p class="empty-hint">Try adjusting your search terms or clear the search to see all roles.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="roleService.resetSearch()">
+                    <mat-icon>clear</mat-icon>
+                    Clear Search
+                  </button>
+                } @else {
+                  <!-- No Data -->
+                  <mat-icon class="empty-icon">work</mat-icon>
+                  <h3>No roles found</h3>
+                  <p>Get started by adding your first role.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="addRole()">
+                    <mat-icon>add</mat-icon>
+                    Add Role
+                  </button>
+                }
               </div>
             }
           </div>
@@ -268,6 +326,19 @@
           </button>
         </div>
 
+        <!-- Search Component -->
+        <app-master-data-search
+          [(searchQuery)]="trainingService.searchQuery"
+          [placeholder]="'Search trainings by name, description, or category...'"
+        />
+
+        <!-- Result Count -->
+        @if (!trainingService.loading() && !trainingService.error() && trainingService.trainings().length > 0) {
+          <div class="result-count" role="status" aria-live="polite">
+            Showing {{ trainingService.filteredTrainings().length }} of {{ trainingService.total() }} trainings
+          </div>
+        }
+
         <!-- Loading State -->
         @if (trainingService.loading()) {
           <div class="loading-container">
@@ -293,7 +364,7 @@
         <!-- Training Cards Grid -->
         @if (!trainingService.loading() && !trainingService.error()) {
           <div class="cards-grid" role="list">
-            @for (training of trainingService.trainings(); track training.id) {
+            @for (training of trainingService.filteredTrainings(); track training.id) {
               <mat-card class="mdm-card" role="listitem">
                 <mat-card-header>
                   <div class="card-header-content">
@@ -340,16 +411,32 @@
               </mat-card>
             } @empty {
               <div class="empty-state">
-                <mat-icon class="empty-icon">school</mat-icon>
-                <h3>No trainings found</h3>
-                <p>Get started by adding your first training.</p>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="addTraining()">
-                  <mat-icon>add</mat-icon>
-                  Add Training
-                </button>
+                @if (trainingService.searchQuery()) {
+                  <!-- No Search Results -->
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <h3>No trainings match your search</h3>
+                  <p>No trainings found for "{{ trainingService.searchQuery() }}"</p>
+                  <p class="empty-hint">Try adjusting your search terms or clear the search to see all trainings.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="trainingService.resetSearch()">
+                    <mat-icon>clear</mat-icon>
+                    Clear Search
+                  </button>
+                } @else {
+                  <!-- No Data -->
+                  <mat-icon class="empty-icon">school</mat-icon>
+                  <h3>No trainings found</h3>
+                  <p>Get started by adding your first training.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="addTraining()">
+                    <mat-icon>add</mat-icon>
+                    Add Training
+                  </button>
+                }
               </div>
             }
           </div>
@@ -380,6 +467,19 @@
           </button>
         </div>
 
+        <!-- Search Component -->
+        <app-master-data-search
+          [(searchQuery)]="certificateService.searchQuery"
+          [placeholder]="'Search certificates by name, description, or category...'"
+        />
+
+        <!-- Result Count -->
+        @if (!certificateService.loading() && !certificateService.error() && certificateService.certificates().length > 0) {
+          <div class="result-count" role="status" aria-live="polite">
+            Showing {{ certificateService.filteredCertificates().length }} of {{ certificateService.total() }} certificates
+          </div>
+        }
+
         <!-- Loading State -->
         @if (certificateService.loading()) {
           <div class="loading-container">
@@ -405,7 +505,7 @@
         <!-- Certificate Cards Grid -->
         @if (!certificateService.loading() && !certificateService.error()) {
           <div class="cards-grid" role="list">
-            @for (certificate of certificateService.certificates(); track certificate.id) {
+            @for (certificate of certificateService.filteredCertificates(); track certificate.id) {
               <mat-card class="mdm-card" role="listitem">
                 <mat-card-header>
                   <div class="card-header-content">
@@ -452,16 +552,32 @@
               </mat-card>
             } @empty {
               <div class="empty-state">
-                <mat-icon class="empty-icon">workspace_premium</mat-icon>
-                <h3>No certificates found</h3>
-                <p>Get started by adding your first certificate.</p>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="addCertificate()">
-                  <mat-icon>add</mat-icon>
-                  Add Certificate
-                </button>
+                @if (certificateService.searchQuery()) {
+                  <!-- No Search Results -->
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <h3>No certificates match your search</h3>
+                  <p>No certificates found for "{{ certificateService.searchQuery() }}"</p>
+                  <p class="empty-hint">Try adjusting your search terms or clear the search to see all certificates.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="certificateService.resetSearch()">
+                    <mat-icon>clear</mat-icon>
+                    Clear Search
+                  </button>
+                } @else {
+                  <!-- No Data -->
+                  <mat-icon class="empty-icon">workspace_premium</mat-icon>
+                  <h3>No certificates found</h3>
+                  <p>Get started by adding your first certificate.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="addCertificate()">
+                    <mat-icon>add</mat-icon>
+                    Add Certificate
+                  </button>
+                }
               </div>
             }
           </div>
@@ -492,6 +608,19 @@
           </button>
         </div>
 
+        <!-- Search Component -->
+        <app-master-data-search
+          [(searchQuery)]="languageService.searchQuery"
+          [placeholder]="'Search languages by name, description, or category...'"
+        />
+
+        <!-- Result Count -->
+        @if (!languageService.loading() && !languageService.error() && languageService.languages().length > 0) {
+          <div class="result-count" role="status" aria-live="polite">
+            Showing {{ languageService.filteredLanguages().length }} of {{ languageService.total() }} languages
+          </div>
+        }
+
         <!-- Loading State -->
         @if (languageService.loading()) {
           <div class="loading-container">
@@ -517,7 +646,7 @@
         <!-- Language Cards Grid -->
         @if (!languageService.loading() && !languageService.error()) {
           <div class="cards-grid" role="list">
-            @for (language of languageService.languages(); track language.id) {
+            @for (language of languageService.filteredLanguages(); track language.id) {
               <mat-card class="mdm-card" role="listitem">
                 <mat-card-header>
                   <div class="card-header-content">
@@ -564,16 +693,32 @@
               </mat-card>
             } @empty {
               <div class="empty-state">
-                <mat-icon class="empty-icon">translate</mat-icon>
-                <h3>No languages found</h3>
-                <p>Get started by adding your first language.</p>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="addLanguage()">
-                  <mat-icon>add</mat-icon>
-                  Add Language
-                </button>
+                @if (languageService.searchQuery()) {
+                  <!-- No Search Results -->
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <h3>No languages match your search</h3>
+                  <p>No languages found for "{{ languageService.searchQuery() }}"</p>
+                  <p class="empty-hint">Try adjusting your search terms or clear the search to see all languages.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="languageService.resetSearch()">
+                    <mat-icon>clear</mat-icon>
+                    Clear Search
+                  </button>
+                } @else {
+                  <!-- No Data -->
+                  <mat-icon class="empty-icon">translate</mat-icon>
+                  <h3>No languages found</h3>
+                  <p>Get started by adding your first language.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="addLanguage()">
+                    <mat-icon>add</mat-icon>
+                    Add Language
+                  </button>
+                }
               </div>
             }
           </div>
@@ -604,6 +749,19 @@
           </button>
         </div>
 
+        <!-- Search Component -->
+        <app-master-data-search
+          [(searchQuery)]="skillService.searchQuery"
+          [placeholder]="'Search skills by name, description, or category...'"
+        />
+
+        <!-- Result Count -->
+        @if (!skillService.loading() && !skillService.error() && skillService.skills().length > 0) {
+          <div class="result-count" role="status" aria-live="polite">
+            Showing {{ skillService.filteredSkills().length }} of {{ skillService.total() }} skills
+          </div>
+        }
+
         <!-- Loading State -->
         @if (skillService.loading()) {
           <div class="loading-container">
@@ -629,7 +787,7 @@
         <!-- Skill Cards Grid -->
         @if (!skillService.loading() && !skillService.error()) {
           <div class="cards-grid" role="list">
-            @for (skill of skillService.skills(); track skill.id) {
+            @for (skill of skillService.filteredSkills(); track skill.id) {
               <mat-card class="mdm-card" role="listitem">
                 <mat-card-header>
                   <div class="card-header-content">
@@ -676,16 +834,32 @@
               </mat-card>
             } @empty {
               <div class="empty-state">
-                <mat-icon class="empty-icon">star</mat-icon>
-                <h3>No skills found</h3>
-                <p>Get started by adding your first skill.</p>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="addSkill()">
-                  <mat-icon>add</mat-icon>
-                  Add Skill
-                </button>
+                @if (skillService.searchQuery()) {
+                  <!-- No Search Results -->
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <h3>No skills match your search</h3>
+                  <p>No skills found for "{{ skillService.searchQuery() }}"</p>
+                  <p class="empty-hint">Try adjusting your search terms or clear the search to see all skills.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="skillService.resetSearch()">
+                    <mat-icon>clear</mat-icon>
+                    Clear Search
+                  </button>
+                } @else {
+                  <!-- No Data -->
+                  <mat-icon class="empty-icon">star</mat-icon>
+                  <h3>No skills found</h3>
+                  <p>Get started by adding your first skill.</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="addSkill()">
+                    <mat-icon>add</mat-icon>
+                    Add Skill
+                  </button>
+                }
               </div>
             }
           </div>

@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { Certificate, CertificateResponse, CertificateRequest } from '../models/
  * - DELETE: Remove certificate
  *
  * Uses signals for reactive state management
+ * Includes client-side search/filter functionality
  */
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,29 @@ export class CertificateService {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly total = signal(0);
+
+  // Search/filter state
+  readonly searchQuery = signal('');
+
+  /**
+   * Filtered certificates based on search query
+   * Searches across: name, description, category
+   * Case-insensitive partial matching
+   */
+  readonly filteredCertificates = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const items = this.certificates();
+
+    if (!query) {
+      return items;
+    }
+
+    return items.filter(cert =>
+      cert.name.toLowerCase().includes(query) ||
+      cert.description.toLowerCase().includes(query) ||
+      cert.category.toLowerCase().includes(query)
+    );
+  });
 
   /**
    * Fetch all certificates from the API
@@ -119,6 +143,13 @@ export class CertificateService {
    */
   clearError(): void {
     this.error.set(null);
+  }
+
+  /**
+   * Reset search query to show all certificates
+   */
+  resetSearch(): void {
+    this.searchQuery.set('');
   }
 
   /**

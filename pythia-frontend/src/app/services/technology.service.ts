@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { Technology, TechnologyResponse, TechnologyRequest } from '../models/tec
  * - DELETE: Remove technology
  *
  * Uses signals for reactive state management
+ * Includes client-side search/filter functionality
  */
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,29 @@ export class TechnologyService {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly total = signal(0);
+
+  // Search/filter state
+  readonly searchQuery = signal('');
+
+  /**
+   * Filtered technologies based on search query
+   * Searches across: name, description, category
+   * Case-insensitive partial matching
+   */
+  readonly filteredTechnologies = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const items = this.technologies();
+
+    if (!query) {
+      return items;
+    }
+
+    return items.filter(tech =>
+      tech.name.toLowerCase().includes(query) ||
+      tech.description.toLowerCase().includes(query) ||
+      tech.category.toLowerCase().includes(query)
+    );
+  });
 
   /**
    * Fetch all technologies from the API
@@ -119,6 +143,13 @@ export class TechnologyService {
    */
   clearError(): void {
     this.error.set(null);
+  }
+
+  /**
+   * Reset search query to show all technologies
+   */
+  resetSearch(): void {
+    this.searchQuery.set('');
   }
 
   /**
