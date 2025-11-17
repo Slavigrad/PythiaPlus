@@ -15,11 +15,14 @@ import { TechnologyEditDialogComponent } from './components/technology-edit-dial
 import { RoleService } from '../../services/role.service';
 import { Role } from '../../models/role.model';
 import { RoleEditDialogComponent } from './components/role-edit-dialog/role-edit-dialog.component';
+import { TrainingService } from '../../services/training.service';
+import { Training } from '../../models/training.model';
+import { TrainingEditDialogComponent } from './components/training-edit-dialog/training-edit-dialog.component';
 
 /**
  * Master Data Management Component
  *
- * Purpose: Central hub for managing master data (technologies, roles, skills, etc.)
+ * Purpose: Central hub for managing master data (technologies, roles, trainings, etc.)
  * Features:
  * - Tabbed interface for different data categories
  * - CRUD operations for each category
@@ -47,6 +50,7 @@ import { RoleEditDialogComponent } from './components/role-edit-dialog/role-edit
 export class MasterDataComponent implements OnInit {
   protected readonly technologyService = inject(TechnologyService);
   protected readonly roleService = inject(RoleService);
+  protected readonly trainingService = inject(TrainingService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
 
@@ -58,6 +62,8 @@ export class MasterDataComponent implements OnInit {
     this.loadTechnologies();
     // Load roles on component initialization
     this.loadRoles();
+    // Load trainings on component initialization
+    this.loadTrainings();
   }
 
   /**
@@ -241,6 +247,87 @@ export class MasterDataComponent implements OnInit {
         error: (error) => {
           this.showError('Failed to delete role');
           console.error('Error deleting role:', error);
+        }
+      });
+    }
+  }
+
+  /**
+   * Load trainings from API
+   */
+  protected loadTrainings(): void {
+    this.trainingService.loadTrainings().subscribe({
+      error: (error) => {
+        this.showError('Failed to load trainings');
+        console.error('Error loading trainings:', error);
+      }
+    });
+  }
+
+  /**
+   * Open dialog to add new training
+   */
+  protected addTraining(): void {
+    const dialogRef = this.dialog.open(TrainingEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.trainingService.createTraining(result).subscribe({
+          next: () => {
+            this.showSuccess('Training added successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to add training');
+            console.error('Error creating training:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Open dialog to edit existing training
+   */
+  protected editTraining(training: Training): void {
+    const dialogRef = this.dialog.open(TrainingEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'edit', training }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.trainingService.updateTraining(training.id, result).subscribe({
+          next: () => {
+            this.showSuccess('Training updated successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to update training');
+            console.error('Error updating training:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Delete training with confirmation
+   */
+  protected deleteTraining(training: Training): void {
+    const confirmed = confirm(
+      `Are you sure you want to delete "${training.name}"?\n\nThis action cannot be undone.`
+    );
+
+    if (confirmed) {
+      this.trainingService.deleteTraining(training.id).subscribe({
+        next: () => {
+          this.showSuccess('Training deleted successfully');
+        },
+        error: (error) => {
+          this.showError('Failed to delete training');
+          console.error('Error deleting training:', error);
         }
       });
     }

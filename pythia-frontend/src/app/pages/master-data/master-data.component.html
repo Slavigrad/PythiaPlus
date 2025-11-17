@@ -8,7 +8,7 @@
           Master Data Management
         </h1>
         <p class="page-subtitle">
-          Manage projects and reference data lists for technologies, roles, training, certificates, and languages
+          Manage projects and reference data lists for technologies, roles, trainings, certificates, and languages
         </p>
       </div>
     </div>
@@ -245,13 +245,116 @@
       </div>
     </mat-tab>
 
-    <!-- Training Tab (Placeholder) -->
-    <mat-tab label="Training" disabled>
+    <!-- Trainings Tab -->
+    <mat-tab label="Trainings">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">school</mat-icon>
-        Training
-        <span class="item-count">0</span>
+        Trainings
+        <span class="item-count">{{ trainingService.total() }}</span>
       </ng-template>
+
+      <div class="tab-content">
+        <!-- Header with Add Button -->
+        <div class="tab-header">
+          <h2 class="tab-title">Trainings</h2>
+          <button
+            mat-raised-button
+            color="primary"
+            class="add-button"
+            (click)="addTraining()"
+            aria-label="Add new training">
+            <mat-icon>add</mat-icon>
+            Add Training
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        @if (trainingService.loading()) {
+          <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p class="loading-text">Loading trainings...</p>
+          </div>
+        }
+
+        <!-- Error State -->
+        @if (trainingService.error()) {
+          <div class="error-container" role="alert">
+            <mat-icon class="error-icon">error</mat-icon>
+            <p class="error-text">{{ trainingService.error() }}</p>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="loadTrainings()">
+              Retry
+            </button>
+          </div>
+        }
+
+        <!-- Training Cards Grid -->
+        @if (!trainingService.loading() && !trainingService.error()) {
+          <div class="cards-grid" role="list">
+            @for (training of trainingService.trainings(); track training.id) {
+              <mat-card class="mdm-card" role="listitem">
+                <mat-card-header>
+                  <div class="card-header-content">
+                    <div class="card-title-section">
+                      <mat-card-title class="card-title">
+                        {{ training.name }}
+                      </mat-card-title>
+                      <mat-chip class="category-chip" [highlighted]="true">
+                        <mat-icon class="chip-icon">label</mat-icon>
+                        {{ training.category }}
+                      </mat-chip>
+                    </div>
+                    <div class="card-actions">
+                      <button
+                        mat-icon-button
+                        class="action-button edit-button"
+                        (click)="editTraining(training)"
+                        [attr.aria-label]="'Edit ' + training.name"
+                        matTooltip="Edit training"
+                        matTooltipPosition="above">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        class="action-button delete-button"
+                        (click)="deleteTraining(training)"
+                        [attr.aria-label]="'Delete ' + training.name"
+                        matTooltip="Delete training"
+                        matTooltipPosition="above">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                  <p class="description">{{ training.description }}</p>
+                  <div class="metadata">
+                    <span class="metadata-item">
+                      <mat-icon class="metadata-icon">access_time</mat-icon>
+                      Updated {{ training.updatedAt | date: 'MMM d, y' }}
+                    </span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            } @empty {
+              <div class="empty-state">
+                <mat-icon class="empty-icon">school</mat-icon>
+                <h3>No trainings found</h3>
+                <p>Get started by adding your first training.</p>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="addTraining()">
+                  <mat-icon>add</mat-icon>
+                  Add Training
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
     </mat-tab>
 
     <!-- Certificates Tab (Placeholder) -->
