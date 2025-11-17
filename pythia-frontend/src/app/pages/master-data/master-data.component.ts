@@ -18,6 +18,9 @@ import { RoleEditDialogComponent } from './components/role-edit-dialog/role-edit
 import { TrainingService } from '../../services/training.service';
 import { Training } from '../../models/training.model';
 import { TrainingEditDialogComponent } from './components/training-edit-dialog/training-edit-dialog.component';
+import { CertificateService } from '../../services/certificate.service';
+import { Certificate } from '../../models/certificate.model';
+import { CertificateEditDialogComponent } from './components/certificate-edit-dialog/certificate-edit-dialog.component';
 
 /**
  * Master Data Management Component
@@ -51,6 +54,7 @@ export class MasterDataComponent implements OnInit {
   protected readonly technologyService = inject(TechnologyService);
   protected readonly roleService = inject(RoleService);
   protected readonly trainingService = inject(TrainingService);
+  protected readonly certificateService = inject(CertificateService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
 
@@ -64,6 +68,8 @@ export class MasterDataComponent implements OnInit {
     this.loadRoles();
     // Load trainings on component initialization
     this.loadTrainings();
+    // Load certificates on component initialization
+    this.loadCertificates();
   }
 
   /**
@@ -328,6 +334,87 @@ export class MasterDataComponent implements OnInit {
         error: (error) => {
           this.showError('Failed to delete training');
           console.error('Error deleting training:', error);
+        }
+      });
+    }
+  }
+
+  /**
+   * Load certificates from API
+   */
+  protected loadCertificates(): void {
+    this.certificateService.loadCertificates().subscribe({
+      error: (error) => {
+        this.showError('Failed to load certificates');
+        console.error('Error loading certificates:', error);
+      }
+    });
+  }
+
+  /**
+   * Open dialog to add new certificate
+   */
+  protected addCertificate(): void {
+    const dialogRef = this.dialog.open(CertificateEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.certificateService.createCertificate(result).subscribe({
+          next: () => {
+            this.showSuccess('Certificate added successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to add certificate');
+            console.error('Error creating certificate:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Open dialog to edit existing certificate
+   */
+  protected editCertificate(certificate: Certificate): void {
+    const dialogRef = this.dialog.open(CertificateEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'edit', certificate }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.certificateService.updateCertificate(certificate.id, result).subscribe({
+          next: () => {
+            this.showSuccess('Certificate updated successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to update certificate');
+            console.error('Error updating certificate:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Delete certificate with confirmation
+   */
+  protected deleteCertificate(certificate: Certificate): void {
+    const confirmed = confirm(
+      `Are you sure you want to delete "${certificate.name}"?\n\nThis action cannot be undone.`
+    );
+
+    if (confirmed) {
+      this.certificateService.deleteCertificate(certificate.id).subscribe({
+        next: () => {
+          this.showSuccess('Certificate deleted successfully');
+        },
+        error: (error) => {
+          this.showError('Failed to delete certificate');
+          console.error('Error deleting certificate:', error);
         }
       });
     }
