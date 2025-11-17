@@ -88,17 +88,15 @@ export class HorizontalBarChartComponent {
   protected readonly chartType = 'bar' as const;
 
   /**
-   * Handle chart click events
+   * Handle chart click events from ng2-charts
+   * Event structure: { event?: ChartEvent, active?: ActiveElement[] }
    */
-  protected onChartClick(event: ChartEvent): void {
+  protected onChartClick(event: { event?: ChartEvent; active?: ActiveElement[] }): void {
     if (!this.clickable()) return;
 
-    const chart = event.chart;
-    if (!chart) return;
-
-    const activeElements = chart.getActiveElements();
-    if (activeElements.length > 0) {
-      const element = activeElements[0] as ActiveElement;
+    const activeElements = event.active;
+    if (activeElements && activeElements.length > 0) {
+      const element = activeElements[0];
       const index = element.index;
 
       const labels = this.data().labels;
