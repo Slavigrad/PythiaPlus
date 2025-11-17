@@ -12,6 +12,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TechnologyService } from '../../services/technology.service';
 import { Technology } from '../../models/technology.model';
 import { TechnologyEditDialogComponent } from './components/technology-edit-dialog/technology-edit-dialog.component';
+import { RoleService } from '../../services/role.service';
+import { Role } from '../../models/role.model';
+import { RoleEditDialogComponent } from './components/role-edit-dialog/role-edit-dialog.component';
 
 /**
  * Master Data Management Component
@@ -43,6 +46,7 @@ import { TechnologyEditDialogComponent } from './components/technology-edit-dial
 })
 export class MasterDataComponent implements OnInit {
   protected readonly technologyService = inject(TechnologyService);
+  protected readonly roleService = inject(RoleService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
 
@@ -52,6 +56,8 @@ export class MasterDataComponent implements OnInit {
   ngOnInit(): void {
     // Load technologies on component initialization
     this.loadTechnologies();
+    // Load roles on component initialization
+    this.loadRoles();
   }
 
   /**
@@ -157,5 +163,86 @@ export class MasterDataComponent implements OnInit {
       verticalPosition: 'top',
       panelClass: ['error-snackbar']
     });
+  }
+
+  /**
+   * Load roles from API
+   */
+  protected loadRoles(): void {
+    this.roleService.loadRoles().subscribe({
+      error: (error) => {
+        this.showError('Failed to load roles');
+        console.error('Error loading roles:', error);
+      }
+    });
+  }
+
+  /**
+   * Open dialog to add new role
+   */
+  protected addRole(): void {
+    const dialogRef = this.dialog.open(RoleEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.roleService.createRole(result).subscribe({
+          next: () => {
+            this.showSuccess('Role added successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to add role');
+            console.error('Error creating role:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Open dialog to edit existing role
+   */
+  protected editRole(role: Role): void {
+    const dialogRef = this.dialog.open(RoleEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'edit', role }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.roleService.updateRole(role.id, result).subscribe({
+          next: () => {
+            this.showSuccess('Role updated successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to update role');
+            console.error('Error updating role:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Delete role with confirmation
+   */
+  protected deleteRole(role: Role): void {
+    const confirmed = confirm(
+      `Are you sure you want to delete "${role.name}"?\n\nThis action cannot be undone.`
+    );
+
+    if (confirmed) {
+      this.roleService.deleteRole(role.id).subscribe({
+        next: () => {
+          this.showSuccess('Role deleted successfully');
+        },
+        error: (error) => {
+          this.showError('Failed to delete role');
+          console.error('Error deleting role:', error);
+        }
+      });
+    }
   }
 }

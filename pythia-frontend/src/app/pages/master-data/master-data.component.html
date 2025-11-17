@@ -133,13 +133,116 @@
       </div>
     </mat-tab>
 
-    <!-- Roles Tab (Placeholder) -->
-    <mat-tab label="Roles" disabled>
+    <!-- Roles Tab -->
+    <mat-tab label="Roles">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">work</mat-icon>
         Roles
-        <span class="item-count">0</span>
+        <span class="item-count">{{ roleService.total() }}</span>
       </ng-template>
+
+      <div class="tab-content">
+        <!-- Header with Add Button -->
+        <div class="tab-header">
+          <h2 class="tab-title">Roles</h2>
+          <button
+            mat-raised-button
+            color="primary"
+            class="add-button"
+            (click)="addRole()"
+            aria-label="Add new role">
+            <mat-icon>add</mat-icon>
+            Add Role
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        @if (roleService.loading()) {
+          <div class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p class="loading-text">Loading roles...</p>
+          </div>
+        }
+
+        <!-- Error State -->
+        @if (roleService.error()) {
+          <div class="error-container" role="alert">
+            <mat-icon class="error-icon">error</mat-icon>
+            <p class="error-text">{{ roleService.error() }}</p>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="loadRoles()">
+              Retry
+            </button>
+          </div>
+        }
+
+        <!-- Role Cards Grid -->
+        @if (!roleService.loading() && !roleService.error()) {
+          <div class="cards-grid" role="list">
+            @for (role of roleService.roles(); track role.id) {
+              <mat-card class="mdm-card" role="listitem">
+                <mat-card-header>
+                  <div class="card-header-content">
+                    <div class="card-title-section">
+                      <mat-card-title class="card-title">
+                        {{ role.name }}
+                      </mat-card-title>
+                      <mat-chip class="category-chip" [highlighted]="true">
+                        <mat-icon class="chip-icon">label</mat-icon>
+                        {{ role.category }}
+                      </mat-chip>
+                    </div>
+                    <div class="card-actions">
+                      <button
+                        mat-icon-button
+                        class="action-button edit-button"
+                        (click)="editRole(role)"
+                        [attr.aria-label]="'Edit ' + role.name"
+                        matTooltip="Edit role"
+                        matTooltipPosition="above">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        class="action-button delete-button"
+                        (click)="deleteRole(role)"
+                        [attr.aria-label]="'Delete ' + role.name"
+                        matTooltip="Delete role"
+                        matTooltipPosition="above">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                  <p class="description">{{ role.description }}</p>
+                  <div class="metadata">
+                    <span class="metadata-item">
+                      <mat-icon class="metadata-icon">access_time</mat-icon>
+                      Updated {{ role.updatedAt | date: 'MMM d, y' }}
+                    </span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            } @empty {
+              <div class="empty-state">
+                <mat-icon class="empty-icon">work</mat-icon>
+                <h3>No roles found</h3>
+                <p>Get started by adding your first role.</p>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="addRole()">
+                  <mat-icon>add</mat-icon>
+                  Add Role
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
     </mat-tab>
 
     <!-- Training Tab (Placeholder) -->
