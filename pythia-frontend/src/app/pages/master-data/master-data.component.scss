@@ -1,0 +1,486 @@
+/**
+ * Master Data Management Page Styles
+ *
+ * Design Philosophy:
+ * - Professional, corporate aesthetic optimized for HR/Managers
+ * - Pythia+ brand colors (Swiss red, gray palette)
+ * - Clean, spacious layout with excellent readability
+ * - WCAG AA compliant color contrasts
+ * - Smooth animations and hover states
+ */
+
+.master-data-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  background-color: var(--color-background-secondary);
+  min-height: 100vh;
+}
+
+// =============================================================================
+// PAGE HEADER
+// =============================================================================
+
+.page-header {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--color-border-light);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+
+  .title-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+    color: var(--color-primary);
+  }
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 800px;
+}
+
+// =============================================================================
+// MATERIAL TABS
+// =============================================================================
+
+.mdm-tabs {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--elevation-1);
+  overflow: hidden;
+
+  ::ng-deep {
+    // Tab header styling
+    .mat-mdc-tab-header {
+      background-color: var(--color-background);
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    // Tab labels
+    .mat-mdc-tab {
+      min-width: 140px;
+      height: 64px;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      transition: all var(--transition-normal);
+
+      &.mat-mdc-tab-disabled {
+        opacity: 0.4;
+      }
+
+      &:hover:not(.mat-mdc-tab-disabled) {
+        background-color: var(--color-background-hover);
+      }
+    }
+
+    // Active tab
+    .mat-mdc-tab.mdc-tab--active {
+      color: var(--color-primary);
+    }
+
+    // Tab indicator (underline)
+    .mat-mdc-tab-indicator {
+      background-color: var(--color-primary);
+      height: 3px;
+    }
+
+    // Tab body
+    .mat-mdc-tab-body-wrapper {
+      background-color: var(--color-surface);
+    }
+  }
+}
+
+.tab-icon {
+  margin-right: var(--spacing-xs);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.item-count {
+  margin-left: var(--spacing-xs);
+  padding: 2px 8px;
+  background-color: var(--color-primary-light);
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+// =============================================================================
+// TAB CONTENT
+// =============================================================================
+
+.tab-content {
+  padding: var(--spacing-xl);
+  min-height: 400px;
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.tab-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.add-button {
+  font-weight: 600;
+  padding: 0 24px;
+  height: 44px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--elevation-2);
+  transition: all var(--transition-normal);
+
+  &:hover {
+    box-shadow: var(--elevation-3);
+    transform: translateY(-2px);
+  }
+
+  mat-icon {
+    margin-right: var(--spacing-xs);
+  }
+}
+
+// =============================================================================
+// CARDS GRID
+// =============================================================================
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--spacing-lg);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================================================
+// MDM CARD (TECHNOLOGY CARD)
+// =============================================================================
+
+.mdm-card {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-lg);
+  transition: all var(--transition-normal);
+  background-color: var(--color-surface);
+  box-shadow: var(--elevation-1);
+
+  &:hover {
+    box-shadow: var(--elevation-2);
+    transform: translateY(-4px);
+    border-color: var(--color-primary-light);
+  }
+
+  ::ng-deep {
+    .mat-mdc-card-header {
+      padding: var(--spacing-md) var(--spacing-md) 0;
+    }
+  }
+}
+
+.card-header-content {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.card-title-section {
+  flex: 1;
+  min-width: 0; // Allows text truncation
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.4;
+}
+
+.category-chip {
+  font-size: 12px;
+  font-weight: 600;
+  height: 24px;
+  background-color: var(--color-primary);
+  color: white;
+
+  .chip-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+  }
+
+  ::ng-deep {
+    .mat-mdc-chip-action-label {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.card-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.action-button {
+  width: 36px;
+  height: 36px;
+  transition: all var(--transition-fast);
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &.edit-button {
+    color: var(--color-info);
+
+    &:hover {
+      background-color: rgba(33, 150, 243, 0.1);
+      transform: scale(1.1);
+    }
+  }
+
+  &.delete-button {
+    color: var(--color-error);
+
+    &:hover {
+      background-color: rgba(244, 67, 54, 0.1);
+      transform: scale(1.1);
+    }
+  }
+}
+
+.card-content {
+  padding: var(--spacing-md);
+
+  ::ng-deep {
+    &.mat-mdc-card-content:first-child {
+      padding-top: var(--spacing-md);
+    }
+  }
+}
+
+.description {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 var(--spacing-md) 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metadata {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+
+  .metadata-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-hint);
+  }
+}
+
+// =============================================================================
+// LOADING STATE
+// =============================================================================
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  gap: var(--spacing-lg);
+}
+
+.loading-text {
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  margin: 0;
+}
+
+// =============================================================================
+// ERROR STATE
+// =============================================================================
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  gap: var(--spacing-md);
+  background-color: rgba(244, 67, 54, 0.05);
+  border: 2px dashed var(--color-error);
+  border-radius: var(--border-radius-lg);
+}
+
+.error-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: var(--color-error);
+}
+
+.error-text {
+  color: var(--color-error);
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+}
+
+// =============================================================================
+// EMPTY STATE
+// =============================================================================
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  gap: var(--spacing-md);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: var(--color-text-hint);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+// =============================================================================
+// RESPONSIVE DESIGN
+// =============================================================================
+
+@media (max-width: 768px) {
+  .master-data-page {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .page-title {
+    font-size: 24px;
+
+    .title-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .tab-content {
+    padding: var(--spacing-lg);
+  }
+
+  .tab-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .add-button {
+    width: 100%;
+  }
+}
+
+// =============================================================================
+// ACCESSIBILITY
+// =============================================================================
+
+// Focus styles for keyboard navigation
+button:focus-visible,
+.action-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+// Screen reader only text
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
