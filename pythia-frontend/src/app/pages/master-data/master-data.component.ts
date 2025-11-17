@@ -24,6 +24,9 @@ import { CertificateEditDialogComponent } from './components/certificate-edit-di
 import { LanguageService } from '../../services/language.service';
 import { Language } from '../../models/language.model';
 import { LanguageEditDialogComponent } from './components/language-edit-dialog/language-edit-dialog.component';
+import { SkillService } from '../../services/skill.service';
+import { Skill } from '../../models/skill.model';
+import { SkillEditDialogComponent } from './components/skill-edit-dialog/skill-edit-dialog.component';
 
 /**
  * Master Data Management Component
@@ -59,6 +62,7 @@ export class MasterDataComponent implements OnInit {
   protected readonly trainingService = inject(TrainingService);
   protected readonly certificateService = inject(CertificateService);
   protected readonly languageService = inject(LanguageService);
+  protected readonly skillService = inject(SkillService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
 
@@ -76,6 +80,8 @@ export class MasterDataComponent implements OnInit {
     this.loadCertificates();
     // Load languages on component initialization
     this.loadLanguages();
+    // Load skills on component initialization
+    this.loadSkills();
   }
 
   /**
@@ -502,6 +508,87 @@ export class MasterDataComponent implements OnInit {
         error: (error) => {
           this.showError('Failed to delete language');
           console.error('Error deleting language:', error);
+        }
+      });
+    }
+  }
+
+  /**
+   * Load skills from API
+   */
+  protected loadSkills(): void {
+    this.skillService.loadSkills().subscribe({
+      error: (error) => {
+        this.showError('Failed to load skills');
+        console.error('Error loading skills:', error);
+      }
+    });
+  }
+
+  /**
+   * Open dialog to add new skill
+   */
+  protected addSkill(): void {
+    const dialogRef = this.dialog.open(SkillEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'create' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.skillService.createSkill(result).subscribe({
+          next: () => {
+            this.showSuccess('Skill added successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to add skill');
+            console.error('Error creating skill:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Open dialog to edit existing skill
+   */
+  protected editSkill(skill: Skill): void {
+    const dialogRef = this.dialog.open(SkillEditDialogComponent, {
+      width: '600px',
+      data: { mode: 'edit', skill }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.skillService.updateSkill(skill.id, result).subscribe({
+          next: () => {
+            this.showSuccess('Skill updated successfully');
+          },
+          error: (error) => {
+            this.showError('Failed to update skill');
+            console.error('Error updating skill:', error);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Delete skill with confirmation
+   */
+  protected deleteSkill(skill: Skill): void {
+    const confirmed = confirm(
+      `Are you sure you want to delete "${skill.name}"?\n\nThis action cannot be undone.`
+    );
+
+    if (confirmed) {
+      this.skillService.deleteSkill(skill.id).subscribe({
+        next: () => {
+          this.showSuccess('Skill deleted successfully');
+        },
+        error: (error) => {
+          this.showError('Failed to delete skill');
+          console.error('Error deleting skill:', error);
         }
       });
     }
