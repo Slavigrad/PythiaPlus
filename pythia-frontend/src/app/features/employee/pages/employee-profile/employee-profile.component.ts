@@ -430,4 +430,53 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
     return dialogRef.afterClosed().toPromise().then(result => result === true);
   }
+
+  /**
+   * Get initials from full name
+   */
+  protected getInitials(fullName: string): string {
+    return fullName
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  /**
+   * Get a consistent color for initials based on name
+   * Returns a color from a predefined palette
+   */
+  protected getInitialsColor(fullName: string): string {
+    const colors = [
+      '#10b981', // green
+      '#3b82f6', // blue
+      '#f59e0b', // amber
+      '#ef4444', // red
+      '#8b5cf6', // purple
+      '#ec4899', // pink
+      '#06b6d4', // cyan
+      '#f97316', // orange
+      '#14b8a6', // teal
+      '#6366f1', // indigo
+    ];
+
+    // Generate a consistent hash from the name
+    let hash = 0;
+    for (let i = 0; i < fullName.length; i++) {
+      hash = fullName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    // Use absolute value and modulo to get consistent index
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
+  }
+
+  /**
+   * Handle image load error - will show initials instead
+   */
+  protected onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+  }
 }

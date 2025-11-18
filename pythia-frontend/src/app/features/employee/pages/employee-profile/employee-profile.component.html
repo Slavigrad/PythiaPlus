@@ -31,12 +31,22 @@
     <header class="profile-header">
       <div class="header-left">
         <div class="avatar-container">
-          <img
-            [src]="emp.profilePicture"
-            [alt]="emp.fullName + ' profile picture'"
-            class="avatar"
-            loading="eager"
-          />
+          @if (emp.profilePicture && emp.profilePicture.startsWith('http')) {
+            <img
+              [src]="emp.profilePicture"
+              [alt]="emp.fullName + ' profile picture'"
+              class="avatar"
+              loading="eager"
+              (error)="onImageError($event)"
+            />
+          }
+          <!-- Always render initials as fallback -->
+          <div
+            class="avatar-initials"
+            [style.background]="getInitialsColor(emp.fullName)"
+          >
+            {{ getInitials(emp.fullName) }}
+          </div>
         </div>
 
         <div class="header-info">
