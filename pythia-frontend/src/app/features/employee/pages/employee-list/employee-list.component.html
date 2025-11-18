@@ -54,17 +54,23 @@
         >
           <!-- Profile Picture or Initials -->
           <div class="card-header">
-            @if (employee.profilePicture && employee.profilePicture.startsWith('http')) {
-              <img
-                [src]="employee.profilePicture"
-                [alt]="employee.fullName"
-                class="profile-picture"
-              />
-            } @else {
-              <div class="profile-initials">
+            <div class="profile-container">
+              @if (employee.profilePicture && employee.profilePicture.startsWith('http')) {
+                <img
+                  [src]="employee.profilePicture"
+                  [alt]="employee.fullName"
+                  class="profile-picture"
+                  (error)="onImageError($event)"
+                />
+              }
+              <!-- Always render initials as fallback -->
+              <div
+                class="profile-initials"
+                [style.background]="getInitialsColor(employee.fullName)"
+              >
                 {{ getInitials(employee.fullName) }}
               </div>
-            }
+            </div>
             <span
               class="availability-badge"
               [class]="getAvailabilityClass(employee.availability)"
