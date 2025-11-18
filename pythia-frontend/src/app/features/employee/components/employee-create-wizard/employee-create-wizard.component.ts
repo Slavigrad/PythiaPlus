@@ -12,6 +12,7 @@ import { StepFoundationComponent } from './wizard-steps/step-foundation/step-fou
 import { StepArsenalComponent } from './wizard-steps/step-arsenal/step-arsenal.component';
 import { StepJourneyComponent } from './wizard-steps/step-journey/step-journey.component';
 import { StepCredentialsComponent } from './wizard-steps/step-credentials/step-credentials.component';
+import { StepOracleComponent } from './wizard-steps/step-oracle/step-oracle.component';
 
 /**
  * Employee Create Wizard - "Oracle's Creation Experience"
@@ -38,7 +39,8 @@ import { StepCredentialsComponent } from './wizard-steps/step-credentials/step-c
     StepFoundationComponent,
     StepArsenalComponent,
     StepJourneyComponent,
-    StepCredentialsComponent
+    StepCredentialsComponent,
+    StepOracleComponent
   ],
   templateUrl: './employee-create-wizard.component.html',
   styleUrl: './employee-create-wizard.component.scss',
