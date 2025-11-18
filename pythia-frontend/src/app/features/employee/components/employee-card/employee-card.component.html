@@ -3,7 +3,12 @@
   [class.enhanced]="enhanced()"
   [class.selectable]="selectable()"
   [class.selected]="selected()"
+  [class.ultra-premium]="enable3dTilt()"
   [attr.aria-label]="'Employee: ' + employee().fullName + ', ' + employee().title"
+  [appTilt3d]="enable3dTilt() ? '' : null"
+  [tiltIntensity]="12"
+  [glareEffect]="true"
+  [scale]="1.03"
   (click)="handleCardClick($event)">
 
   <!-- Department Color Accent (Left Border) -->

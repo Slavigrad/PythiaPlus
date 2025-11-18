@@ -9,6 +9,7 @@
  * - Department color coding
  * - Experience badges
  * - Smooth micro-interactions
+ * - 3D tilt effects (Ultra Premium)
  * - WCAG AA compliant
  */
 
@@ -24,6 +25,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Employee } from '../../../../models/employee.model';
 import { AVAILABILITY_LABELS } from '../../../../core/constants/employee.constants';
 import { SkillRadarMiniComponent } from '../skill-radar-mini/skill-radar-mini.component';
+import { Tilt3dDirective } from '../../../../shared/directives/tilt-3d.directive';
 
 @Component({
   selector: 'app-employee-card',
@@ -35,7 +37,8 @@ import { SkillRadarMiniComponent } from '../skill-radar-mini/skill-radar-mini.co
     MatTooltipModule,
     MatCheckboxModule,
     MatProgressBarModule,
-    SkillRadarMiniComponent
+    SkillRadarMiniComponent,
+    Tilt3dDirective
   ],
   templateUrl: './employee-card.component.html',
   styleUrl: './employee-card.component.scss'
@@ -46,6 +49,7 @@ export class EmployeeCardComponent {
   readonly selectable = input(false);
   readonly selected = input(false);
   readonly enhanced = input(false); // Gallery mode with more details
+  readonly enable3dTilt = input(false); // Ultra Premium 3D tilt effect
 
   // Outputs
   readonly selectToggle = output<number>();

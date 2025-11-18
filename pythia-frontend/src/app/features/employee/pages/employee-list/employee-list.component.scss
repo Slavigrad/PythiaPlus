@@ -8,6 +8,39 @@
   flex-direction: column;
   height: 100%;
   background-color: var(--color-neutral-50);
+
+  // Ultra Premium: Glassmorphism background
+  &.ultra-premium-page {
+    background: linear-gradient(135deg,
+      #f5f5f5 0%,
+      #fce4ec 25%,
+      #fff3e0 50%,
+      #fce4ec 75%,
+      #f5f5f5 100%);
+    background-size: 400% 400%;
+    animation: gradient-flow 15s ease infinite;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(211, 47, 47, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 111, 0, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(211, 47, 47, 0.03) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+  }
 }
 
 // ========================================
@@ -107,6 +140,19 @@
       background-color: rgba(211, 47, 47, 0.2);
       border-color: var(--color-primary-400);
       color: var(--color-primary-400);
+    }
+
+    &.ultra-premium-active {
+      background: linear-gradient(135deg, #d32f2f 0%, #ff6f00 100%);
+      border-color: transparent;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+      animation: ultra-glow 2s ease-in-out infinite;
+
+      mat-icon {
+        animation: rotate-sparkle 4s linear infinite;
+      }
     }
 
     &:disabled {
@@ -254,6 +300,31 @@
 }
 
 // ========================================
+// Virtual Scroll Viewport (Ultra Premium)
+// ========================================
+
+.virtual-scroll-viewport {
+  width: 100%;
+  height: calc(100vh - 300px); // Account for header + padding
+  min-height: 600px;
+
+  &.list-viewport {
+    .employee-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+  }
+
+  // Override CDK styles for smooth scrolling
+  ::ng-deep {
+    .cdk-virtual-scroll-content-wrapper {
+      width: 100%;
+    }
+  }
+}
+
+// ========================================
 // Employee Grid View
 // ========================================
 
@@ -298,6 +369,34 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes ultra-glow {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(211, 47, 47, 0.6),
+                0 0 30px rgba(255, 111, 0, 0.3);
+  }
+}
+
+@keyframes rotate-sparkle {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gradient-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
 

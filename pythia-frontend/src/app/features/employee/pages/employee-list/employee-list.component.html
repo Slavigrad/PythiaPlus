@@ -1,4 +1,4 @@
-<div class="employee-list-page">
+<div class="employee-list-page" [class.ultra-premium-page]="ultraPremiumMode()">
   <!-- Header -->
   <div class="page-header">
     <div class="page-header__content">
@@ -57,6 +57,17 @@
           matTooltip="Export to CSV">
           <mat-icon>download</mat-icon>
           Export
+        </button>
+
+        <!-- Ultra Premium Mode Toggle -->
+        <button
+          mat-stroked-button
+          [class.active]="ultraPremiumMode()"
+          [class.ultra-premium-active]="ultraPremiumMode()"
+          (click)="ultraPremiumMode.set(!ultraPremiumMode())"
+          matTooltip="Toggle Ultra Premium features (3D tilt, glassmorphism)">
+          <mat-icon>auto_awesome</mat-icon>
+          Ultra
         </button>
 
         <!-- Refresh -->
@@ -149,45 +160,99 @@
 
       <!-- Employee Grid View -->
       @else if (viewMode() === 'grid') {
-        <div class="employee-grid">
-          @for (employee of filteredEmployees(); track employee.id) {
-            <app-employee-card
-              [employee]="employee"
-              [selectable]="comparisonMode()"
-              [selected]="isEmployeeSelected(employee.id)"
-              (click)="handleEmployeeClick(employee.id)">
-            </app-employee-card>
-          }
-        </div>
+        @if (virtualScrollEnabled() && filteredCount() > 20) {
+          <cdk-virtual-scroll-viewport
+            [itemSize]="GRID_ITEM_HEIGHT"
+            class="virtual-scroll-viewport">
+            <div class="employee-grid">
+              @for (employee of filteredEmployees(); track employee.id) {
+                <app-employee-card
+                  [employee]="employee"
+                  [selectable]="comparisonMode()"
+                  [selected]="isEmployeeSelected(employee.id)"
+                  [enable3dTilt]="ultraPremiumMode()"
+                  (click)="handleEmployeeClick(employee.id)">
+                </app-employee-card>
+              }
+            </div>
+          </cdk-virtual-scroll-viewport>
+        } @else {
+          <div class="employee-grid">
+            @for (employee of filteredEmployees(); track employee.id) {
+              <app-employee-card
+                [employee]="employee"
+                [selectable]="comparisonMode()"
+                [selected]="isEmployeeSelected(employee.id)"
+                [enable3dTilt]="ultraPremiumMode()"
+                (click)="handleEmployeeClick(employee.id)">
+              </app-employee-card>
+            }
+          </div>
+        }
       }
 
       <!-- Employee List View -->
       @else if (viewMode() === 'list') {
-        <div class="employee-list">
-          @for (employee of filteredEmployees(); track employee.id) {
-            <app-employee-card-compact
-              [employee]="employee"
-              [selectable]="comparisonMode()"
-              [selected]="isEmployeeSelected(employee.id)"
-              (click)="handleEmployeeClick(employee.id)">
-            </app-employee-card-compact>
-          }
-        </div>
+        @if (virtualScrollEnabled() && filteredCount() > 20) {
+          <cdk-virtual-scroll-viewport
+            [itemSize]="LIST_ITEM_HEIGHT"
+            class="virtual-scroll-viewport list-viewport">
+            @for (employee of filteredEmployees(); track employee.id) {
+              <app-employee-card-compact
+                [employee]="employee"
+                [selectable]="comparisonMode()"
+                [selected]="isEmployeeSelected(employee.id)"
+                (click)="handleEmployeeClick(employee.id)">
+              </app-employee-card-compact>
+            }
+          </cdk-virtual-scroll-viewport>
+        } @else {
+          <div class="employee-list">
+            @for (employee of filteredEmployees(); track employee.id) {
+              <app-employee-card-compact
+                [employee]="employee"
+                [selectable]="comparisonMode()"
+                [selected]="isEmployeeSelected(employee.id)"
+                (click)="handleEmployeeClick(employee.id)">
+              </app-employee-card-compact>
+            }
+          </div>
+        }
       }
 
       <!-- Gallery View (Large Cards) -->
       @else if (viewMode() === 'gallery') {
-        <div class="employee-gallery">
-          @for (employee of filteredEmployees(); track employee.id) {
-            <app-employee-card
-              [employee]="employee"
-              [selectable]="comparisonMode()"
-              [selected]="isEmployeeSelected(employee.id)"
-              [enhanced]="true"
-              (click)="handleEmployeeClick(employee.id)">
-            </app-employee-card>
-          }
-        </div>
+        @if (virtualScrollEnabled() && filteredCount() > 20) {
+          <cdk-virtual-scroll-viewport
+            [itemSize]="GALLERY_ITEM_HEIGHT"
+            class="virtual-scroll-viewport">
+            <div class="employee-gallery">
+              @for (employee of filteredEmployees(); track employee.id) {
+                <app-employee-card
+                  [employee]="employee"
+                  [selectable]="comparisonMode()"
+                  [selected]="isEmployeeSelected(employee.id)"
+                  [enhanced]="true"
+                  [enable3dTilt]="ultraPremiumMode()"
+                  (click)="handleEmployeeClick(employee.id)">
+                </app-employee-card>
+              }
+            </div>
+          </cdk-virtual-scroll-viewport>
+        } @else {
+          <div class="employee-gallery">
+            @for (employee of filteredEmployees(); track employee.id) {
+              <app-employee-card
+                [employee]="employee"
+                [selectable]="comparisonMode()"
+                [selected]="isEmployeeSelected(employee.id)"
+                [enhanced]="true"
+                [enable3dTilt]="ultraPremiumMode()"
+                (click)="handleEmployeeClick(employee.id)">
+              </app-employee-card>
+            }
+          </div>
+        }
       }
     </main>
   </div>

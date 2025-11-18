@@ -7,6 +7,7 @@
  * - Comparison mode
  * - Live status indicators
  * - Export functionality
+ * - Virtual scrolling for 1000+ employees (Ultra Premium)
  */
 
 import { Component, signal, computed, inject, effect } from '@angular/core';
@@ -17,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { Employee } from '../../../../models/employee.model';
 import { Availability, Seniority } from '../../../../core/constants/employee.constants';
@@ -46,6 +48,7 @@ export interface EmployeeFilters {
     MatIconModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    ScrollingModule,
     EmployeeCardComponent,
     EmployeeCardCompactComponent,
     EmployeeFilterPanelComponent,
@@ -63,6 +66,15 @@ export class EmployeeListComponent {
   protected readonly showFilters = signal(true);
   protected readonly comparisonMode = signal(false);
   protected readonly selectedEmployees = signal<number[]>([]);
+
+  // Ultra Premium Features
+  protected readonly ultraPremiumMode = signal(true); // Enable all premium features
+  protected readonly virtualScrollEnabled = signal(true); // Virtual scrolling for performance
+
+  // Virtual Scroll Item Sizes (approximate heights in px)
+  protected readonly GRID_ITEM_HEIGHT = 520;
+  protected readonly LIST_ITEM_HEIGHT = 100;
+  protected readonly GALLERY_ITEM_HEIGHT = 640;
 
   // Data
   protected readonly employees = signal<Employee[]>([]);
