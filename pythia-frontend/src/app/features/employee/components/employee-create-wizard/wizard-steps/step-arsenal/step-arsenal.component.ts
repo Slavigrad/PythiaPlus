@@ -75,14 +75,19 @@ export class StepArsenalComponent implements OnInit {
    */
   protected readonly proficiencyLevels = PROFICIENCY_LEVELS;
 
+  /**
+   * Expose Math for template usage
+   */
+  protected readonly Math = Math;
+
   // =============================================================================
   // LIFECYCLE
   // =============================================================================
 
   ngOnInit(): void {
     // Load master data
-    this.technologyService.getTechnologies();
-    this.skillService.getSkills();
+    this.technologyService.loadTechnologies().subscribe();
+    this.skillService.loadSkills().subscribe();
 
     // Load existing selections
     const existingData = this.createService.formData();
