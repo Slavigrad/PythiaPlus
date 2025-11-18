@@ -298,7 +298,8 @@ export class StepCredentialsComponent implements OnInit {
   /**
    * Format date for display (MMM YYYY)
    */
-  protected formatDateDisplay(dateString: string): string {
+  protected formatDateDisplay(dateString: string | undefined): string {
+    if (!dateString) return 'Present';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
@@ -306,7 +307,8 @@ export class StepCredentialsComponent implements OnInit {
   /**
    * Calculate duration between two dates
    */
-  protected calculateDuration(startDate: string, endDate: string | undefined): string {
+  protected calculateDuration(startDate: string | undefined, endDate: string | undefined): string {
+    if (!startDate) return '';
     const start = new Date(startDate);
     const end = endDate ? new Date(endDate) : new Date();
 

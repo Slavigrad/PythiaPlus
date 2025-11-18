@@ -110,15 +110,15 @@ export class StepArsenalComponent implements OnInit {
    */
   protected addTechnology(tech: Technology): void {
     // Check if already added
-    const exists = this.selectedTechnologies().some(t => t.technologyId === tech.id);
+    const exists = this.selectedTechnologies().some(t => t.name === tech.name);
     if (exists) {
       return;
     }
 
     const newTech: EmployeeCreateTechnology = {
-      technologyId: tech.id,
-      proficiency: 'intermediate',
-      years: 1
+      name: tech.name,
+      proficiency: 'Intermediate',
+      yearsOfExperience: 1
     };
 
     this.selectedTechnologies.update(techs => [...techs, newTech]);
@@ -154,7 +154,7 @@ export class StepArsenalComponent implements OnInit {
   protected updateTechYears(index: number, years: number): void {
     this.selectedTechnologies.update(techs => {
       const updated = [...techs];
-      updated[index] = { ...updated[index], years };
+      updated[index] = { ...updated[index], yearsOfExperience: years };
       return updated;
     });
     this.saveToService();
@@ -177,15 +177,15 @@ export class StepArsenalComponent implements OnInit {
    */
   protected addSkill(skill: Skill): void {
     // Check if already added
-    const exists = this.selectedSkills().some(s => s.skillId === skill.id);
+    const exists = this.selectedSkills().some(s => s.name === skill.name);
     if (exists) {
       return;
     }
 
     const newSkill: EmployeeCreateSkill = {
-      skillId: skill.id,
-      proficiency: 'intermediate',
-      years: 1
+      name: skill.name,
+      proficiency: 'Intermediate',
+      yearsOfExperience: 1
     };
 
     this.selectedSkills.update(skills => [...skills, newSkill]);
@@ -221,7 +221,7 @@ export class StepArsenalComponent implements OnInit {
   protected updateSkillYears(index: number, years: number): void {
     this.selectedSkills.update(skills => {
       const updated = [...skills];
-      updated[index] = { ...updated[index], years };
+      updated[index] = { ...updated[index], yearsOfExperience: years };
       return updated;
     });
     this.saveToService();

@@ -44,10 +44,10 @@
     <!-- Selected Technologies -->
     @if (selectedTechnologies().length > 0) {
       <div class="selected-items">
-        @for (tech of selectedTechnologies(); track tech.technologyId; let i = $index) {
+        @for (tech of selectedTechnologies(); track tech.name; let i = $index) {
           <div class="skill-card tech-card">
             <div class="card-header">
-              <h4 class="card-title">{{ getTechnologyName(tech.technologyId) }}</h4>
+              <h4 class="card-title">{{ tech.name }}</h4>
               <button
                 mat-icon-button
                 type="button"
@@ -88,19 +88,19 @@
                     type="button"
                     mat-icon-button
                     class="years-btn"
-                    (click)="updateTechYears(i, Math.max(0, tech.years - 1))"
-                    [disabled]="tech.years <= 0"
+                    (click)="updateTechYears(i, Math.max(0, (tech.yearsOfExperience || 0) - 1))"
+                    [disabled]="(tech.yearsOfExperience || 0) <= 0"
                     aria-label="Decrease years"
                   >
                     <mat-icon>remove</mat-icon>
                   </button>
-                  <span class="years-value">{{ tech.years }}</span>
+                  <span class="years-value">{{ tech.yearsOfExperience || 0 }}</span>
                   <button
                     type="button"
                     mat-icon-button
                     class="years-btn"
-                    (click)="updateTechYears(i, Math.min(50, tech.years + 1))"
-                    [disabled]="tech.years >= 50"
+                    (click)="updateTechYears(i, Math.min(50, (tech.yearsOfExperience || 0) + 1))"
+                    [disabled]="(tech.yearsOfExperience || 0) >= 50"
                     aria-label="Increase years"
                   >
                     <mat-icon>add</mat-icon>
@@ -165,10 +165,10 @@
     <!-- Selected Skills -->
     @if (selectedSkills().length > 0) {
       <div class="selected-items">
-        @for (skill of selectedSkills(); track skill.skillId; let i = $index) {
+        @for (skill of selectedSkills(); track skill.name; let i = $index) {
           <div class="skill-card">
             <div class="card-header">
-              <h4 class="card-title">{{ getSkillName(skill.skillId) }}</h4>
+              <h4 class="card-title">{{ skill.name }}</h4>
               <button
                 mat-icon-button
                 type="button"
@@ -209,19 +209,19 @@
                     type="button"
                     mat-icon-button
                     class="years-btn"
-                    (click)="updateSkillYears(i, Math.max(0, skill.years - 1))"
-                    [disabled]="skill.years <= 0"
+                    (click)="updateSkillYears(i, Math.max(0, (skill.yearsOfExperience || 0) - 1))"
+                    [disabled]="(skill.yearsOfExperience || 0) <= 0"
                     aria-label="Decrease years"
                   >
                     <mat-icon>remove</mat-icon>
                   </button>
-                  <span class="years-value">{{ skill.years }}</span>
+                  <span class="years-value">{{ skill.yearsOfExperience || 0 }}</span>
                   <button
                     type="button"
                     mat-icon-button
                     class="years-btn"
-                    (click)="updateSkillYears(i, Math.min(50, skill.years + 1))"
-                    [disabled]="skill.years >= 50"
+                    (click)="updateSkillYears(i, Math.min(50, (skill.yearsOfExperience || 0) + 1))"
+                    [disabled]="(skill.yearsOfExperience || 0) >= 50"
                     aria-label="Increase years"
                   >
                     <mat-icon>add</mat-icon>

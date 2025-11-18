@@ -135,7 +135,7 @@ export class StepOracleComponent {
   /**
    * Format date for display (MMM YYYY)
    */
-  protected formatDateDisplay(dateString: string | undefined): string {
+  protected formatDateDisplay(dateString: string | undefined | null): string {
     if (!dateString) return 'Present';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });

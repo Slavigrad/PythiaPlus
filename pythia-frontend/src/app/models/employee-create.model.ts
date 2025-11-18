@@ -9,30 +9,33 @@
 import { Availability, Seniority, Proficiency, LanguageProficiency } from '../core/constants/employee.constants';
 
 /**
- * Technology for employee creation (references technology by ID)
+ * Technology for employee creation
  */
 export interface EmployeeCreateTechnology {
-  technologyId: number;
-  proficiency: Proficiency;
-  years: number;
+  name: string;
+  proficiency: string;  // Beginner, Intermediate, Advanced, Expert
+  yearsOfExperience?: number;
 }
 
 /**
- * Skill for employee creation (references skill by ID)
+ * Skill for employee creation
  */
 export interface EmployeeCreateSkill {
-  skillId: number;
-  proficiency: Proficiency;
-  years: number;
+  name: string;
+  proficiency: string;  // Beginner, Intermediate, Advanced, Expert
+  yearsOfExperience?: number;
 }
 
 /**
- * Certification for employee creation (references certification by ID)
+ * Certification for employee creation
  */
 export interface EmployeeCreateCertification {
-  certificationId: number;
-  issuedOn: string;  // YYYY-MM-DD format
-  expiresOn: string | null;  // YYYY-MM-DD format or null
+  name: string;
+  issuingOrganization: string;
+  issueDate?: string;  // YYYY-MM-DD format
+  expiryDate?: string;  // YYYY-MM-DD format or undefined if doesn't expire
+  credentialId?: string;
+  credentialUrl?: string;
 }
 
 /**
@@ -60,9 +63,9 @@ export interface EmployeeCreateWorkExperience {
 export interface EmployeeCreateEducation {
   institution: string;
   degree: string;
-  field: string;
-  startYear: number;
-  endYear: number;
+  fieldOfStudy?: string;
+  startDate?: string;  // YYYY-MM-DD format
+  endDate?: string;   // YYYY-MM-DD format or undefined for current enrollment
 }
 
 /**
@@ -82,6 +85,7 @@ export interface EmployeeCreate {
   phone?: string;
   city?: string;
   country?: string;
+  location?: string;  // Combined location field for UI
   profilePicture?: string;
   summary?: string;
   department?: string;
