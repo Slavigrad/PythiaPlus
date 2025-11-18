@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { StepEssenceComponent } from './wizard-steps/step-essence/step-essence.component';
 import { StepFoundationComponent } from './wizard-steps/step-foundation/step-foundation.component';
 import { StepArsenalComponent } from './wizard-steps/step-arsenal/step-arsenal.component';
+import { StepJourneyComponent } from './wizard-steps/step-journey/step-journey.component';
 
 /**
  * Employee Create Wizard - "Oracle's Creation Experience"
@@ -34,7 +35,8 @@ import { StepArsenalComponent } from './wizard-steps/step-arsenal/step-arsenal.c
     MatTooltipModule,
     StepEssenceComponent,
     StepFoundationComponent,
-    StepArsenalComponent
+    StepArsenalComponent,
+    StepJourneyComponent
   ],
   templateUrl: './employee-create-wizard.component.html',
   styleUrl: './employee-create-wizard.component.scss',
