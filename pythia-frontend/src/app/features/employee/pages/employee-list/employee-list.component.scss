@@ -66,19 +66,37 @@
   position: relative;
 }
 
+.profile-container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
 .profile-picture {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 64px;
   height: 64px;
   border-radius: var(--radius-full);
   object-fit: cover;
   border: 2px solid var(--color-neutral-200);
+  background: white;
+  z-index: 2;
+
+  &[style*="display: none"] {
+    display: none !important;
+  }
 }
 
 .profile-initials {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 64px;
   height: 64px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
   color: white;
   display: flex;
   align-items: center;
@@ -86,6 +104,8 @@
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   border: 2px solid var(--color-neutral-200);
+  z-index: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .availability-badge {

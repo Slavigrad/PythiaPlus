@@ -33,7 +33,11 @@ export class EmployeeListComponent implements OnInit {
   /**
    * Navigate to employee detail page
    */
-  protected navigateToEmployee(id: number): void {
+  protected navigateToEmployee(id: number | undefined): void {
+    if (!id) {
+      console.error('Cannot navigate: employee ID is undefined');
+      return;
+    }
     this.router.navigate(['/employees', id]);
   }
 
@@ -47,6 +51,43 @@ export class EmployeeListComponent implements OnInit {
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  }
+
+  /**
+   * Get a consistent color for initials based on name
+   * Returns a color from a predefined palette
+   */
+  protected getInitialsColor(fullName: string): string {
+    const colors = [
+      '#10b981', // green
+      '#3b82f6', // blue
+      '#f59e0b', // amber
+      '#ef4444', // red
+      '#8b5cf6', // purple
+      '#ec4899', // pink
+      '#06b6d4', // cyan
+      '#f97316', // orange
+      '#14b8a6', // teal
+      '#6366f1', // indigo
+    ];
+
+    // Generate a consistent hash from the name
+    let hash = 0;
+    for (let i = 0; i < fullName.length; i++) {
+      hash = fullName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    // Use absolute value and modulo to get consistent index
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
+  }
+
+  /**
+   * Handle image load error - will show initials instead
+   */
+  protected onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
   }
 
   /**

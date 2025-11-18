@@ -7,9 +7,10 @@
 /**
  * Employee summary for list view
  * Simplified version of Employee interface for list display
+ * Note: id is extracted from _links.self.href by the service
  */
 export interface EmployeeListItem {
-  id: number;
+  id?: number;  // Extracted from _links.self.href
   fullName: string;
   title: string;
   city: string;

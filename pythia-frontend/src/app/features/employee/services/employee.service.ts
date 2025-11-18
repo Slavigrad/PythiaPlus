@@ -52,7 +52,12 @@ export class EmployeeService {
     )
       .pipe(
         tap((response) => {
-          this.employees.set(response._embedded.employees);
+          // Extract ID from _links.self.href for each employee
+          const employeesWithIds = response._embedded.employees.map(emp => ({
+            ...emp,
+            id: this.extractIdFromHref(emp._links?.self?.href)
+          }));
+          this.employees.set(employeesWithIds);
           this.pageMetadata.set(response.page);
           this.listLoading.set(false);
         }),
@@ -63,6 +68,16 @@ export class EmployeeService {
         })
       )
       .subscribe();
+  }
+
+  /**
+   * Extract employee ID from HAL href link
+   * Example: "http://localhost:8080/api/v1/employees/1" -> 1
+   */
+  private extractIdFromHref(href: string | undefined): number | undefined {
+    if (!href) return undefined;
+    const matches = href.match(/\/employees\/(\d+)$/);
+    return matches ? parseInt(matches[1], 10) : undefined;
   }
 
   /**
