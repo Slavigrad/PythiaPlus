@@ -1,8 +1,11 @@
 import { Component, ChangeDetectionStrategy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { EmployeeService } from '../../services/employee.service';
 import { SkeletonLoaderComponent } from '../../components/shared/skeleton-loader/skeleton-loader.component';
+import { EmployeeCreateButtonComponent } from '../../components/employee-create-button/employee-create-button.component';
+import { EmployeeCreateWizardComponent } from '../../components/employee-create-wizard/employee-create-wizard.component';
 
 /**
  * Employee List Page Component
@@ -12,7 +15,7 @@ import { SkeletonLoaderComponent } from '../../components/shared/skeleton-loader
  */
 @Component({
   selector: 'app-employee-list',
-  imports: [CommonModule, SkeletonLoaderComponent],
+  imports: [CommonModule, SkeletonLoaderComponent, EmployeeCreateButtonComponent],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -20,6 +23,7 @@ import { SkeletonLoaderComponent } from '../../components/shared/skeleton-loader
 export class EmployeeListComponent implements OnInit {
   protected readonly employeeService = inject(EmployeeService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   // Expose service signals to template
   protected readonly employees = this.employeeService.employees;
@@ -120,5 +124,30 @@ export class EmployeeListComponent implements OnInit {
       default:
         return availability;
     }
+  }
+
+  /**
+   * Handle create new employee button click
+   * Opens the employee creation wizard modal
+   */
+  protected onCreateEmployee(): void {
+    const dialogRef = this.dialog.open(EmployeeCreateWizardComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '900px',
+      panelClass: 'wizard-dialog',
+      disableClose: false, // Allow closing with ESC or backdrop click
+      autoFocus: true,
+      restoreFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('✨ Employee created:', result);
+        // Refresh employee list
+        this.employeeService.getEmployees();
+      }
+    });
   }
 }

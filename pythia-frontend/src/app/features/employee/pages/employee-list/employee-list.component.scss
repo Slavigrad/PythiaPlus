@@ -8,6 +8,25 @@
   margin-bottom: var(--spacing-xl);
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.header-text {
+  flex: 1;
+  min-width: 250px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
 .page-title {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
@@ -294,6 +313,15 @@
 @media (max-width: 768px) {
   .employee-list-page {
     padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    justify-content: center;
   }
 
   .employee-grid {

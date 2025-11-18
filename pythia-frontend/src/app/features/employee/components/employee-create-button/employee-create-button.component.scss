@@ -1,0 +1,378 @@
+// =============================================================================
+// ORACLE'S SUMMONS - THE HERO BUTTON
+// =============================================================================
+
+:host {
+  display: inline-block;
+}
+
+.hero-button {
+  // Base styling
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 32px;
+
+  // Typography
+  font-family: var(--font-family-primary);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  color: white;
+
+  // No default button styles
+  border: none;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+
+  // Gradient background - Pythia red magic
+  background: linear-gradient(135deg, #d32f2f 0%, #ff6659 50%, #d32f2f 100%);
+  background-size: 200% 200%;
+
+  // Rounded corners
+  border-radius: var(--border-radius-lg);
+
+  // 3D elevation - dramatic shadow
+  box-shadow:
+    0 8px 24px rgba(211, 47, 47, 0.4),
+    0 4px 12px rgba(211, 47, 47, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  // Smooth transitions
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal),
+    background-position var(--transition-slow);
+
+  // Prevent button from being squished
+  overflow: hidden;
+
+  // Accessibility
+  &:focus-visible {
+    outline: 3px solid rgba(211, 47, 47, 0.5);
+    outline-offset: 4px;
+  }
+
+  // =============================================================================
+  // HOVER STATE - Magnetic levitation
+  // =============================================================================
+
+  &:hover {
+    // Lift up
+    transform: translateY(-6px) scale(1.03);
+
+    // Enhanced shadow for depth
+    box-shadow:
+      0 16px 48px rgba(211, 47, 47, 0.6),
+      0 8px 24px rgba(211, 47, 47, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+    // Animate gradient position
+    background-position: 100% 50%;
+
+    .glow-background {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .shine-effect {
+      animation: shine 1.5s ease-in-out infinite;
+    }
+
+    .particle {
+      opacity: 1;
+      animation: float 3s ease-in-out infinite;
+    }
+  }
+
+  // =============================================================================
+  // ACTIVE STATE - Press down
+  // =============================================================================
+
+  &:active {
+    transform: translateY(-2px) scale(0.98);
+    box-shadow:
+      0 4px 16px rgba(211, 47, 47, 0.4),
+      0 2px 8px rgba(211, 47, 47, 0.3);
+  }
+}
+
+// =============================================================================
+// GLOW BACKGROUND - Pulsing aura
+// =============================================================================
+
+.glow-background {
+  position: absolute;
+  inset: -4px;
+  background: radial-gradient(circle, rgba(255, 102, 89, 0.6) 0%, transparent 70%);
+  border-radius: var(--border-radius-lg);
+  opacity: 0;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+  pointer-events: none;
+  z-index: -1;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+// =============================================================================
+// SHINE EFFECT - Diagonal sweep
+// =============================================================================
+
+.shine-effect {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+// =============================================================================
+// RIPPLE EFFECT - Click feedback
+// =============================================================================
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  pointer-events: none;
+  animation: ripple-expand 0.6s ease-out;
+}
+
+@keyframes ripple-expand {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(20);
+    opacity: 0;
+  }
+}
+
+// =============================================================================
+// BUTTON CONTENT - Icon and text
+// =============================================================================
+
+.button-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1;
+}
+
+// =============================================================================
+// ICON - Plus transforms to sparkle
+// =============================================================================
+
+.icon {
+  width: 24px;
+  height: 24px;
+  transition: transform var(--transition-normal);
+
+  .plus-line-1,
+  .plus-line-2 {
+    transition:
+      transform var(--transition-normal),
+      opacity var(--transition-normal);
+    transform-origin: center;
+  }
+
+  .sparkle {
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+  }
+
+  // Hovering state - rotate plus and show sparkles
+  &.hovering {
+    transform: rotate(90deg);
+
+    .plus-line-1,
+    .plus-line-2 {
+      transform: scale(0.8);
+      opacity: 0.7;
+    }
+
+    .sparkle {
+      opacity: 1;
+      animation: sparkle-pulse 1s ease-in-out infinite;
+    }
+
+    .sparkle-1 { animation-delay: 0s; }
+    .sparkle-2 { animation-delay: 0.2s; }
+    .sparkle-3 { animation-delay: 0.4s; }
+    .sparkle-4 { animation-delay: 0.6s; }
+  }
+}
+
+@keyframes sparkle-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+// =============================================================================
+// BUTTON TEXT - Letter spacing animation
+// =============================================================================
+
+.button-text {
+  display: flex;
+  gap: 8px;
+  letter-spacing: 0.5px;
+  transition: letter-spacing var(--transition-normal);
+
+  .text-word {
+    display: inline-block;
+    transition: transform var(--transition-fast);
+  }
+
+  .hero-button:hover & {
+    letter-spacing: 1px;
+
+    .text-word {
+      &:nth-child(1) {
+        animation: word-bounce 0.6s ease-in-out;
+        animation-delay: 0s;
+      }
+      &:nth-child(2) {
+        animation: word-bounce 0.6s ease-in-out;
+        animation-delay: 0.1s;
+      }
+      &:nth-child(3) {
+        animation: word-bounce 0.6s ease-in-out;
+        animation-delay: 0.2s;
+      }
+    }
+  }
+}
+
+@keyframes word-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+// =============================================================================
+// FLOATING PARTICLES - Decorative elements
+// =============================================================================
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.particle-1 {
+  top: 20%;
+  right: 15%;
+  animation-delay: 0s;
+}
+
+.particle-2 {
+  top: 60%;
+  right: 10%;
+  animation-delay: 1s;
+}
+
+.particle-3 {
+  top: 40%;
+  right: 20%;
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(-5px) translateX(-5px);
+  }
+  75% {
+    transform: translateY(-15px) translateX(3px);
+  }
+}
+
+// =============================================================================
+// RESPONSIVE DESIGN
+// =============================================================================
+
+@media (max-width: 640px) {
+  .hero-button {
+    padding: 14px 24px;
+    font-size: 15px;
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// =============================================================================
+// ACCESSIBILITY - Reduced motion
+// =============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-button,
+  .glow-background,
+  .shine-effect,
+  .icon,
+  .button-text,
+  .particle {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hero-button:hover {
+    transform: none;
+  }
+}

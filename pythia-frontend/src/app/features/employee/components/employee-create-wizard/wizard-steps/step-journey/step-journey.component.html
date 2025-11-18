@@ -1,0 +1,238 @@
+<div class="journey-form">
+  <!-- =============================================================================
+       WORK EXPERIENCE TIMELINE
+       ============================================================================= -->
+  @if (workExperiences().length > 0 && !showForm()) {
+    <div class="timeline">
+      @for (exp of workExperiences(); track $index; let i = $index; let isLast = $last) {
+        <div class="timeline-item">
+          <!-- Timeline connector -->
+          <div class="timeline-connector">
+            <div class="timeline-dot"></div>
+            @if (!isLast) {
+              <div class="timeline-line"></div>
+            }
+          </div>
+
+          <!-- Experience card -->
+          <div class="experience-card">
+            <div class="card-header">
+              <div class="header-content">
+                <h4 class="company-name">{{ exp.company }}</h4>
+                <p class="role-title">{{ exp.role }}</p>
+              </div>
+              <div class="card-actions">
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="action-button"
+                  (click)="editExperience(i)"
+                  aria-label="Edit experience"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="action-button remove-button"
+                  (click)="removeExperience(i)"
+                  aria-label="Remove experience"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="date-range">
+                <mat-icon class="date-icon">calendar_today</mat-icon>
+                <span class="date-text">
+                  {{ formatDisplayDate(exp.startDate) }} - {{ formatDisplayDate(exp.endDate) }}
+                </span>
+                <span class="duration">
+                  ({{ calculateDuration(exp.startDate, exp.endDate) }})
+                </span>
+              </div>
+
+              @if (exp.description) {
+                <p class="description">{{ exp.description }}</p>
+              }
+            </div>
+
+            @if (!exp.endDate) {
+              <div class="current-badge">
+                <mat-icon>work</mat-icon>
+                <span>Current Position</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- =============================================================================
+       EMPTY STATE
+       ============================================================================= -->
+  @if (workExperiences().length === 0 && !showForm()) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">work_history</mat-icon>
+      <h3 class="empty-title">No work experience added yet</h3>
+      <p class="empty-text">Build your professional timeline by adding your work history</p>
+    </div>
+  }
+
+  <!-- =============================================================================
+       ADD/EDIT FORM
+       ============================================================================= -->
+  @if (showForm()) {
+    <form [formGroup]="experienceForm" class="experience-form">
+      <div class="form-header">
+        <h3 class="form-title">
+          @if (editingIndex() === -1) {
+            Add Work Experience
+          } @else {
+            Edit Work Experience
+          }
+        </h3>
+      </div>
+
+      <!-- Company -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Company</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="company"
+          placeholder="e.g., Acme Corporation"
+          required
+        />
+        <mat-icon matPrefix>business</mat-icon>
+        @if (experienceForm.controls.company.invalid && experienceForm.controls.company.touched) {
+          <mat-error>{{ getFieldError('company') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Role -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Role / Position</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="role"
+          placeholder="e.g., Senior Software Engineer"
+          required
+        />
+        <mat-icon matPrefix>badge</mat-icon>
+        @if (experienceForm.controls.role.invalid && experienceForm.controls.role.touched) {
+          <mat-error>{{ getFieldError('role') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Dates row -->
+      <div class="date-row">
+        <!-- Start Date -->
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>Start Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="startPicker"
+            formControlName="startDate"
+            placeholder="MM/YYYY"
+            required
+          />
+          <mat-icon matPrefix>event</mat-icon>
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker startView="multi-year"></mat-datepicker>
+          @if (experienceForm.controls.startDate.invalid && experienceForm.controls.startDate.touched) {
+            <mat-error>{{ getFieldError('startDate') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- End Date -->
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>End Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="endPicker"
+            formControlName="endDate"
+            placeholder="MM/YYYY"
+            [required]="!experienceForm.controls.isCurrent.value"
+          />
+          <mat-icon matPrefix>event</mat-icon>
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker startView="multi-year"></mat-datepicker>
+          @if (experienceForm.controls.endDate.invalid && experienceForm.controls.endDate.touched) {
+            <mat-error>{{ getFieldError('endDate') }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Current Position checkbox -->
+      <div class="current-checkbox">
+        <mat-checkbox formControlName="isCurrent">
+          This is my current position
+        </mat-checkbox>
+      </div>
+
+      <!-- Description -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description (Optional)</mat-label>
+        <textarea
+          matInput
+          formControlName="description"
+          rows="4"
+          placeholder="Describe your responsibilities, achievements, and key projects..."
+        ></textarea>
+        <mat-icon matPrefix>description</mat-icon>
+        <mat-hint>Highlight your key achievements and responsibilities</mat-hint>
+      </mat-form-field>
+
+      <!-- Form actions -->
+      <div class="form-actions">
+        <button
+          mat-button
+          type="button"
+          class="cancel-button"
+          (click)="cancelEdit()"
+        >
+          Cancel
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          class="save-button"
+          [disabled]="experienceForm.invalid"
+          (click)="saveExperience()"
+        >
+          @if (editingIndex() === -1) {
+            <mat-icon>add</mat-icon>
+            <span>Add Experience</span>
+          } @else {
+            <mat-icon>save</mat-icon>
+            <span>Save Changes</span>
+          }
+        </button>
+      </div>
+    </form>
+  }
+
+  <!-- =============================================================================
+       ADD NEW BUTTON
+       ============================================================================= -->
+  @if (!showForm()) {
+    <div class="add-button-container">
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        class="add-experience-button"
+        (click)="addNew()"
+      >
+        <mat-icon>add</mat-icon>
+        <span>Add Work Experience</span>
+      </button>
+    </div>
+  }
+</div>

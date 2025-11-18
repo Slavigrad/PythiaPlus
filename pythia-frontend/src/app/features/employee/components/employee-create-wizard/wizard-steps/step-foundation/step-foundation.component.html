@@ -1,0 +1,180 @@
+<form [formGroup]="foundationForm" class="foundation-form">
+  <!-- =============================================================================
+       TITLE & LOCATION - Basic professional info
+       ============================================================================= -->
+  <div class="basic-info-section">
+    <h3 class="section-title">Professional Details</h3>
+
+    <div class="form-row">
+      <!-- Job Title -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Job Title</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="title"
+          placeholder="e.g., Senior Software Engineer"
+          autocomplete="organization-title"
+        />
+        <mat-icon matPrefix>work</mat-icon>
+        <mat-hint>Current or target position</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row-split">
+      <!-- City -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>City</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="city"
+          placeholder="e.g., Zurich"
+          autocomplete="address-level2"
+        />
+        <mat-icon matPrefix>location_city</mat-icon>
+      </mat-form-field>
+
+      <!-- Country -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Country</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="country"
+          placeholder="e.g., Switzerland"
+          autocomplete="country-name"
+        />
+        <mat-icon matPrefix>public</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- =============================================================================
+       DEPARTMENT SELECTOR - Icon grid
+       ============================================================================= -->
+  <div class="department-section">
+    <h3 class="section-title">Department</h3>
+    <p class="section-description">Select the primary department</p>
+
+    <div class="department-grid">
+      @for (dept of departments; track dept.value) {
+        <button
+          type="button"
+          class="department-card"
+          [class.selected]="isDepartmentSelected(dept.value)"
+          [style.--dept-color]="dept.color"
+          (click)="selectDepartment(dept.value)"
+          [attr.aria-label]="'Select ' + dept.value + ' department'"
+          [attr.aria-pressed]="isDepartmentSelected(dept.value)"
+        >
+          <mat-icon class="dept-icon">{{ dept.icon }}</mat-icon>
+          <span class="dept-name">{{ dept.value }}</span>
+          @if (isDepartmentSelected(dept.value)) {
+            <mat-icon class="check-icon">check_circle</mat-icon>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- =============================================================================
+       SENIORITY SELECTOR - Visual tier buttons
+       ============================================================================= -->
+  <div class="seniority-section">
+    <h3 class="section-title">Seniority Level</h3>
+    <p class="section-description">Career progression stage</p>
+
+    <div class="seniority-buttons">
+      @for (level of seniorityLevels; track level; let i = $index) {
+        <button
+          type="button"
+          class="seniority-button"
+          [class.selected]="isSenioritySelected(level)"
+          [attr.data-tier]="i"
+          (click)="selectSeniority(level)"
+          [attr.aria-label]="'Select seniority level: ' + level"
+          [attr.aria-pressed]="isSenioritySelected(level)"
+        >
+          <span class="tier-badge">{{ i + 1 }}</span>
+          <span class="tier-label">{{ level }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- =============================================================================
+       YEARS OF EXPERIENCE - Number spinner
+       ============================================================================= -->
+  <div class="experience-section">
+    <h3 class="section-title">Years of Experience</h3>
+    <p class="section-description">Total professional experience</p>
+
+    <div class="experience-spinner">
+      <button
+        type="button"
+        mat-icon-button
+        class="spinner-button"
+        (click)="decrementYears()"
+        [disabled]="(foundationForm.controls.yearsExperience.value ?? 0) <= 0"
+        aria-label="Decrease years"
+      >
+        <mat-icon>remove</mat-icon>
+      </button>
+
+      <div class="experience-display">
+        <span class="experience-number">
+          {{ foundationForm.controls.yearsExperience.value ?? 0 }}
+        </span>
+        <span class="experience-label">years</span>
+      </div>
+
+      <button
+        type="button"
+        mat-icon-button
+        class="spinner-button"
+        (click)="incrementYears()"
+        [disabled]="(foundationForm.controls.yearsExperience.value ?? 0) >= 50"
+        aria-label="Increase years"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <div class="experience-hint">
+      <mat-icon>info</mat-icon>
+      <span>This should reflect total professional experience, not just in current role</span>
+    </div>
+  </div>
+
+  <!-- =============================================================================
+       AVAILABILITY STATUS - Toggle cards
+       ============================================================================= -->
+  <div class="availability-section">
+    <h3 class="section-title">Availability Status</h3>
+    <p class="section-description">Current availability for opportunities</p>
+
+    <div class="availability-grid">
+      @for (option of availabilityOptions; track option.value) {
+        <button
+          type="button"
+          class="availability-card"
+          [class.selected]="isAvailabilitySelected(option.value)"
+          [style.--status-color]="option.color"
+          (click)="selectAvailability(option.value)"
+          [attr.aria-label]="'Set availability to: ' + option.label"
+          [attr.aria-pressed]="isAvailabilitySelected(option.value)"
+        >
+          <mat-icon class="status-icon">{{ option.icon }}</mat-icon>
+          <div class="status-content">
+            <h4 class="status-label">{{ option.label }}</h4>
+            <p class="status-description">{{ option.description }}</p>
+          </div>
+          @if (isAvailabilitySelected(option.value)) {
+            <mat-icon class="check-mark">check_circle</mat-icon>
+          }
+        </button>
+      }
+    </div>
+  </div>
+</form>
