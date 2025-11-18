@@ -1,0 +1,83 @@
+import { Component, ChangeDetectionStrategy, OnInit, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { EmployeeService } from '../../services/employee.service';
+import { SkeletonLoaderComponent } from '../../components/shared/skeleton-loader/skeleton-loader.component';
+
+/**
+ * Employee List Page Component
+ *
+ * Displays all employees in a grid layout with cards
+ * Features: Loading states, error handling, click to navigate to detail
+ */
+@Component({
+  selector: 'app-employee-list',
+  imports: [CommonModule, SkeletonLoaderComponent],
+  templateUrl: './employee-list.component.html',
+  styleUrl: './employee-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class EmployeeListComponent implements OnInit {
+  protected readonly employeeService = inject(EmployeeService);
+  private readonly router = inject(Router);
+
+  // Expose service signals to template
+  protected readonly employees = this.employeeService.employees;
+  protected readonly loading = this.employeeService.listLoading;
+  protected readonly error = this.employeeService.listError;
+
+  ngOnInit(): void {
+    this.employeeService.getEmployees();
+  }
+
+  /**
+   * Navigate to employee detail page
+   */
+  protected navigateToEmployee(id: number): void {
+    this.router.navigate(['/employees', id]);
+  }
+
+  /**
+   * Get initials from full name
+   */
+  protected getInitials(fullName: string): string {
+    return fullName
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  /**
+   * Get availability badge color class
+   */
+  protected getAvailabilityClass(availability: string): string {
+    switch (availability) {
+      case 'available':
+        return 'badge-success';
+      case 'notice':
+        return 'badge-warning';
+      case 'unavailable':
+        return 'badge-error';
+      default:
+        return 'badge-neutral';
+    }
+  }
+
+  /**
+   * Format availability text
+   */
+  protected formatAvailability(availability: string): string {
+    switch (availability) {
+      case 'available':
+        return 'Available';
+      case 'notice':
+        return 'Notice Period';
+      case 'unavailable':
+        return 'Unavailable';
+      default:
+        return availability;
+    }
+  }
+}
