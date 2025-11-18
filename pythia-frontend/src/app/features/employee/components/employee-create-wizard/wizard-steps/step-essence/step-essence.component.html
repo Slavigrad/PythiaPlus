@@ -1,0 +1,129 @@
+<form [formGroup]="essenceForm" class="essence-form">
+  <!-- =============================================================================
+       INITIALS PREVIEW - Live animated bubble
+       ============================================================================= -->
+  <div class="initials-preview">
+    <div class="preview-container">
+      <!-- Profile picture or initials -->
+      <div class="profile-wrapper">
+        @if (hasValidProfilePicture()) {
+          <img
+            [src]="profilePictureUrl()"
+            [alt]="essenceForm.controls.fullName.value"
+            class="profile-picture"
+            (error)="onImageError($event)"
+          />
+        }
+        <!-- Initials bubble (always rendered, shown when no picture) -->
+        <div
+          class="initials-bubble"
+          [style.background]="initialsColor()"
+          [class.visible]="!hasValidProfilePicture()"
+        >
+          <span class="initials-text">{{ initials() }}</span>
+        </div>
+      </div>
+
+      <!-- Name label below -->
+      <p class="preview-name">
+        @if (essenceForm.controls.fullName.value) {
+          {{ essenceForm.controls.fullName.value }}
+        } @else {
+          <span class="placeholder-text">Your Name</span>
+        }
+      </p>
+    </div>
+  </div>
+
+  <!-- =============================================================================
+       FORM FIELDS - Beautiful Material Design inputs
+       ============================================================================= -->
+  <div class="form-fields">
+    <!-- Full Name (Required) -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Full Name</mat-label>
+      <input
+        matInput
+        type="text"
+        formControlName="fullName"
+        placeholder="e.g., John Doe"
+        required
+        autocomplete="name"
+      />
+      <mat-icon matPrefix>person</mat-icon>
+      @if (essenceForm.controls.fullName.invalid && essenceForm.controls.fullName.touched) {
+        <mat-error>{{ getFullNameError() }}</mat-error>
+      }
+      <mat-hint>This will appear on the talent profile</mat-hint>
+    </mat-form-field>
+
+    <!-- Email (Required) -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email Address</mat-label>
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        placeholder="e.g., john.doe@company.com"
+        required
+        autocomplete="email"
+      />
+      <mat-icon matPrefix>email</mat-icon>
+      @if (essenceForm.controls.email.invalid && essenceForm.controls.email.touched) {
+        <mat-error>{{ getEmailError() }}</mat-error>
+      }
+      <mat-hint>Must be unique across all profiles</mat-hint>
+    </mat-form-field>
+
+    <!-- Profile Picture URL (Optional) -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Profile Picture URL (Optional)</mat-label>
+      <input
+        matInput
+        type="url"
+        formControlName="profilePicture"
+        placeholder="https://example.com/photo.jpg"
+        autocomplete="photo"
+      />
+      <mat-icon matPrefix>image</mat-icon>
+      @if (essenceForm.controls.profilePicture.value) {
+        <button
+          matSuffix
+          mat-icon-button
+          type="button"
+          (click)="clearProfilePicture()"
+          aria-label="Clear profile picture"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+      @if (essenceForm.controls.profilePicture.invalid && essenceForm.controls.profilePicture.touched) {
+        <mat-error>{{ getProfilePictureError() }}</mat-error>
+      }
+      <mat-hint>
+        @if (!essenceForm.controls.profilePicture.value) {
+          A colorful initial will be used if no picture is provided
+        } @else if (hasValidProfilePicture()) {
+          ✓ Preview shown above
+        }
+      </mat-hint>
+    </mat-form-field>
+  </div>
+
+  <!-- =============================================================================
+       HELPFUL TIPS - Guidance for users
+       ============================================================================= -->
+  <div class="tips-section">
+    <div class="tip-card">
+      <mat-icon class="tip-icon">lightbulb</mat-icon>
+      <div class="tip-content">
+        <h4 class="tip-title">Quick Tips</h4>
+        <ul class="tip-list">
+          <li>Use the person's full professional name</li>
+          <li>Corporate email addresses are preferred</li>
+          <li>Profile pictures help create a personal connection</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</form>

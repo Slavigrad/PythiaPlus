@@ -7,6 +7,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EmployeeCreateService } from '../../services/employee-create.service';
 import { Router } from '@angular/router';
+import { StepEssenceComponent } from './wizard-steps/step-essence/step-essence.component';
 
 /**
  * Employee Create Wizard - "Oracle's Creation Experience"
@@ -28,7 +29,8 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    StepEssenceComponent
   ],
   templateUrl: './employee-create-wizard.component.html',
   styleUrl: './employee-create-wizard.component.scss',
