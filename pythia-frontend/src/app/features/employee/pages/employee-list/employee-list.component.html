@@ -1,0 +1,194 @@
+<div class="employee-list-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header__content">
+      <div class="page-header__title-section">
+        <h1 class="page-header__title">
+          <mat-icon class="page-header__icon">people</mat-icon>
+          Employees
+        </h1>
+        <div class="page-header__stats">
+          <span class="stat">
+            <strong>{{ filteredCount() }}</strong> of <strong>{{ totalCount() }}</strong>
+          </span>
+          <span class="stat stat--available">
+            <mat-icon>check_circle</mat-icon>
+            {{ availableCount() }} available
+          </span>
+        </div>
+      </div>
+
+      <div class="page-header__actions">
+        <!-- View Toggle -->
+        <app-view-toggle
+          [viewMode]="viewMode()"
+          (viewModeChange)="handleViewModeChange($event)">
+        </app-view-toggle>
+
+        <!-- Filter Toggle -->
+        <button
+          mat-stroked-button
+          [class.active]="showFilters()"
+          (click)="toggleFilters()"
+          matTooltip="Toggle filters">
+          <mat-icon>filter_list</mat-icon>
+          Filters
+        </button>
+
+        <!-- Comparison Mode -->
+        <button
+          mat-stroked-button
+          [class.active]="comparisonMode()"
+          [color]="comparisonMode() ? 'primary' : undefined"
+          (click)="toggleComparisonMode()"
+          matTooltip="Compare employees side-by-side">
+          <mat-icon>compare</mat-icon>
+          Compare
+          @if (selectedEmployees().length > 0) {
+            <span class="badge">{{ selectedEmployees().length }}</span>
+          }
+        </button>
+
+        <!-- Export -->
+        <button
+          mat-stroked-button
+          (click)="exportEmployees()"
+          [disabled]="filteredCount() === 0"
+          matTooltip="Export to CSV">
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+
+        <!-- Refresh -->
+        <button
+          mat-icon-button
+          (click)="refresh()"
+          matTooltip="Refresh">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <!-- Filter Panel (Sidebar) -->
+    @if (showFilters()) {
+      <aside class="filter-sidebar">
+        <app-employee-filter-panel
+          [filters]="filters()"
+          [employees]="employees()"
+          (filtersChange)="handleFiltersChange($event)">
+        </app-employee-filter-panel>
+
+        @if (filters().search || filters().availabilityStatuses.length > 0 || filters().departments.length > 0 || filters().seniorities.length > 0 || filters().skills.length > 0) {
+          <button
+            mat-stroked-button
+            class="clear-filters-btn"
+            (click)="clearFilters()">
+            <mat-icon>clear</mat-icon>
+            Clear All Filters
+          </button>
+        }
+      </aside>
+    }
+
+    <!-- Main Content -->
+    <main class="main-content" [class.full-width]="!showFilters()">
+      <!-- Comparison Mode Banner -->
+      @if (comparisonMode()) {
+        <div class="comparison-banner">
+          <div class="comparison-banner__content">
+            <mat-icon>info</mat-icon>
+            <span>
+              Comparison mode active. Click employees to compare (max 3).
+              <strong>{{ selectedEmployees().length }}/3 selected</strong>
+            </span>
+          </div>
+          <button mat-button (click)="clearComparison()">
+            <mat-icon>clear</mat-icon>
+            Clear Selection
+          </button>
+        </div>
+      }
+
+      <!-- Loading State -->
+      @if (loading()) {
+        <div class="loading-state">
+          <mat-spinner diameter="48"></mat-spinner>
+          <p>Loading employees...</p>
+        </div>
+      }
+
+      <!-- Error State -->
+      @else if (error()) {
+        <div class="error-state">
+          <mat-icon>error_outline</mat-icon>
+          <h3>Failed to Load Employees</h3>
+          <p>{{ error() }}</p>
+          <button mat-raised-button color="primary" (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+            Try Again
+          </button>
+        </div>
+      }
+
+      <!-- Empty State (No Results) -->
+      @else if (filteredCount() === 0) {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <h3>No Employees Found</h3>
+          <p>Try adjusting your filters or search terms.</p>
+          @if (filters().search || filters().availabilityStatuses.length > 0 || filters().departments.length > 0 || filters().seniorities.length > 0 || filters().skills.length > 0) {
+            <button mat-raised-button color="primary" (click)="clearFilters()">
+              <mat-icon>clear</mat-icon>
+              Clear Filters
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Employee Grid View -->
+      @else if (viewMode() === 'grid') {
+        <div class="employee-grid">
+          @for (employee of filteredEmployees(); track employee.id) {
+            <app-employee-card
+              [employee]="employee"
+              [selectable]="comparisonMode()"
+              [selected]="isEmployeeSelected(employee.id)"
+              (click)="handleEmployeeClick(employee.id)">
+            </app-employee-card>
+          }
+        </div>
+      }
+
+      <!-- Employee List View -->
+      @else if (viewMode() === 'list') {
+        <div class="employee-list">
+          @for (employee of filteredEmployees(); track employee.id) {
+            <app-employee-card-compact
+              [employee]="employee"
+              [selectable]="comparisonMode()"
+              [selected]="isEmployeeSelected(employee.id)"
+              (click)="handleEmployeeClick(employee.id)">
+            </app-employee-card-compact>
+          }
+        </div>
+      }
+
+      <!-- Gallery View (Large Cards) -->
+      @else if (viewMode() === 'gallery') {
+        <div class="employee-gallery">
+          @for (employee of filteredEmployees(); track employee.id) {
+            <app-employee-card
+              [employee]="employee"
+              [selectable]="comparisonMode()"
+              [selected]="isEmployeeSelected(employee.id)"
+              [enhanced]="true"
+              (click)="handleEmployeeClick(employee.id)">
+            </app-employee-card>
+          }
+        </div>
+      }
+    </main>
+  </div>
+</div>

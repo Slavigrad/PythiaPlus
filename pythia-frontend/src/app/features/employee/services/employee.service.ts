@@ -29,6 +29,20 @@ export class EmployeeService {
   readonly updateError = signal<string | null>(null);
 
   /**
+   * Fetch all employees
+   * Returns an observable for flexible subscription handling
+   */
+  getAllEmployees(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.API_BASE_URL}/employees`)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Failed to fetch employees:', error);
+          throw error;
+        })
+      );
+  }
+
+  /**
    * Fetch employee by ID
    */
   getEmployeeById(id: number): void {
