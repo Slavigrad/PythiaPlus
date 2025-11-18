@@ -1,0 +1,310 @@
+### ============================================================================
+### PYTHIA API - EMPLOYEE CREATE ENDPOINT TESTS
+### ============================================================================
+### Base URL: http://localhost:8080/api/v1/employees
+### Method: POST
+### Description: Create a new employee with all related data
+### ============================================================================
+
+### Environment Variables
+@baseUrl = http://localhost:8080
+@apiVersion = v1
+
+### ============================================================================
+### TEST 1: Create Employee - Minimal Required Fields Only
+### ============================================================================
+### Description: Create employee with only required fields (fullName, email)
+### Expected: 201 Created
+### Response: Employee created with default availability = "available"
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "John Minimal",
+  "email": "john.minimal@example.com"
+}
+
+### ============================================================================
+### TEST 2: Create Employee - Full Profile with All Fields
+### ============================================================================
+### Description: Create employee with all possible fields populated
+### Expected: 201 Created
+### Response: Complete employee profile with all related data
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "Jane Complete",
+  "email": "jane.complete@example.com",
+  "title": "Senior Full Stack Developer",
+  "phone": "+1-555-0123",
+  "city": "San Francisco",
+  "country": "USA",
+  "profilePicture": "https://example.com/photos/jane.jpg",
+  "summary": "Experienced full-stack developer with 8+ years in web development, specializing in React, Node.js, and cloud architecture. Passionate about building scalable applications and mentoring junior developers.",
+  "department": "Engineering",
+  "seniority": "Senior",
+  "yearsExperience": 8.5,
+  "availability": "available",
+  "technologies": [
+    {
+      "technologyId": 1,
+      "proficiency": "Expert",
+      "years": 5.0
+    },
+    {
+      "technologyId": 2,
+      "proficiency": "Advanced",
+      "years": 4.0
+    }
+  ],
+  "skills": [
+    {
+      "skillId": 1,
+      "proficiency": "Expert",
+      "years": 6.0
+    },
+    {
+      "skillId": 2,
+      "proficiency": "Intermediate",
+      "years": 3.0
+    }
+  ],
+  "certifications": [
+    {
+      "certificationId": 1,
+      "issuedOn": "2023-01-15",
+      "expiresOn": "2026-01-15"
+    }
+  ],
+  "languages": [
+    {
+      "languageId": 1,
+      "level": "Native"
+    },
+    {
+      "languageId": 2,
+      "level": "Professional"
+    }
+  ],
+  "workExperiences": [
+    {
+      "company": "Tech Corp",
+      "role": "Senior Developer",
+      "startDate": "2020-03-01",
+      "endDate": null,
+      "description": "Leading development of microservices architecture"
+    },
+    {
+      "company": "StartupXYZ",
+      "role": "Full Stack Developer",
+      "startDate": "2017-06-01",
+      "endDate": "2020-02-28",
+      "description": "Built and maintained web applications using React and Node.js"
+    }
+  ],
+  "educations": [
+    {
+      "institution": "Stanford University",
+      "degree": "Master of Science",
+      "field": "Computer Science",
+      "startYear": 2013,
+      "endYear": 2015
+    },
+    {
+      "institution": "UC Berkeley",
+      "degree": "Bachelor of Science",
+      "field": "Software Engineering",
+      "startYear": 2009,
+      "endYear": 2013
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 3: Create Employee - With Notice Period Availability
+### ============================================================================
+### Description: Create employee with availability = "notice"
+### Expected: 201 Created
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "Bob Notice",
+  "email": "bob.notice@example.com",
+  "title": "DevOps Engineer",
+  "availability": "notice",
+  "yearsExperience": 5.0
+}
+
+### ============================================================================
+### TEST 4: Create Employee - Unavailable Status
+### ============================================================================
+### Description: Create employee with availability = "unavailable"
+### Expected: 201 Created
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "Alice Unavailable",
+  "email": "alice.unavailable@example.com",
+  "title": "Backend Developer",
+  "availability": "unavailable",
+  "yearsExperience": 3.0
+}
+
+### ============================================================================
+### TEST 5: Validation Error - Missing Required Field (fullName)
+### ============================================================================
+### Description: Attempt to create employee without fullName
+### Expected: 400 Bad Request
+### Error: "Full name is required"
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "email": "missing.name@example.com"
+}
+
+### ============================================================================
+### TEST 6: Validation Error - Missing Required Field (email)
+### ============================================================================
+### Description: Attempt to create employee without email
+### Expected: 400 Bad Request
+### Error: "Email is required"
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "No Email Person"
+}
+
+### ============================================================================
+### TEST 7: Validation Error - Invalid Email Format
+### ============================================================================
+### Description: Attempt to create employee with invalid email format
+### Expected: 400 Bad Request
+### Error: "Invalid email format"
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "Invalid Email",
+  "email": "not-an-email"
+}
+
+### ============================================================================
+### TEST 8: Validation Error - Duplicate Email
+### ============================================================================
+### Description: Attempt to create employee with existing email
+### Expected: 409 Conflict
+### Error: "Employee with email 'john.minimal@example.com' already exists"
+### Note: Run TEST 1 first to create the initial employee
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "John Duplicate",
+  "email": "john.minimal@example.com"
+}
+
+### ============================================================================
+### TEST 9: Validation Error - Invalid Technology ID
+### ============================================================================
+### Description: Attempt to create employee with non-existent technology ID
+### Expected: 404 Not Found
+### Error: "Technology with ID 99999 not found"
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "Invalid Tech",
+  "email": "invalid.tech@example.com",
+  "technologies": [
+    {
+      "technologyId": 99999,
+      "proficiency": "Expert",
+      "years": 5.0
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 10: Validation Error - Negative Years of Experience
+### ============================================================================
+### Description: Attempt to create employee with negative years of experience
+### Expected: 400 Bad Request
+### Error: "Years of experience cannot be negative"
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "Negative Years",
+  "email": "negative.years@example.com",
+  "yearsExperience": -5.0
+}
+
+### ============================================================================
+### TEST 11: Validation Error - Invalid Work Experience Dates
+### ============================================================================
+### Description: Attempt to create employee with start date after end date
+### Expected: 400 Bad Request
+### Error: "Work experience start date cannot be after end date"
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "Invalid Dates",
+  "email": "invalid.dates@example.com",
+  "workExperiences": [
+    {
+      "company": "Test Corp",
+      "role": "Developer",
+      "startDate": "2023-01-01",
+      "endDate": "2022-01-01"
+    }
+  ]
+}
+
+### ============================================================================
+### TEST 12: Create Employee - International Profile
+### ============================================================================
+### Description: Create employee from different country with international data
+### Expected: 201 Created
+POST {{baseUrl}}/api/{{apiVersion}}/employees
+Content-Type: application/json
+
+{
+  "fullName": "Hans Müller",
+  "email": "hans.mueller@example.de",
+  "title": "Software Architect",
+  "phone": "+49-30-12345678",
+  "city": "Berlin",
+  "country": "Germany",
+  "summary": "Experienced software architect specializing in enterprise solutions and microservices.",
+  "department": "Architecture",
+  "seniority": "Lead",
+  "yearsExperience": 12.0,
+  "availability": "available"
+}
+
+### ============================================================================
+### TEST 13: Verify Created Employee - GET by ID
+### ============================================================================
+### Description: Retrieve the created employee to verify all data was saved
+### Expected: 200 OK
+### Note: Replace {id} with the ID from the creation response
+GET {{baseUrl}}/api/{{apiVersion}}/employees/1
+
+### ============================================================================
+### TEST 14: Search for Created Employee
+### ============================================================================
+### Description: Search for newly created employee to verify embedding generation
+### Expected: 200 OK with employee in results
+### Note: Replace search query with employee name or skills
+GET {{baseUrl}}/api/{{apiVersion}}/search?query=John Minimal
+
+### ============================================================================
+### END OF TESTS
+### ============================================================================
+
