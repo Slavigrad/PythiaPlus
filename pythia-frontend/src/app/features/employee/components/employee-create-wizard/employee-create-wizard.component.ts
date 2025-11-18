@@ -8,6 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { EmployeeCreateService } from '../../services/employee-create.service';
 import { Router } from '@angular/router';
 import { StepEssenceComponent } from './wizard-steps/step-essence/step-essence.component';
+import { StepFoundationComponent } from './wizard-steps/step-foundation/step-foundation.component';
 
 /**
  * Employee Create Wizard - "Oracle's Creation Experience"
@@ -30,7 +31,8 @@ import { StepEssenceComponent } from './wizard-steps/step-essence/step-essence.c
     MatIconModule,
     MatProgressBarModule,
     MatTooltipModule,
-    StepEssenceComponent
+    StepEssenceComponent,
+    StepFoundationComponent
   ],
   templateUrl: './employee-create-wizard.component.html',
   styleUrl: './employee-create-wizard.component.scss',
