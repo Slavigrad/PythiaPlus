@@ -41,43 +41,17 @@ export class EmployeeService {
   readonly updateError = signal<string | null>(null);
 
   /**
-   * Fetch all employees with pagination
+   * Fetch all employees
+   * Returns an observable for flexible subscription handling
    */
-  getEmployees(page: number = 0, size: number = 20): void {
-    this.listLoading.set(true);
-    this.listError.set(null);
-
-    this.http.get<EmployeeListResponse>(
-      `${this.API_BASE_URL}/employees?page=${page}&size=${size}`
-    )
+  getAllEmployees(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.API_BASE_URL}/employees`)
       .pipe(
-        tap((response) => {
-          // Extract ID from _links.self.href for each employee
-          const employeesWithIds = response._embedded.employees.map(emp => ({
-            ...emp,
-            id: this.extractIdFromHref(emp._links?.self?.href)
-          }));
-          this.employees.set(employeesWithIds);
-          this.pageMetadata.set(response.page);
-          this.listLoading.set(false);
-        }),
         catchError((error: HttpErrorResponse) => {
-          this.listError.set(this.getErrorMessage(error));
-          this.listLoading.set(false);
-          return of(null);
+          console.error('Failed to fetch employees:', error);
+          throw error;
         })
-      )
-      .subscribe();
-  }
-
-  /**
-   * Extract employee ID from HAL href link
-   * Example: "http://localhost:8080/api/v1/employees/1" -> 1
-   */
-  private extractIdFromHref(href: string | undefined): number | undefined {
-    if (!href) return undefined;
-    const matches = href.match(/\/employees\/(\d+)$/);
-    return matches ? parseInt(matches[1], 10) : undefined;
+      );
   }
 
   /**

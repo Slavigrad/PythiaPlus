@@ -1,0 +1,218 @@
+<article
+  class="employee-card"
+  [class.enhanced]="enhanced()"
+  [class.selectable]="selectable()"
+  [class.selected]="selected()"
+  [class.ultra-premium]="enable3dTilt()"
+  [attr.aria-label]="'Employee: ' + employee().fullName + ', ' + employee().title"
+  [appTilt3d]="enable3dTilt() ? '' : null"
+  [tiltIntensity]="12"
+  [glareEffect]="true"
+  [scale]="1.03"
+  (click)="handleCardClick($event)">
+
+  <!-- Department Color Accent (Left Border) -->
+  <div class="department-accent" [style.background-color]="departmentColor()"></div>
+
+  <!-- Selection Checkbox -->
+  @if (selectable()) {
+    <div class="selection-checkbox">
+      <mat-checkbox
+        [checked]="selected()"
+        [attr.aria-label]="'Select ' + employee().fullName"
+        (change)="handleCheckboxChange($event)"
+        color="primary">
+      </mat-checkbox>
+    </div>
+  }
+
+  <!-- Card Header -->
+  <div class="card-header">
+    <!-- Avatar with Gradient Border -->
+    <div class="avatar-wrapper" [class.pulsing]="isPulsing()">
+      <div class="avatar-gradient" [style.background]="'linear-gradient(135deg, ' + avatarColor() + ' 0%, ' + departmentColor() + ' 100%)'"></div>
+      <div class="avatar">
+        @if (getProfilePicture()) {
+          <img [src]="getProfilePicture()" [alt]="employee().fullName" />
+        } @else {
+          <span class="initials" [style.background-color]="avatarColor()">
+            {{ initials() }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Status Badge (Floating) -->
+    <div class="status-badge" [class]="availabilityClass()" [class.pulsing]="isPulsing()">
+      @switch (employee().availability) {
+        @case ('available') {
+          <mat-icon>check_circle</mat-icon>
+        }
+        @case ('busy') {
+          <mat-icon>schedule</mat-icon>
+        }
+        @case ('unavailable') {
+          <mat-icon>block</mat-icon>
+        }
+        @case ('notice_period') {
+          <mat-icon>event</mat-icon>
+        }
+      }
+      <span>{{ availabilityLabel() }}</span>
+    </div>
+  </div>
+
+  <!-- Employee Info -->
+  <div class="employee-info">
+    <h3 class="employee-name">{{ employee().fullName }}</h3>
+    <p class="employee-title">{{ employee().title }}</p>
+    <div class="employee-meta">
+      <span class="meta-item">
+        <mat-icon>business</mat-icon>
+        {{ employee().department }}
+      </span>
+      <span class="meta-item">
+        <mat-icon>location_on</mat-icon>
+        {{ employee().location }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <mat-icon class="stat-icon">workspace_premium</mat-icon>
+      <div class="stat-content">
+        <span class="stat-value">{{ employee().seniority }}</span>
+        <span class="stat-label">Level</span>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <mat-icon class="stat-icon">schedule</mat-icon>
+      <div class="stat-content">
+        <span class="stat-value">{{ employee().yearsExperience }}y</span>
+        <span class="stat-label">Experience</span>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <mat-icon class="stat-icon">folder</mat-icon>
+      <div class="stat-content">
+        <span class="stat-value">{{ activeProjects() }}</span>
+        <span class="stat-label">Projects</span>
+      </div>
+    </div>
+
+    @if (enhanced()) {
+      <div class="stat-item">
+        <mat-icon class="stat-icon">star</mat-icon>
+        <div class="stat-content">
+          <span class="stat-value">{{ performanceRating() }}</span>
+          <span class="stat-label">Rating</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Top Skills with Proficiency Bars -->
+  <div class="skills-section">
+    <div class="skills-header">
+      <span class="skills-title">Top Skills</span>
+      @if (enhanced()) {
+        <button
+          mat-icon-button
+          class="radar-toggle"
+          (click)="toggleSkillRadar()"
+          [matTooltip]="showSkillRadar() ? 'Hide skill radar' : 'Show skill radar'">
+          <mat-icon>{{ showSkillRadar() ? 'bar_chart' : 'radar' }}</mat-icon>
+        </button>
+      }
+    </div>
+
+    @if (showSkillRadar() && enhanced()) {
+      <div class="skill-radar-container">
+        <app-skill-radar-mini [employee]="employee()"></app-skill-radar-mini>
+      </div>
+    } @else {
+      <div class="skill-list">
+        @for (skill of topSkills(); track skill.name) {
+          <div class="skill-item">
+            <div class="skill-info">
+              <span class="skill-name">{{ skill.name }}</span>
+              <span class="skill-years">{{ skill.years }}y</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="skillProficiencyValue()(skill)"
+              [color]="skill.proficiency === 'expert' ? 'primary' : 'accent'">
+            </mat-progress-bar>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Certifications (Enhanced Mode) -->
+  @if (enhanced() && employee().certifications.length > 0) {
+    <div class="certifications-section">
+      <div class="section-title">
+        <mat-icon>verified</mat-icon>
+        Certifications ({{ employee().certifications.length }})
+      </div>
+      <div class="certification-badges">
+        @for (cert of employee().certifications.slice(0, 3); track cert.id) {
+          <span class="cert-badge" [matTooltip]="cert.name">
+            <mat-icon>verified</mat-icon>
+            {{ cert.name.length > 20 ? cert.name.substring(0, 20) + '...' : cert.name }}
+          </span>
+        }
+        @if (employee().certifications.length > 3) {
+          <span class="cert-badge more">
+            +{{ employee().certifications.length - 3 }} more
+          </span>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Quick Actions (Revealed on Hover) -->
+  <div class="quick-actions">
+    <button
+      mat-icon-button
+      class="action-btn"
+      (click)="handleAction('view', $event)"
+      matTooltip="View Profile">
+      <mat-icon>visibility</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      class="action-btn"
+      (click)="handleAction('message', $event)"
+      matTooltip="Send Message">
+      <mat-icon>mail</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      class="action-btn"
+      (click)="handleAction('schedule', $event)"
+      matTooltip="Schedule Meeting">
+      <mat-icon>event</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      class="action-btn"
+      (click)="handleAction('add-project', $event)"
+      matTooltip="Add to Project">
+      <mat-icon>add_circle</mat-icon>
+    </button>
+  </div>
+
+  <!-- Hover Indicator -->
+  <div class="hover-indicator" aria-hidden="true">
+    <mat-icon>arrow_forward</mat-icon>
+  </div>
+</article>

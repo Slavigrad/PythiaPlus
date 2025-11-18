@@ -1,128 +1,660 @@
-<div class="employee-list-page">
+<div class="employee-list-page" [class.ultra-premium-page]="ultraPremiumMode()">
+  <!-- Header -->
   <div class="page-header">
-    <div class="header-content">
-      <div class="header-text">
-        <h1 class="page-title">Employees</h1>
-        <p class="page-subtitle">Browse all employees in the talent pool</p>
+    <div class="page-header__content">
+      <div class="page-header__title-section">
+        <h1 class="page-header__title">
+          <mat-icon class="page-header__icon">people</mat-icon>
+          Employees
+        </h1>
+        <div class="page-header__stats">
+          <span class="stat">
+            <strong>{{ filteredCount() }}</strong> of <strong>{{ totalCount() }}</strong>
+          </span>
+          <span class="stat stat--available">
+            <mat-icon>check_circle</mat-icon>
+            {{ availableCount() }} available
+          </span>
+        </div>
       </div>
-      <div class="header-actions">
-        <app-employee-create-button (createClick)="onCreateEmployee()" />
+
+      <div class="page-header__actions">
+        <!-- View Toggle -->
+        <app-view-toggle
+          [viewMode]="viewMode()"
+          (viewModeChange)="handleViewModeChange($event)">
+        </app-view-toggle>
+
+        <!-- Filter Toggle -->
+        <button
+          mat-stroked-button
+          [class.active]="showFilters()"
+          (click)="toggleFilters()"
+          matTooltip="Toggle filters">
+          <mat-icon>filter_list</mat-icon>
+          Filters
+        </button>
+
+        <!-- Comparison Mode -->
+        <button
+          mat-stroked-button
+          [class.active]="comparisonMode()"
+          [color]="comparisonMode() ? 'primary' : undefined"
+          (click)="toggleComparisonMode()"
+          matTooltip="Compare employees side-by-side">
+          <mat-icon>compare</mat-icon>
+          Compare
+          @if (selectedEmployees().length > 0) {
+            <span class="badge">{{ selectedEmployees().length }}</span>
+          }
+        </button>
+
+        <!-- Export -->
+        <button
+          mat-stroked-button
+          (click)="exportEmployees()"
+          [disabled]="filteredCount() === 0"
+          matTooltip="Export to CSV">
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+
+        <!-- Ultra Premium Mode Toggle -->
+        <button
+          mat-stroked-button
+          [class.active]="ultraPremiumMode()"
+          [class.ultra-premium-active]="ultraPremiumMode()"
+          (click)="ultraPremiumMode.set(!ultraPremiumMode())"
+          matTooltip="Toggle Ultra Premium features (3D tilt, glassmorphism)">
+          <mat-icon>auto_awesome</mat-icon>
+          Ultra
+        </button>
+
+        <!-- Smart Grouping Toggle -->
+        <button
+          mat-stroked-button
+          [class.active]="groupingEnabled()"
+          (click)="cycleGroupBy()"
+          matTooltip="Group by: {{ groupBy() === 'none' ? 'Off' : groupBy() }}">
+          <mat-icon>{{ groupingEnabled() ? 'folder_open' : 'folder' }}</mat-icon>
+          @if (groupingEnabled()) {
+            <span class="group-label">{{ groupBy() }}</span>
+          }
+        </button>
+
+        <!-- Analytics (Ultra Premium) -->
+        @if (ultraPremiumMode()) {
+          <button
+            mat-stroked-button
+            [class.active]="showAnalytics()"
+            (click)="toggleAnalytics()"
+            matTooltip="View team analytics and insights">
+            <mat-icon>analytics</mat-icon>
+            Analytics
+          </button>
+        }
+
+        <!-- Dark Mode Toggle -->
+        <button
+          mat-stroked-button
+          [class.active]="themeService.isDarkMode()"
+          (click)="themeService.toggleTheme()"
+          [matTooltip]="themeService.getThemeLabel()">
+          <mat-icon>{{ themeService.getThemeIcon() }}</mat-icon>
+        </button>
+
+        <!-- Refresh -->
+        <button
+          mat-icon-button
+          (click)="refresh()"
+          matTooltip="Refresh">
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Loading State -->
-  @if (loading()) {
-    <div class="employee-grid">
-      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-        <div class="employee-card skeleton">
-          <app-skeleton-loader [height]="200" [borderRadius]="'8px'" />
-        </div>
-      }
-    </div>
-  }
+  <div class="page-content">
+    <!-- Filter Panel (Sidebar) -->
+    @if (showFilters()) {
+      <aside class="filter-sidebar">
+        <app-employee-filter-panel
+          [filters]="filters()"
+          [employees]="employees()"
+          (filtersChange)="handleFiltersChange($event)">
+        </app-employee-filter-panel>
 
-  <!-- Error State -->
-  @else if (error()) {
-    <div class="error-state">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="error-icon">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-      <h2 class="error-title">Unable to load employees</h2>
-      <p class="error-message">{{ error() }}</p>
-      <button class="retry-button" (click)="employeeService.getEmployees()">
-        Try Again
-      </button>
-    </div>
-  }
+        @if (filters().search || filters().availabilityStatuses.length > 0 || filters().departments.length > 0 || filters().seniorities.length > 0 || filters().skills.length > 0) {
+          <button
+            mat-stroked-button
+            class="clear-filters-btn"
+            (click)="clearFilters()">
+            <mat-icon>clear</mat-icon>
+            Clear All Filters
+          </button>
+        }
+      </aside>
+    }
 
-  <!-- Empty State -->
-  @else if (employees().length === 0) {
-    <div class="empty-state">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="empty-icon">
-        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-      </svg>
-      <h2 class="empty-title">No employees found</h2>
-      <p class="empty-message">There are currently no employees in the system.</p>
-    </div>
-  }
-
-  <!-- Employee Grid -->
-  @else {
-    <div class="employee-grid">
-      @for (employee of employees(); track employee.id) {
-        <article
-          class="employee-card"
-          (click)="navigateToEmployee(employee.id)"
-          (keydown.enter)="navigateToEmployee(employee.id)"
-          [attr.tabindex]="0"
-          role="button"
-          [attr.aria-label]="'View profile for ' + employee.fullName"
-        >
-          <!-- Profile Picture or Initials -->
-          <div class="card-header">
-            <div class="profile-container">
-              @if (employee.profilePicture && employee.profilePicture.startsWith('http')) {
-                <img
-                  [src]="employee.profilePicture"
-                  [alt]="employee.fullName"
-                  class="profile-picture"
-                  (error)="onImageError($event)"
-                />
-              }
-              <!-- Always render initials as fallback -->
-              <div
-                class="profile-initials"
-                [style.background]="getInitialsColor(employee.fullName)"
-              >
-                {{ getInitials(employee.fullName) }}
-              </div>
-            </div>
-            <span
-              class="availability-badge"
-              [class]="getAvailabilityClass(employee.availability)"
-            >
-              {{ formatAvailability(employee.availability) }}
+    <!-- Main Content -->
+    <main class="main-content" [class.full-width]="!showFilters()">
+      <!-- Comparison Mode Banner -->
+      @if (comparisonMode()) {
+        <div class="comparison-banner">
+          <div class="comparison-banner__content">
+            <mat-icon>info</mat-icon>
+            <span>
+              Comparison mode active. Click employees to compare (max 3).
+              <strong>{{ selectedEmployees().length }}/3 selected</strong>
             </span>
           </div>
+          <button mat-button (click)="clearComparison()">
+            <mat-icon>clear</mat-icon>
+            Clear Selection
+          </button>
+        </div>
+      }
 
-          <!-- Employee Info -->
-          <div class="card-body">
-            <h3 class="employee-name">{{ employee.fullName }}</h3>
-            <p class="employee-title">{{ employee.title }}</p>
+      <!-- Loading State -->
+      @if (loading()) {
+        <div class="loading-state">
+          <mat-spinner diameter="48"></mat-spinner>
+          <p>Loading employees...</p>
+        </div>
+      }
 
-            <div class="employee-details">
-              <div class="detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                </svg>
-                <span>{{ employee.city }}, {{ employee.country }}</span>
+      <!-- Error State -->
+      @else if (error()) {
+        <div class="error-state">
+          <mat-icon>error_outline</mat-icon>
+          <h3>Failed to Load Employees</h3>
+          <p>{{ error() }}</p>
+          <button mat-raised-button color="primary" (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+            Try Again
+          </button>
+        </div>
+      }
+
+      <!-- Empty State (No Results) -->
+      @else if (filteredCount() === 0) {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <h3>No Employees Found</h3>
+          <p>Try adjusting your filters or search terms.</p>
+          @if (filters().search || filters().availabilityStatuses.length > 0 || filters().departments.length > 0 || filters().seniorities.length > 0 || filters().skills.length > 0) {
+            <button mat-raised-button color="primary" (click)="clearFilters()">
+              <mat-icon>clear</mat-icon>
+              Clear Filters
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Employee Grid View -->
+      @else if (viewMode() === 'grid') {
+        <!-- Grouped View -->
+        @if (groupingEnabled() && groupedEmployees()) {
+          <div class="grouped-view">
+            @for (group of groupedEmployees(); track group.name) {
+              <div class="employee-group">
+                <div class="group-header">
+                  <h3 class="group-title">
+                    <mat-icon>folder_open</mat-icon>
+                    {{ group.name }}
+                    <span class="group-count">({{ group.count }})</span>
+                  </h3>
+                </div>
+                <div class="employee-grid">
+                  @for (employee of group.employees; track employee.id) {
+                    <div
+                      cdkDrag
+                      [cdkDragData]="employee"
+                      [cdkDragDisabled]="!ultraPremiumMode()"
+                      (cdkDragStarted)="handleEmployeeDragStart(employee)">
+                      <app-employee-card
+                        [employee]="employee"
+                        [selectable]="comparisonMode()"
+                        [selected]="isEmployeeSelected(employee.id)"
+                        [enable3dTilt]="ultraPremiumMode()"
+                        (click)="handleEmployeeClick(employee.id)">
+                      </app-employee-card>
+                    </div>
+                  }
+                </div>
               </div>
-
-              <div class="detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
-                </svg>
-                <span>{{ employee.department }}</span>
+            }
+          </div>
+        }
+        <!-- Standard View (No Grouping) -->
+        @else if (virtualScrollEnabled() && filteredCount() > 20) {
+          <cdk-virtual-scroll-viewport
+            [itemSize]="GRID_ITEM_HEIGHT"
+            class="virtual-scroll-viewport">
+            <div class="employee-grid">
+              @for (employee of filteredEmployees(); track employee.id) {
+                <div
+                  cdkDrag
+                  [cdkDragData]="employee"
+                  [cdkDragDisabled]="!ultraPremiumMode()"
+                  (cdkDragStarted)="handleEmployeeDragStart(employee)">
+                  <app-employee-card
+                    [employee]="employee"
+                    [selectable]="comparisonMode()"
+                    [selected]="isEmployeeSelected(employee.id)"
+                    [enable3dTilt]="ultraPremiumMode()"
+                    (click)="handleEmployeeClick(employee.id)">
+                  </app-employee-card>
+                </div>
+              }
+            </div>
+          </cdk-virtual-scroll-viewport>
+        } @else {
+          <div class="employee-grid">
+            @for (employee of filteredEmployees(); track employee.id) {
+              <div
+                cdkDrag
+                [cdkDragData]="employee"
+                [cdkDragDisabled]="!ultraPremiumMode()"
+                (cdkDragStarted)="handleEmployeeDragStart(employee)">
+                <app-employee-card
+                  [employee]="employee"
+                  [selectable]="comparisonMode()"
+                  [selected]="isEmployeeSelected(employee.id)"
+                  [enable3dTilt]="ultraPremiumMode()"
+                  (click)="handleEmployeeClick(employee.id)">
+                </app-employee-card>
               </div>
+            }
+          </div>
+        }
+      }
 
-              <div class="detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                </svg>
-                <span>{{ employee.yearsExperience }} years</span>
+      <!-- Employee List View -->
+      @else if (viewMode() === 'list') {
+        @if (virtualScrollEnabled() && filteredCount() > 20) {
+          <cdk-virtual-scroll-viewport
+            [itemSize]="LIST_ITEM_HEIGHT"
+            class="virtual-scroll-viewport list-viewport">
+            @for (employee of filteredEmployees(); track employee.id) {
+              <app-employee-card-compact
+                [employee]="employee"
+                [selectable]="comparisonMode()"
+                [selected]="isEmployeeSelected(employee.id)"
+                (click)="handleEmployeeClick(employee.id)">
+              </app-employee-card-compact>
+            }
+          </cdk-virtual-scroll-viewport>
+        } @else {
+          <div class="employee-list">
+            @for (employee of filteredEmployees(); track employee.id) {
+              <app-employee-card-compact
+                [employee]="employee"
+                [selectable]="comparisonMode()"
+                [selected]="isEmployeeSelected(employee.id)"
+                (click)="handleEmployeeClick(employee.id)">
+              </app-employee-card-compact>
+            }
+          </div>
+        }
+      }
+
+      <!-- Gallery View (Large Cards) -->
+      @else if (viewMode() === 'gallery') {
+        @if (virtualScrollEnabled() && filteredCount() > 20) {
+          <cdk-virtual-scroll-viewport
+            [itemSize]="GALLERY_ITEM_HEIGHT"
+            class="virtual-scroll-viewport">
+            <div class="employee-gallery">
+              @for (employee of filteredEmployees(); track employee.id) {
+                <div
+                  cdkDrag
+                  [cdkDragData]="employee"
+                  [cdkDragDisabled]="!ultraPremiumMode()"
+                  (cdkDragStarted)="handleEmployeeDragStart(employee)">
+                  <app-employee-card
+                    [employee]="employee"
+                    [selectable]="comparisonMode()"
+                    [selected]="isEmployeeSelected(employee.id)"
+                    [enhanced]="true"
+                    [enable3dTilt]="ultraPremiumMode()"
+                    (click)="handleEmployeeClick(employee.id)">
+                  </app-employee-card>
+                </div>
+              }
+            </div>
+          </cdk-virtual-scroll-viewport>
+        } @else {
+          <div class="employee-gallery">
+            @for (employee of filteredEmployees(); track employee.id) {
+              <div
+                cdkDrag
+                [cdkDragData]="employee"
+                [cdkDragDisabled]="!ultraPremiumMode()"
+                (cdkDragStarted)="handleEmployeeDragStart(employee)">
+                <app-employee-card
+                  [employee]="employee"
+                  [selectable]="comparisonMode()"
+                  [selected]="isEmployeeSelected(employee.id)"
+                  [enhanced]="true"
+                  [enable3dTilt]="ultraPremiumMode()"
+                  (click)="handleEmployeeClick(employee.id)">
+                </app-employee-card>
               </div>
+            }
+          </div>
+        }
+      }
+    </main>
+  </div>
+
+  <!-- Ultra Premium: Drag-to-Compare Panel -->
+  @if (ultraPremiumMode() && showComparisonPanel() && comparisonPanel().length > 0) {
+    <div class="comparison-panel">
+      <div class="comparison-panel__header">
+        <div class="comparison-panel__title">
+          <mat-icon>compare_arrows</mat-icon>
+          <h3>Employee Comparison</h3>
+          <span class="comparison-count">{{ comparisonPanel().length }}/3</span>
+        </div>
+        <div class="comparison-panel__actions">
+          <button
+            mat-button
+            (click)="clearComparisonPanel()"
+            matTooltip="Clear all">
+            <mat-icon>clear_all</mat-icon>
+            Clear
+          </button>
+          <button
+            mat-icon-button
+            (click)="toggleComparisonPanel()"
+            matTooltip="Minimize">
+            <mat-icon>expand_more</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="comparison-panel__content"
+        cdkDropList
+        [cdkDropListData]="comparisonPanel()"
+        (cdkDropListDropped)="reorderComparison($event)"
+        cdkDropListOrientation="horizontal">
+        @for (employee of comparisonPanel(); track employee.id) {
+          <div
+            class="comparison-card"
+            cdkDrag
+            [cdkDragData]="employee">
+            <!-- Drag Handle -->
+            <div class="drag-handle" cdkDragHandle>
+              <mat-icon>drag_indicator</mat-icon>
             </div>
 
-            <p class="employee-summary">{{ employee.summary }}</p>
+            <!-- Remove Button -->
+            <button
+              class="remove-btn"
+              mat-icon-button
+              (click)="removeFromComparison(employee.id)"
+              matTooltip="Remove from comparison">
+              <mat-icon>close</mat-icon>
+            </button>
+
+            <!-- Employee Info -->
+            <div class="comparison-card__content">
+              <div class="comparison-card__avatar">
+                <img
+                  [src]="employee.avatar || '/assets/images/avatar-placeholder.png'"
+                  [alt]="employee.fullName"
+                  onerror="this.src='/assets/images/avatar-placeholder.png'" />
+              </div>
+
+              <div class="comparison-card__info">
+                <h4>{{ employee.fullName }}</h4>
+                <p class="title">{{ employee.title }}</p>
+                <p class="department">{{ employee.department }}</p>
+
+                <div class="comparison-card__details">
+                  <div class="detail-item">
+                    <mat-icon>work</mat-icon>
+                    <span>{{ employee.seniority }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <mat-icon>schedule</mat-icon>
+                    <span>{{ employee.yearsExperience }} years</span>
+                  </div>
+                  <div class="detail-item" [class]="'status-' + employee.availability">
+                    <mat-icon>circle</mat-icon>
+                    <span>{{ employee.availability }}</span>
+                  </div>
+                </div>
+
+                <div class="comparison-card__skills">
+                  @for (tech of employee.technologies.slice(0, 3); track tech.name) {
+                    <span class="skill-badge">{{ tech.name }}</span>
+                  }
+                  @if (employee.technologies.length > 3) {
+                    <span class="skill-badge more">+{{ employee.technologies.length - 3 }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Empty Slot Placeholders -->
+        @for (i of [1, 2, 3].slice(comparisonPanel().length); track i) {
+          <div class="comparison-placeholder">
+            <mat-icon>person_add</mat-icon>
+            <p>Drag employee here</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Drop Zone Indicator (Shows when Ultra Premium mode is on) -->
+  @if (ultraPremiumMode() && !showComparisonPanel()) {
+    <div
+      class="drop-zone-trigger"
+      cdkDropList
+      (cdkDropListDropped)="handleEmployeeDrop($event)"
+      (click)="toggleComparisonPanel()"
+      matTooltip="Drag employees here to compare">
+      <mat-icon>compare_arrows</mat-icon>
+      <span>Drop to Compare</span>
+    </div>
+  }
+
+  <!-- Ultra Premium: Advanced Analytics Panel -->
+  @if (ultraPremiumMode() && showAnalytics()) {
+    <div class="analytics-overlay" (click)="toggleAnalytics()">
+      <div class="analytics-modal" (click)="$event.stopPropagation()">
+        <div class="analytics-modal__header">
+          <div class="analytics-modal__title">
+            <mat-icon>analytics</mat-icon>
+            <h2>Team Analytics & Insights</h2>
+          </div>
+          <button
+            mat-icon-button
+            (click)="toggleAnalytics()"
+            matTooltip="Close">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="analytics-modal__content">
+          <!-- Department Distribution -->
+          <div class="analytics-card">
+            <div class="analytics-card__header">
+              <mat-icon>business</mat-icon>
+              <h3>Department Distribution</h3>
+              <span class="analytics-badge">{{ filteredCount() }} total</span>
+            </div>
+            <div class="analytics-chart">
+              @for (dept of departmentDistribution(); track dept.name) {
+                <div class="chart-bar-item">
+                  <div class="chart-bar-label">
+                    <span class="chart-bar-name">{{ dept.name }}</span>
+                    <span class="chart-bar-value">{{ dept.count }}</span>
+                  </div>
+                  <div class="chart-bar-track">
+                    <div
+                      class="chart-bar-fill chart-bar-fill--department"
+                      [style.width.%]="(dept.count / filteredCount()) * 100">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
 
-          <!-- Seniority Badge -->
-          <div class="card-footer">
-            <span class="seniority-badge">{{ employee.seniority }}</span>
+          <!-- Seniority Distribution -->
+          <div class="analytics-card">
+            <div class="analytics-card__header">
+              <mat-icon>leaderboard</mat-icon>
+              <h3>Seniority Levels</h3>
+              <span class="analytics-badge">{{ seniorityDistribution().length }} levels</span>
+            </div>
+            <div class="analytics-chart">
+              @for (level of seniorityDistribution(); track level.name) {
+                <div class="chart-bar-item">
+                  <div class="chart-bar-label">
+                    <span class="chart-bar-name">{{ level.name }}</span>
+                    <span class="chart-bar-value">{{ level.count }}</span>
+                  </div>
+                  <div class="chart-bar-track">
+                    <div
+                      class="chart-bar-fill chart-bar-fill--seniority"
+                      [style.width.%]="(level.count / filteredCount()) * 100">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
-        </article>
-      }
+
+          <!-- Availability Status -->
+          <div class="analytics-card">
+            <div class="analytics-card__header">
+              <mat-icon>schedule</mat-icon>
+              <h3>Availability Status</h3>
+              <span class="analytics-badge">{{ availabilityDistribution().length }} statuses</span>
+            </div>
+            <div class="analytics-stats-grid">
+              @for (status of availabilityDistribution(); track status.name) {
+                <div class="stat-card" [class]="'stat-card--' + status.name">
+                  <div class="stat-card__icon">
+                    <mat-icon>
+                      @if (status.name === 'available') {
+                        check_circle
+                      } @else if (status.name === 'busy') {
+                        schedule
+                      } @else {
+                        block
+                      }
+                    </mat-icon>
+                  </div>
+                  <div class="stat-card__content">
+                    <div class="stat-card__value">{{ status.count }}</div>
+                    <div class="stat-card__label">{{ status.name }}</div>
+                    <div class="stat-card__percentage">
+                      {{ (status.count / filteredCount() * 100).toFixed(1) }}%
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Top Technologies -->
+          <div class="analytics-card">
+            <div class="analytics-card__header">
+              <mat-icon>code</mat-icon>
+              <h3>Top Technologies</h3>
+              <span class="analytics-badge">Top {{ topTechnologies().length }}</span>
+            </div>
+            <div class="analytics-chart">
+              @for (tech of topTechnologies(); track tech.name) {
+                <div class="chart-bar-item">
+                  <div class="chart-bar-label">
+                    <span class="chart-bar-name">{{ tech.name }}</span>
+                    <span class="chart-bar-value">{{ tech.count }} employees</span>
+                  </div>
+                  <div class="chart-bar-track">
+                    <div
+                      class="chart-bar-fill chart-bar-fill--technology"
+                      [style.width.%]="(tech.count / filteredCount()) * 100">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Top Skills -->
+          <div class="analytics-card">
+            <div class="analytics-card__header">
+              <mat-icon>star</mat-icon>
+              <h3>Top Skills</h3>
+              <span class="analytics-badge">Top {{ topSkills().length }}</span>
+            </div>
+            <div class="analytics-chart">
+              @for (skill of topSkills(); track skill.name) {
+                <div class="chart-bar-item">
+                  <div class="chart-bar-label">
+                    <span class="chart-bar-name">{{ skill.name }}</span>
+                    <span class="chart-bar-value">{{ skill.count }} employees</span>
+                  </div>
+                  <div class="chart-bar-track">
+                    <div
+                      class="chart-bar-fill chart-bar-fill--skill"
+                      [style.width.%]="(skill.count / filteredCount()) * 100">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Summary Stats -->
+          <div class="analytics-card analytics-card--summary">
+            <div class="analytics-card__header">
+              <mat-icon>summarize</mat-icon>
+              <h3>Summary Statistics</h3>
+            </div>
+            <div class="summary-grid">
+              <div class="summary-stat">
+                <mat-icon>people</mat-icon>
+                <div class="summary-stat__content">
+                  <div class="summary-stat__value">{{ filteredCount() }}</div>
+                  <div class="summary-stat__label">Total Employees</div>
+                </div>
+              </div>
+              <div class="summary-stat">
+                <mat-icon>check_circle</mat-icon>
+                <div class="summary-stat__content">
+                  <div class="summary-stat__value">{{ availableCount() }}</div>
+                  <div class="summary-stat__label">Available Now</div>
+                </div>
+              </div>
+              <div class="summary-stat">
+                <mat-icon>business</mat-icon>
+                <div class="summary-stat__content">
+                  <div class="summary-stat__value">{{ departmentDistribution().length }}</div>
+                  <div class="summary-stat__label">Departments</div>
+                </div>
+              </div>
+              <div class="summary-stat">
+                <mat-icon>code</mat-icon>
+                <div class="summary-stat__content">
+                  <div class="summary-stat__value">{{ topTechnologies().length }}</div>
+                  <div class="summary-stat__label">Technologies</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   }
 </div>

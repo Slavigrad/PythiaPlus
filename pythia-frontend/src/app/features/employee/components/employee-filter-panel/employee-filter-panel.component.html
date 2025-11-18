@@ -1,0 +1,161 @@
+<div class="filter-panel">
+  <!-- Search -->
+  <div class="filter-section">
+    <h3 class="filter-section__title">
+      <mat-icon>search</mat-icon>
+      Search
+    </h3>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        type="search"
+        placeholder="Search by name, title, skills..."
+        [(ngModel)]="searchText"
+        (ngModelChange)="handleSearchChange($event)"
+        aria-label="Search employees">
+      @if (searchText()) {
+        <button
+          matSuffix
+          mat-icon-button
+          (click)="handleSearchChange('')"
+          aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+  </div>
+
+  <!-- Availability Status -->
+  <mat-expansion-panel class="filter-expansion" [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>schedule</mat-icon>
+        Availability
+        @if (filters().availabilityStatuses.length > 0) {
+          <span class="filter-count">{{ filters().availabilityStatuses.length }}</span>
+        }
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="filter-options">
+      @for (status of availabilityOptions; track status) {
+        <div class="filter-option">
+          <mat-checkbox
+            [checked]="isAvailabilityChecked(status)"
+            (change)="toggleAvailability(status, $event.checked)"
+            color="primary">
+            <span class="option-label">{{ availabilityLabels[status] }}</span>
+            <span class="option-count">({{ getAvailabilityCount(status) }})</span>
+          </mat-checkbox>
+        </div>
+      }
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Department -->
+  <mat-expansion-panel class="filter-expansion">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>business</mat-icon>
+        Department
+        @if (filters().departments.length > 0) {
+          <span class="filter-count">{{ filters().departments.length }}</span>
+        }
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="filter-options">
+      @for (dept of availableDepartments(); track dept) {
+        <div class="filter-option">
+          <mat-checkbox
+            [checked]="isDepartmentChecked(dept)"
+            (change)="toggleDepartment(dept, $event.checked)"
+            color="primary">
+            <span class="option-label">{{ dept }}</span>
+            <span class="option-count">({{ getDepartmentCount(dept) }})</span>
+          </mat-checkbox>
+        </div>
+      }
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Seniority -->
+  <mat-expansion-panel class="filter-expansion">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>workspace_premium</mat-icon>
+        Seniority
+        @if (filters().seniorities.length > 0) {
+          <span class="filter-count">{{ filters().seniorities.length }}</span>
+        }
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="filter-options">
+      @for (level of seniorityOptions; track level) {
+        <div class="filter-option">
+          <mat-checkbox
+            [checked]="isSeniorityChecked(level)"
+            (change)="toggleSeniority(level, $event.checked)"
+            color="primary">
+            <span class="option-label">{{ level }}</span>
+            <span class="option-count">({{ getSeniorityCount(level) }})</span>
+          </mat-checkbox>
+        </div>
+      }
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Skills -->
+  <mat-expansion-panel class="filter-expansion">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>code</mat-icon>
+        Skills
+        @if (filters().skills.length > 0) {
+          <span class="filter-count">{{ filters().skills.length }}</span>
+        }
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="skills-filter">
+      <!-- Selected Skills Chips -->
+      @if (filters().skills.length > 0) {
+        <div class="selected-skills">
+          @for (skill of filters().skills; track skill) {
+            <mat-chip (removed)="removeSkill(skill)">
+              {{ skill }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          }
+        </div>
+      }
+
+      <!-- Skill Input -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-icon matPrefix>add</mat-icon>
+        <input
+          matInput
+          type="text"
+          placeholder="Add skill to filter..."
+          [(ngModel)]="skillInput"
+          (keydown)="handleSkillInputKeydown($event)"
+          [matAutocomplete]="skillAuto"
+          aria-label="Add skill filter">
+        <mat-autocomplete #skillAuto="matAutocomplete" (optionSelected)="addSkill($event.option.value); skillInput.set('')">
+          @for (skill of filteredSkillOptions(); track skill) {
+            <mat-option [value]="skill">{{ skill }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <p class="help-text">
+        <mat-icon>info</mat-icon>
+        Type and press Enter or select from suggestions
+      </p>
+    </div>
+  </mat-expansion-panel>
+</div>

@@ -1,0 +1,117 @@
+<article
+  class="employee-card-compact"
+  [class.selectable]="selectable()"
+  [class.selected]="selected()"
+  [attr.aria-label]="'Employee: ' + employee().fullName + ', ' + employee().title">
+
+  <!-- Department Color Accent -->
+  <div class="department-accent" [style.background-color]="departmentColor()"></div>
+
+  <!-- Selection Checkbox -->
+  @if (selectable()) {
+    <div class="selection-checkbox">
+      <mat-checkbox
+        [checked]="selected()"
+        [attr.aria-label]="'Select ' + employee().fullName"
+        (change)="handleCheckboxChange($event)"
+        color="primary">
+      </mat-checkbox>
+    </div>
+  }
+
+  <!-- Avatar -->
+  <div class="avatar">
+    @if (getProfilePicture()) {
+      <img [src]="getProfilePicture()" [alt]="employee().fullName" />
+    } @else {
+      <span class="initials" [style.background-color]="avatarColor()">
+        {{ initials() }}
+      </span>
+    }
+  </div>
+
+  <!-- Main Info -->
+  <div class="main-info">
+    <div class="info-header">
+      <div class="info-primary">
+        <h3 class="employee-name">{{ employee().fullName }}</h3>
+        <p class="employee-title">{{ employee().title }}</p>
+      </div>
+
+      <!-- Status Badge -->
+      <div class="status-badge" [class]="'status-' + employee().availability">
+        <mat-icon>{{ availabilityIcon() }}</mat-icon>
+        <span>{{ availabilityLabel() }}</span>
+      </div>
+    </div>
+
+    <!-- Metadata Row -->
+    <div class="metadata-row">
+      <span class="meta-item">
+        <mat-icon>business</mat-icon>
+        {{ employee().department }}
+      </span>
+      <span class="meta-separator">•</span>
+      <span class="meta-item">
+        <mat-icon>location_on</mat-icon>
+        {{ employee().location }}
+      </span>
+      <span class="meta-separator">•</span>
+      <span class="meta-item">
+        <mat-icon>workspace_premium</mat-icon>
+        {{ employee().seniority }}
+      </span>
+      <span class="meta-separator">•</span>
+      <span class="meta-item">
+        <mat-icon>schedule</mat-icon>
+        {{ employee().yearsExperience }}y exp
+      </span>
+    </div>
+  </div>
+
+  <!-- Skills Chips -->
+  <div class="skills-chips">
+    @for (skill of topSkills(); track skill) {
+      <mat-chip>{{ skill }}</mat-chip>
+    }
+    @if (employee().technologies.length + employee().skills.length > 5) {
+      <mat-chip class="more-chip">
+        +{{ employee().technologies.length + employee().skills.length - 5 }} more
+      </mat-chip>
+    }
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-compact">
+    <button
+      mat-icon-button
+      (click)="handleAction('view', $event)"
+      matTooltip="View Profile">
+      <mat-icon>visibility</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      (click)="handleAction('message', $event)"
+      matTooltip="Send Message">
+      <mat-icon>mail</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      (click)="handleAction('schedule', $event)"
+      matTooltip="Schedule Meeting">
+      <mat-icon>event</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      (click)="handleAction('more', $event)"
+      matTooltip="More Actions">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
+
+  <!-- Hover Arrow -->
+  <mat-icon class="arrow-icon" aria-hidden="true">arrow_forward</mat-icon>
+</article>
