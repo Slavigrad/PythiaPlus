@@ -70,6 +70,15 @@
           Ultra
         </button>
 
+        <!-- Dark Mode Toggle -->
+        <button
+          mat-stroked-button
+          [class.active]="themeService.isDarkMode()"
+          (click)="themeService.toggleTheme()"
+          [matTooltip]="themeService.getThemeLabel()">
+          <mat-icon>{{ themeService.getThemeIcon() }}</mat-icon>
+        </button>
+
         <!-- Refresh -->
         <button
           mat-icon-button

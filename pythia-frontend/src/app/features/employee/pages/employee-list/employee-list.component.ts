@@ -23,6 +23,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Employee } from '../../../../models/employee.model';
 import { Availability, Seniority } from '../../../../core/constants/employee.constants';
 import { EmployeeService } from '../../services/employee.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 import { EmployeeCardComponent } from '../../components/employee-card/employee-card.component';
 import { EmployeeCardCompactComponent } from '../../components/employee-card-compact/employee-card-compact.component';
@@ -60,6 +61,7 @@ export interface EmployeeFilters {
 export class EmployeeListComponent {
   private readonly employeeService = inject(EmployeeService);
   private readonly router = inject(Router);
+  protected readonly themeService = inject(ThemeService);
 
   // State Management
   protected readonly viewMode = signal<ViewMode>('grid');
@@ -70,6 +72,8 @@ export class EmployeeListComponent {
   // Ultra Premium Features
   protected readonly ultraPremiumMode = signal(true); // Enable all premium features
   protected readonly virtualScrollEnabled = signal(true); // Virtual scrolling for performance
+  protected readonly groupingEnabled = signal(false); // Smart grouping/categorization
+  protected readonly groupBy = signal<'department' | 'seniority' | 'availability' | 'none'>('none');
 
   // Virtual Scroll Item Sizes (approximate heights in px)
   protected readonly GRID_ITEM_HEIGHT = 520;
