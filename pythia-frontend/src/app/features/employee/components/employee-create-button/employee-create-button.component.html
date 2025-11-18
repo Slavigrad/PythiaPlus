@@ -1,0 +1,64 @@
+<button
+  class="hero-button"
+  type="button"
+  (click)="onClick($event)"
+  (mousemove)="onMouseMove($event)"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  [style.transform]="'translate(' + mouseX() + 'px, ' + mouseY() + 'px)'"
+  aria-label="Add new employee profile"
+>
+  <!-- Background gradient glow -->
+  <div class="glow-background"></div>
+
+  <!-- Shine effect -->
+  <div class="shine-effect"></div>
+
+  <!-- Ripple effect -->
+  @if (showRipple()) {
+    <span
+      class="ripple"
+      [style.left.px]="rippleX()"
+      [style.top.px]="rippleY()"
+    ></span>
+  }
+
+  <!-- Button content -->
+  <div class="button-content">
+    <!-- Animated icon -->
+    <svg
+      class="icon"
+      [class.hovering]="isHovering()"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <!-- Plus icon that transforms into sparkle -->
+      <line class="plus-line-1" x1="12" y1="5" x2="12" y2="19"></line>
+      <line class="plus-line-2" x1="5" y1="12" x2="19" y2="12"></line>
+
+      <!-- Sparkle particles (hidden by default, shown on hover) -->
+      <circle class="sparkle sparkle-1" cx="6" cy="6" r="1"></circle>
+      <circle class="sparkle sparkle-2" cx="18" cy="6" r="1"></circle>
+      <circle class="sparkle sparkle-3" cx="6" cy="18" r="1"></circle>
+      <circle class="sparkle sparkle-4" cx="18" cy="18" r="1"></circle>
+    </svg>
+
+    <!-- Button text with letter-spacing animation -->
+    <span class="button-text">
+      <span class="text-word">Add</span>
+      <span class="text-word">New</span>
+      <span class="text-word">Profile</span>
+    </span>
+  </div>
+
+  <!-- Floating particles decoration -->
+  <div class="particle particle-1"></div>
+  <div class="particle particle-2"></div>
+  <div class="particle particle-3"></div>
+</button>

@@ -1,0 +1,243 @@
+<div class="wizard-container">
+  <!-- =============================================================================
+       WIZARD HEADER - Progress & Navigation
+       ============================================================================= -->
+  <div class="wizard-header">
+    <!-- Close button -->
+    <button
+      class="close-button"
+      type="button"
+      (click)="onCancel()"
+      aria-label="Close wizard"
+      matTooltip="Close"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <!-- Title -->
+    <div class="header-title">
+      <h1 class="wizard-title">Oracle's Creation</h1>
+      <p class="wizard-subtitle">Discover a new talent</p>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-container">
+      <div class="progress-info">
+        <span class="progress-label">{{ motivationalMessage() }}</span>
+        <span class="progress-percentage">{{ completionPercentage() }}%</span>
+      </div>
+      <mat-progress-bar
+        mode="determinate"
+        [value]="completionPercentage()"
+        class="progress-bar"
+      ></mat-progress-bar>
+    </div>
+
+    <!-- Breadcrumb navigation -->
+    <div class="breadcrumb-nav">
+      @for (stepInfo of stepTitles; track stepInfo.step) {
+        <button
+          class="breadcrumb-step"
+          [class.completed]="isStepCompleted(stepInfo.step)"
+          [class.active]="isStepActive(stepInfo.step)"
+          [disabled]="stepInfo.step > currentStep()"
+          (click)="goToStep(stepInfo.step)"
+          [attr.aria-label]="'Go to step ' + stepInfo.step + ': ' + stepInfo.title"
+        >
+          <div class="step-indicator">
+            @if (isStepCompleted(stepInfo.step)) {
+              <mat-icon class="step-icon">check</mat-icon>
+            } @else {
+              <span class="step-number">{{ stepInfo.step }}</span>
+            }
+          </div>
+          <span class="step-title">{{ stepInfo.title }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- =============================================================================
+       WIZARD CONTENT - Step Forms
+       ============================================================================= -->
+  <div class="wizard-content" [class.slide-forward]="slideDirection() === 'forward'" [class.slide-backward]="slideDirection() === 'backward'">
+    <!-- Step 1: The Essence -->
+    @if (currentStep() === 1) {
+      <div class="step-container">
+        <div class="step-header">
+          <mat-icon class="step-icon-large">person</mat-icon>
+          <h2 class="step-title">The Essence</h2>
+          <p class="step-description">Let's start with the fundamentals - who is this talent?</p>
+        </div>
+
+        <div class="step-body">
+          <!-- TODO: Step 1 form will go here -->
+          <div class="placeholder-content">
+            <p>Step 1: The Essence form coming soon...</p>
+            <p>Fields: Full Name (required), Email (required), Profile Picture (optional)</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 2: The Foundation -->
+    @if (currentStep() === 2) {
+      <div class="step-container">
+        <div class="step-header">
+          <mat-icon class="step-icon-large">business</mat-icon>
+          <h2 class="step-title">The Foundation</h2>
+          <p class="step-description">Build the professional foundation</p>
+        </div>
+
+        <div class="step-body">
+          <!-- TODO: Step 2 form will go here -->
+          <div class="placeholder-content">
+            <p>Step 2: The Foundation form coming soon...</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 3: The Arsenal -->
+    @if (currentStep() === 3) {
+      <div class="step-container">
+        <div class="step-header">
+          <mat-icon class="step-icon-large">code</mat-icon>
+          <h2 class="step-title">The Arsenal</h2>
+          <p class="step-description">What tools and skills does this talent wield?</p>
+        </div>
+
+        <div class="step-body">
+          <!-- TODO: Step 3 form will go here -->
+          <div class="placeholder-content">
+            <p>Step 3: The Arsenal form coming soon...</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 4: The Journey -->
+    @if (currentStep() === 4) {
+      <div class="step-container">
+        <div class="step-header">
+          <mat-icon class="step-icon-large">timeline</mat-icon>
+          <h2 class="step-title">The Journey</h2>
+          <p class="step-description">Trace the path of experience</p>
+        </div>
+
+        <div class="step-body">
+          <!-- TODO: Step 4 form will go here -->
+          <div class="placeholder-content">
+            <p>Step 4: The Journey form coming soon...</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 5: The Credentials -->
+    @if (currentStep() === 5) {
+      <div class="step-container">
+        <div class="step-header">
+          <mat-icon class="step-icon-large">school</mat-icon>
+          <h2 class="step-title">The Credentials</h2>
+          <p class="step-description">Education and certifications that validate expertise</p>
+        </div>
+
+        <div class="step-body">
+          <!-- TODO: Step 5 form will go here -->
+          <div class="placeholder-content">
+            <p>Step 5: The Credentials form coming soon...</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 6: The Oracle Speaks -->
+    @if (currentStep() === 6) {
+      <div class="step-container">
+        <div class="step-header">
+          <mat-icon class="step-icon-large">visibility</mat-icon>
+          <h2 class="step-title">The Oracle Speaks</h2>
+          <p class="step-description">Behold the profile you've created</p>
+        </div>
+
+        <div class="step-body">
+          <!-- TODO: Step 6 preview will go here -->
+          <div class="placeholder-content">
+            <p>Step 6: The Oracle Speaks (preview) coming soon...</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Error message -->
+    @if (error()) {
+      <div class="error-banner">
+        <mat-icon>error</mat-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <!-- Success state -->
+    @if (success()) {
+      <div class="success-banner">
+        <mat-icon>check_circle</mat-icon>
+        <span>🎉 Profile created successfully! Redirecting...</span>
+      </div>
+    }
+  </div>
+
+  <!-- =============================================================================
+       WIZARD FOOTER - Navigation Buttons
+       ============================================================================= -->
+  <div class="wizard-footer">
+    <!-- Previous button -->
+    <button
+      mat-button
+      type="button"
+      class="nav-button nav-button-previous"
+      [disabled]="currentStep() === 1 || loading()"
+      (click)="onPrevious()"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      <span>Previous</span>
+    </button>
+
+    <!-- Step indicator (mobile) -->
+    <div class="step-indicator-mobile">
+      <span>{{ currentStep() }} / {{ totalSteps }}</span>
+    </div>
+
+    <!-- Next/Submit button -->
+    @if (currentStep() < totalSteps) {
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        class="nav-button nav-button-next"
+        [disabled]="!isCurrentStepValid() || loading()"
+        (click)="onNext()"
+      >
+        <span>Next</span>
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    } @else {
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        class="nav-button nav-button-submit"
+        [disabled]="!canSubmit()"
+        (click)="onSubmit()"
+      >
+        @if (loading()) {
+          <mat-icon class="spinner">hourglass_empty</mat-icon>
+          <span>Creating...</span>
+        } @else {
+          <mat-icon>star</mat-icon>
+          <span>Summon This Talent</span>
+        }
+      </button>
+    }
+  </div>
+</div>

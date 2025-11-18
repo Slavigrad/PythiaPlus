@@ -1,7 +1,14 @@
 <div class="employee-list-page">
   <div class="page-header">
-    <h1 class="page-title">Employees</h1>
-    <p class="page-subtitle">Browse all employees in the talent pool</p>
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">Employees</h1>
+        <p class="page-subtitle">Browse all employees in the talent pool</p>
+      </div>
+      <div class="header-actions">
+        <app-employee-create-button (createClick)="onCreateEmployee()" />
+      </div>
+    </div>
   </div>
 
   <!-- Loading State -->
