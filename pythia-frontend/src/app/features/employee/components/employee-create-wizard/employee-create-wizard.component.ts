@@ -9,6 +9,7 @@ import { EmployeeCreateService } from '../../services/employee-create.service';
 import { Router } from '@angular/router';
 import { StepEssenceComponent } from './wizard-steps/step-essence/step-essence.component';
 import { StepFoundationComponent } from './wizard-steps/step-foundation/step-foundation.component';
+import { StepArsenalComponent } from './wizard-steps/step-arsenal/step-arsenal.component';
 
 /**
  * Employee Create Wizard - "Oracle's Creation Experience"
@@ -32,7 +33,8 @@ import { StepFoundationComponent } from './wizard-steps/step-foundation/step-fou
     MatProgressBarModule,
     MatTooltipModule,
     StepEssenceComponent,
-    StepFoundationComponent
+    StepFoundationComponent,
+    StepArsenalComponent
   ],
   templateUrl: './employee-create-wizard.component.html',
   styleUrl: './employee-create-wizard.component.scss',
