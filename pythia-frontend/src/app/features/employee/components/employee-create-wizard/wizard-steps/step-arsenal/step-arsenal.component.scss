@@ -1,0 +1,420 @@
+// =============================================================================
+// STEP 3: THE ARSENAL - TECHNOLOGIES & SKILLS STYLING
+// =============================================================================
+
+.arsenal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================================================
+// SECTION HEADERS
+// =============================================================================
+
+.tech-section {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+.skills-section {
+  animation: slideInRight 0.5s ease-out 0.2s both;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.section-icon {
+  font-size: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+  color: var(--color-primary);
+}
+
+.section-description {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+// =============================================================================
+// SEARCH FIELD
+// =============================================================================
+
+.search-field {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// Autocomplete options
+.autocomplete-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.option-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.option-category {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.no-results {
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+// =============================================================================
+// SELECTED ITEMS - Skill Cards
+// =============================================================================
+
+.selected-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skill-card {
+  background: white;
+  border: 2px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all var(--transition-fast);
+  animation: cardSlideIn 0.4s ease-out;
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &.tech-card {
+    border-left: 4px solid #3b82f6; // Blue for tech
+  }
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.remove-button {
+  width: 32px;
+  height: 32px;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    color: var(--color-error);
+    background: rgba(244, 67, 54, 0.1);
+    transform: rotate(90deg);
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// =============================================================================
+// PROFICIENCY ROW
+// =============================================================================
+
+.proficiency-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.proficiency-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.prof-button {
+  flex: 1;
+  min-width: 90px;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid var(--color-border-light);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--prof-color);
+    color: var(--prof-color);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.selected {
+    background: var(--prof-color);
+    border-color: var(--prof-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+// =============================================================================
+// YEARS ROW
+// =============================================================================
+
+.years-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.years-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: rgba(211, 47, 47, 0.05);
+  border-radius: 8px;
+}
+
+.years-btn {
+  width: 32px;
+  height: 32px;
+  background: white;
+  border: 2px solid var(--color-border-light);
+  transition: all var(--transition-fast);
+
+  &:not(:disabled):hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: white;
+    transform: scale(1.1);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.years-value {
+  min-width: 40px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-primary);
+  animation: numberPulse 0.3s ease-out;
+}
+
+@keyframes numberPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+// =============================================================================
+// EMPTY STATE
+// =============================================================================
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  background: linear-gradient(135deg, rgba(211, 47, 47, 0.02) 0%, rgba(255, 102, 89, 0.05) 100%);
+  border: 2px dashed var(--color-border-light);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 64px !important;
+  width: 64px !important;
+  height: 64px !important;
+  color: var(--color-text-disabled);
+  margin-bottom: 16px;
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.empty-text {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.empty-hint {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-hint);
+}
+
+// =============================================================================
+// RESPONSIVE DESIGN
+// =============================================================================
+
+@media (max-width: 768px) {
+  .arsenal-form {
+    gap: 32px;
+  }
+
+  .proficiency-buttons {
+    flex-direction: column;
+
+    .prof-button {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+
+  .years-row {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .years-input {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .skill-card {
+    padding: 16px;
+  }
+}
+
+// =============================================================================
+// ACCESSIBILITY - Reduced motion
+// =============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .arsenal-form,
+  .tech-section,
+  .skills-section,
+  .skill-card,
+  .empty-icon {
+    animation: none !important;
+  }
+
+  * {
+    transition: none !important;
+  }
+
+  .prof-button:hover,
+  .remove-button:hover {
+    transform: none;
+  }
+}

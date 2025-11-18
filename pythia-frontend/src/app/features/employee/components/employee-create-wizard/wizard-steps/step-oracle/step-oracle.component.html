@@ -1,0 +1,373 @@
+<!-- =============================================================================
+     STEP 6: THE ORACLE SPEAKS - FINAL PREVIEW
+     ============================================================================= -->
+<div class="oracle-view">
+
+  <!-- =============================================================================
+       HERO CARD - Profile Preview
+       ============================================================================= -->
+  <div class="hero-card">
+    <div class="hero-background"></div>
+    <div class="hero-content">
+      <!-- Avatar -->
+      <div class="avatar-container">
+        @if (formData().profilePicture) {
+          <img [src]="formData().profilePicture" [alt]="formData().fullName" class="avatar-image" />
+        } @else {
+          <div class="avatar-initials" [style.background]="initialsColor()">
+            {{ initials() }}
+          </div>
+        }
+        <div class="completion-ring" [style.--completion]="completionPercentage()">
+          <svg viewBox="0 0 100 100">
+            <circle class="ring-background" cx="50" cy="50" r="45" />
+            <circle class="ring-progress" cx="50" cy="50" r="45" />
+          </svg>
+          <div class="completion-badge">
+            <mat-icon>star</mat-icon>
+            <span>{{ completionPercentage() }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Name and Title -->
+      <div class="hero-text">
+        <h2 class="profile-name">{{ formData().fullName || 'Unnamed Talent' }}</h2>
+        @if (formData().title) {
+          <p class="profile-title">{{ formData().title }}</p>
+        }
+        @if (formData().location) {
+          <p class="profile-location">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ formData().location }}</span>
+          </p>
+        }
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="quick-stats">
+        @if (totalYearsExperience() > 0) {
+          <div class="stat-item">
+            <mat-icon>work_history</mat-icon>
+            <span class="stat-value">{{ totalYearsExperience() }}</span>
+            <span class="stat-label">Years Exp.</span>
+          </div>
+        }
+        @if (totalTechnologies() > 0 || totalSkills() > 0) {
+          <div class="stat-item">
+            <mat-icon>code</mat-icon>
+            <span class="stat-value">{{ totalTechnologies() + totalSkills() }}</span>
+            <span class="stat-label">Skills</span>
+          </div>
+        }
+        @if (totalEducations() > 0) {
+          <div class="stat-item">
+            <mat-icon>school</mat-icon>
+            <span class="stat-value">{{ totalEducations() }}</span>
+            <span class="stat-label">Degrees</span>
+          </div>
+        }
+        @if (totalCertifications() > 0) {
+          <div class="stat-item">
+            <mat-icon>verified</mat-icon>
+            <span class="stat-value">{{ totalCertifications() }}</span>
+            <span class="stat-label">Certs</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================================
+       PREVIEW SECTIONS
+       ============================================================================= -->
+  <div class="preview-sections">
+
+    <!-- Section 1: The Essence -->
+    <div class="preview-section" [class.incomplete]="!essenceComplete()">
+      <div class="section-header">
+        <div class="header-left">
+          <mat-icon class="section-icon">person</mat-icon>
+          <h3 class="section-title">The Essence</h3>
+          @if (essenceComplete()) {
+            <mat-icon class="check-icon">check_circle</mat-icon>
+          }
+        </div>
+        <button mat-button class="edit-button" (click)="goToStep(1)">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+      </div>
+
+      <div class="section-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Full Name</span>
+            <span class="info-value">{{ formData().fullName || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ formData().email || '—' }}</span>
+          </div>
+          @if (formData().profilePicture) {
+            <div class="info-item">
+              <span class="info-label">Profile Picture</span>
+              <span class="info-value">✓ Provided</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: The Foundation -->
+    <div class="preview-section" [class.incomplete]="!foundationComplete()">
+      <div class="section-header">
+        <div class="header-left">
+          <mat-icon class="section-icon">business</mat-icon>
+          <h3 class="section-title">The Foundation</h3>
+          @if (foundationComplete()) {
+            <mat-icon class="check-icon">check_circle</mat-icon>
+          }
+        </div>
+        <button mat-button class="edit-button" (click)="goToStep(2)">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+      </div>
+
+      <div class="section-body">
+        <div class="info-grid">
+          @if (formData().department) {
+            <div class="info-item">
+              <span class="info-label">Department</span>
+              <span class="info-value">{{ formData().department }}</span>
+            </div>
+          }
+          @if (formData().seniority) {
+            <div class="info-item">
+              <span class="info-label">Seniority</span>
+              <span class="info-value">{{ getSeniorityDisplay(formData().seniority) }}</span>
+            </div>
+          }
+          @if (formData().yearsExperience !== undefined) {
+            <div class="info-item">
+              <span class="info-label">Years of Experience</span>
+              <span class="info-value">{{ formData().yearsExperience }} years</span>
+            </div>
+          }
+          @if (formData().availability) {
+            <div class="info-item">
+              <span class="info-label">Availability</span>
+              <span class="info-value">{{ getAvailabilityDisplay(formData().availability) }}</span>
+            </div>
+          }
+          @if (formData().location) {
+            <div class="info-item">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ formData().location }}</span>
+            </div>
+          }
+          @if (formData().title) {
+            <div class="info-item">
+              <span class="info-label">Title</span>
+              <span class="info-value">{{ formData().title }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: The Arsenal -->
+    <div class="preview-section" [class.incomplete]="!arsenalComplete()">
+      <div class="section-header">
+        <div class="header-left">
+          <mat-icon class="section-icon">code</mat-icon>
+          <h3 class="section-title">The Arsenal</h3>
+          @if (arsenalComplete()) {
+            <mat-icon class="check-icon">check_circle</mat-icon>
+          }
+        </div>
+        <button mat-button class="edit-button" (click)="goToStep(3)">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+      </div>
+
+      <div class="section-body">
+        @if (formData().technologies && formData().technologies!.length > 0) {
+          <div class="subsection">
+            <h4 class="subsection-title">Technologies ({{ totalTechnologies() }})</h4>
+            <div class="chips-container">
+              @for (tech of formData().technologies; track tech.name) {
+                <div class="skill-chip" [style.border-color]="getProficiencyColor(tech.proficiency)">
+                  <span class="chip-name">{{ tech.name }}</span>
+                  <span class="chip-proficiency" [style.color]="getProficiencyColor(tech.proficiency)">
+                    {{ tech.proficiency }}
+                  </span>
+                  @if (tech.yearsOfExperience) {
+                    <span class="chip-years">{{ tech.yearsOfExperience }}y</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (formData().skills && formData().skills!.length > 0) {
+          <div class="subsection">
+            <h4 class="subsection-title">Skills ({{ totalSkills() }})</h4>
+            <div class="chips-container">
+              @for (skill of formData().skills; track skill.name) {
+                <div class="skill-chip" [style.border-color]="getProficiencyColor(skill.proficiency)">
+                  <span class="chip-name">{{ skill.name }}</span>
+                  <span class="chip-proficiency" [style.color]="getProficiencyColor(skill.proficiency)">
+                    {{ skill.proficiency }}
+                  </span>
+                  @if (skill.yearsOfExperience) {
+                    <span class="chip-years">{{ skill.yearsOfExperience }}y</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (!arsenalComplete()) {
+          <p class="empty-message">No technologies or skills added yet</p>
+        }
+      </div>
+    </div>
+
+    <!-- Section 4: The Journey -->
+    <div class="preview-section" [class.incomplete]="!journeyComplete()">
+      <div class="section-header">
+        <div class="header-left">
+          <mat-icon class="section-icon">timeline</mat-icon>
+          <h3 class="section-title">The Journey</h3>
+          @if (journeyComplete()) {
+            <mat-icon class="check-icon">check_circle</mat-icon>
+          }
+        </div>
+        <button mat-button class="edit-button" (click)="goToStep(4)">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+      </div>
+
+      <div class="section-body">
+        @if (formData().workExperiences && formData().workExperiences!.length > 0) {
+          <div class="experiences-list">
+            @for (exp of formData().workExperiences; track $index) {
+              <div class="experience-item">
+                <div class="exp-header">
+                  <h4 class="exp-company">{{ exp.company }}</h4>
+                  <span class="exp-dates">
+                    {{ formatDateDisplay(exp.startDate) }} – {{ formatDateDisplay(exp.endDate) }}
+                  </span>
+                </div>
+                <p class="exp-role">{{ exp.role }}</p>
+                @if (exp.description) {
+                  <p class="exp-description">{{ exp.description }}</p>
+                }
+                @if (!exp.endDate) {
+                  <span class="current-badge">Current Position</span>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-message">No work experiences added yet</p>
+        }
+      </div>
+    </div>
+
+    <!-- Section 5: The Credentials -->
+    <div class="preview-section" [class.incomplete]="!credentialsComplete()">
+      <div class="section-header">
+        <div class="header-left">
+          <mat-icon class="section-icon">school</mat-icon>
+          <h3 class="section-title">The Credentials</h3>
+          @if (credentialsComplete()) {
+            <mat-icon class="check-icon">check_circle</mat-icon>
+          }
+        </div>
+        <button mat-button class="edit-button" (click)="goToStep(5)">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+      </div>
+
+      <div class="section-body">
+        @if (formData().educations && formData().educations!.length > 0) {
+          <div class="subsection">
+            <h4 class="subsection-title">Education ({{ totalEducations() }})</h4>
+            <div class="education-list">
+              @for (edu of formData().educations; track $index) {
+                <div class="education-item">
+                  <div class="edu-badge" [style.background]="getDegreeColor(edu.degree)">
+                    <mat-icon>{{ getDegreeIcon(edu.degree) }}</mat-icon>
+                  </div>
+                  <div class="edu-content">
+                    <h5 class="edu-degree">{{ edu.degree }}</h5>
+                    <p class="edu-institution">{{ edu.institution }}</p>
+                    @if (edu.fieldOfStudy) {
+                      <p class="edu-field">{{ edu.fieldOfStudy }}</p>
+                    }
+                    <p class="edu-dates">
+                      {{ formatDateDisplay(edu.startDate) }} – {{ formatDateDisplay(edu.endDate) }}
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (formData().certifications && formData().certifications!.length > 0) {
+          <div class="subsection">
+            <h4 class="subsection-title">Certifications ({{ totalCertifications() }})</h4>
+            <div class="certifications-list">
+              @for (cert of formData().certifications; track $index) {
+                <div class="certification-item">
+                  <mat-icon class="cert-icon">verified</mat-icon>
+                  <div class="cert-content">
+                    <h5 class="cert-name">{{ cert.name }}</h5>
+                    <p class="cert-issuer">{{ cert.issuingOrganization }}</p>
+                    <p class="cert-dates">Issued: {{ formatDateDisplay(cert.issueDate) }}</p>
+                    @if (cert.expiryDate) {
+                      <span class="cert-status"
+                            [class.expired]="isCertificationExpired(cert.expiryDate)"
+                            [class.expiring-soon]="isCertificationExpiringSoon(cert.expiryDate)">
+                        {{ getCertificationStatus(cert.expiryDate) }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (!credentialsComplete()) {
+          <p class="empty-message">No education or certifications added yet</p>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =============================================================================
+       READY TO SUBMIT MESSAGE
+       ============================================================================= -->
+  <div class="ready-message">
+    <mat-icon class="ready-icon">auto_awesome</mat-icon>
+    <div class="ready-text">
+      <h3 class="ready-title">Ready to Summon This Talent?</h3>
+      <p class="ready-subtitle">
+        Review the information above and click "Summon This Talent" to create the profile.
+        You can always edit sections by clicking the Edit buttons.
+      </p>
+    </div>
+  </div>
+
+</div>

@@ -2,7 +2,13 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, tap, map } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
-import { Employee, EmployeeUpdateRequest, EmployeeUpdateResponse } from '../../../models';
+import {
+  Employee,
+  EmployeeUpdateRequest,
+  EmployeeUpdateResponse,
+  EmployeeListResponse,
+  EmployeeListItem
+} from '../../../models';
 
 /**
  * Employee Service
@@ -19,10 +25,16 @@ export class EmployeeService {
   // API configuration
   private readonly API_BASE_URL = 'http://localhost:8080/api/v1';
 
-  // Signal state
+  // Signal state for single employee
   readonly employee = signal<Employee | null>(null);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+
+  // Signal state for employee list
+  readonly employees = signal<EmployeeListItem[]>([]);
+  readonly listLoading = signal(false);
+  readonly listError = signal<string | null>(null);
+  readonly pageMetadata = signal<{ size: number; totalElements: number; totalPages: number; number: number } | null>(null);
 
   // Update operation state
   readonly updateLoading = signal(false);

@@ -1,0 +1,243 @@
+<div class="arsenal-form">
+  <!-- =============================================================================
+       TECHNOLOGIES SECTION
+       ============================================================================= -->
+  <div class="tech-section">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">code</mat-icon>
+      <span>Technologies</span>
+    </h3>
+    <p class="section-description">Programming languages, frameworks, and tools</p>
+
+    <!-- Technology Search/Add -->
+    <mat-form-field appearance="outline" class="full-width search-field">
+      <mat-label>Search and add technologies</mat-label>
+      <input
+        matInput
+        type="text"
+        [formControl]="techSearchControl"
+        [matAutocomplete]="techAuto"
+        placeholder="e.g., Angular, TypeScript, Docker..."
+      />
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-autocomplete
+        #techAuto="matAutocomplete"
+        [displayWith]="displayTech"
+        (optionSelected)="addTechnology($event.option.value)"
+      >
+        @for (tech of technologyService.filteredTechnologies(); track tech.id) {
+          <mat-option [value]="tech">
+            <div class="autocomplete-option">
+              <span class="option-name">{{ tech.name }}</span>
+              <span class="option-category">{{ tech.category }}</span>
+            </div>
+          </mat-option>
+        }
+        @empty {
+          <mat-option disabled>
+            <span class="no-results">No technologies found</span>
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <!-- Selected Technologies -->
+    @if (selectedTechnologies().length > 0) {
+      <div class="selected-items">
+        @for (tech of selectedTechnologies(); track tech.name; let i = $index) {
+          <div class="skill-card tech-card">
+            <div class="card-header">
+              <h4 class="card-title">{{ tech.name }}</h4>
+              <button
+                mat-icon-button
+                type="button"
+                class="remove-button"
+                (click)="removeTechnology(i)"
+                aria-label="Remove technology"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+
+            <div class="card-body">
+              <!-- Proficiency Selector -->
+              <div class="proficiency-row">
+                <label class="row-label">Proficiency</label>
+                <div class="proficiency-buttons">
+                  @for (level of proficiencyLevels; track level) {
+                    <button
+                      type="button"
+                      class="prof-button"
+                      [class.selected]="tech.proficiency === level"
+                      [style.--prof-color]="getProficiencyColor(level)"
+                      (click)="updateTechProficiency(i, level)"
+                      [attr.aria-label]="'Set proficiency to ' + level"
+                      [attr.aria-pressed]="tech.proficiency === level"
+                    >
+                      {{ getProficiencyLabel(level) }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Years Experience -->
+              <div class="years-row">
+                <label class="row-label">Years</label>
+                <div class="years-input">
+                  <button
+                    type="button"
+                    mat-icon-button
+                    class="years-btn"
+                    (click)="updateTechYears(i, Math.max(0, (tech.yearsOfExperience || 0) - 1))"
+                    [disabled]="(tech.yearsOfExperience || 0) <= 0"
+                    aria-label="Decrease years"
+                  >
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <span class="years-value">{{ tech.yearsOfExperience || 0 }}</span>
+                  <button
+                    type="button"
+                    mat-icon-button
+                    class="years-btn"
+                    (click)="updateTechYears(i, Math.min(50, (tech.yearsOfExperience || 0) + 1))"
+                    [disabled]="(tech.yearsOfExperience || 0) >= 50"
+                    aria-label="Increase years"
+                  >
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">code_off</mat-icon>
+        <p class="empty-text">No technologies added yet</p>
+        <p class="empty-hint">Start typing to search and add</p>
+      </div>
+    }
+  </div>
+
+  <!-- =============================================================================
+       SKILLS SECTION
+       ============================================================================= -->
+  <div class="skills-section">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">psychology</mat-icon>
+      <span>Skills</span>
+    </h3>
+    <p class="section-description">Professional competencies and soft skills</p>
+
+    <!-- Skill Search/Add -->
+    <mat-form-field appearance="outline" class="full-width search-field">
+      <mat-label>Search and add skills</mat-label>
+      <input
+        matInput
+        type="text"
+        [formControl]="skillSearchControl"
+        [matAutocomplete]="skillAuto"
+        placeholder="e.g., Leadership, Agile, Problem Solving..."
+      />
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-autocomplete
+        #skillAuto="matAutocomplete"
+        [displayWith]="displaySkill"
+        (optionSelected)="addSkill($event.option.value)"
+      >
+        @for (skill of skillService.filteredSkills(); track skill.id) {
+          <mat-option [value]="skill">
+            <div class="autocomplete-option">
+              <span class="option-name">{{ skill.name }}</span>
+              <span class="option-category">{{ skill.category }}</span>
+            </div>
+          </mat-option>
+        }
+        @empty {
+          <mat-option disabled>
+            <span class="no-results">No skills found</span>
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <!-- Selected Skills -->
+    @if (selectedSkills().length > 0) {
+      <div class="selected-items">
+        @for (skill of selectedSkills(); track skill.name; let i = $index) {
+          <div class="skill-card">
+            <div class="card-header">
+              <h4 class="card-title">{{ skill.name }}</h4>
+              <button
+                mat-icon-button
+                type="button"
+                class="remove-button"
+                (click)="removeSkill(i)"
+                aria-label="Remove skill"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+
+            <div class="card-body">
+              <!-- Proficiency Selector -->
+              <div class="proficiency-row">
+                <label class="row-label">Proficiency</label>
+                <div class="proficiency-buttons">
+                  @for (level of proficiencyLevels; track level) {
+                    <button
+                      type="button"
+                      class="prof-button"
+                      [class.selected]="skill.proficiency === level"
+                      [style.--prof-color]="getProficiencyColor(level)"
+                      (click)="updateSkillProficiency(i, level)"
+                      [attr.aria-label]="'Set proficiency to ' + level"
+                      [attr.aria-pressed]="skill.proficiency === level"
+                    >
+                      {{ getProficiencyLabel(level) }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Years Experience -->
+              <div class="years-row">
+                <label class="row-label">Years</label>
+                <div class="years-input">
+                  <button
+                    type="button"
+                    mat-icon-button
+                    class="years-btn"
+                    (click)="updateSkillYears(i, Math.max(0, (skill.yearsOfExperience || 0) - 1))"
+                    [disabled]="(skill.yearsOfExperience || 0) <= 0"
+                    aria-label="Decrease years"
+                  >
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <span class="years-value">{{ skill.yearsOfExperience || 0 }}</span>
+                  <button
+                    type="button"
+                    mat-icon-button
+                    class="years-btn"
+                    (click)="updateSkillYears(i, Math.min(50, (skill.yearsOfExperience || 0) + 1))"
+                    [disabled]="(skill.yearsOfExperience || 0) >= 50"
+                    aria-label="Increase years"
+                  >
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">psychology_off</mat-icon>
+        <p class="empty-text">No skills added yet</p>
+        <p class="empty-hint">Start typing to search and add</p>
+      </div>
+    }
+  </div>
+</div>

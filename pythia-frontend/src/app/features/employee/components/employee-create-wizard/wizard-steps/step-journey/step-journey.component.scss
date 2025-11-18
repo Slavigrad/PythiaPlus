@@ -1,0 +1,550 @@
+// =============================================================================
+// STEP 4: THE JOURNEY - WORK EXPERIENCE TIMELINE STYLING
+// =============================================================================
+
+.journey-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================================================
+// TIMELINE - Vertical connector with dots
+// =============================================================================
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 0 0 32px;
+  animation: slideInLeft 0.5s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.timeline-item {
+  display: flex;
+  gap: 20px;
+  animation: timelineItemFadeIn 0.4s ease-out;
+}
+
+@keyframes timelineItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timeline-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 40px;
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  background: var(--color-primary);
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.5);
+  }
+}
+
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  background: linear-gradient(180deg, var(--color-primary) 0%, rgba(211, 47, 47, 0.3) 100%);
+  margin-top: 8px;
+}
+
+// =============================================================================
+// EXPERIENCE CARD
+// =============================================================================
+
+.experience-card {
+  position: relative;
+  flex: 1;
+  background: white;
+  border: 2px solid var(--color-border-light);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all var(--transition-fast);
+  animation: cardSlideIn 0.5s ease-out;
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateX(4px);
+  }
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.company-name {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.role-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.action-button {
+  width: 36px;
+  height: 36px;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: rgba(211, 47, 47, 0.1);
+    color: var(--color-primary);
+    transform: scale(1.1);
+  }
+
+  &.remove-button:hover {
+    background: rgba(244, 67, 54, 0.1);
+    color: var(--color-error);
+    transform: rotate(90deg);
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.date-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  color: var(--color-primary);
+}
+
+.date-text {
+  font-weight: 500;
+}
+
+.duration {
+  font-style: italic;
+  color: var(--color-text-hint);
+}
+
+.description {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.current-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  width: fit-content;
+  animation: badgePulse 2s ease-in-out infinite;
+
+  mat-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+  }
+}
+
+// =============================================================================
+// EXPERIENCE FORM
+// =============================================================================
+
+.experience-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(211, 47, 47, 0.02) 0%, rgba(255, 102, 89, 0.05) 100%);
+  border: 2px dashed var(--color-primary);
+  border-radius: 12px;
+  animation: formSlideIn 0.4s ease-out;
+}
+
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.form-header {
+  margin-bottom: 8px;
+}
+
+.form-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.date-field {
+  flex: 1;
+}
+
+.current-checkbox {
+  margin: -8px 0;
+
+  mat-checkbox {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cancel-button {
+  min-width: 100px;
+  color: var(--color-text-secondary);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.save-button {
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:not(:disabled) {
+    animation: buttonGlow 2s ease-in-out infinite;
+  }
+}
+
+@keyframes buttonGlow {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(211, 47, 47, 0.5);
+  }
+}
+
+// =============================================================================
+// EMPTY STATE
+// =============================================================================
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  background: linear-gradient(135deg, rgba(211, 47, 47, 0.02) 0%, rgba(255, 102, 89, 0.05) 100%);
+  border: 2px dashed var(--color-border-light);
+  border-radius: 12px;
+  text-align: center;
+  animation: emptyStateFadeIn 0.5s ease-out;
+}
+
+@keyframes emptyStateFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.empty-icon {
+  font-size: 72px !important;
+  width: 72px !important;
+  height: 72px !important;
+  color: var(--color-text-disabled);
+  margin-bottom: 20px;
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.empty-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.empty-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-hint);
+}
+
+// =============================================================================
+// ADD BUTTON
+// =============================================================================
+
+.add-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.add-experience-button {
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  animation: buttonPulse 2s ease-in-out infinite;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+  }
+}
+
+@keyframes buttonPulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+  }
+  50% {
+    box-shadow: 0 6px 16px rgba(211, 47, 47, 0.5);
+  }
+}
+
+// =============================================================================
+// RESPONSIVE DESIGN
+// =============================================================================
+
+@media (max-width: 768px) {
+  .journey-form {
+    gap: 24px;
+  }
+
+  .timeline {
+    margin: 0 0 24px;
+  }
+
+  .timeline-item {
+    gap: 12px;
+  }
+
+  .timeline-connector {
+    width: 30px;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .experience-card {
+    padding: 16px;
+
+    &:hover {
+      transform: translateX(0);
+    }
+  }
+
+  .company-name {
+    font-size: 18px;
+  }
+
+  .role-title {
+    font-size: 14px;
+  }
+
+  .date-row {
+    grid-template-columns: 1fr;
+  }
+
+  .experience-form {
+    padding: 20px;
+  }
+
+  .empty-state {
+    padding: 48px 20px;
+  }
+
+  .empty-icon {
+    font-size: 56px !important;
+    width: 56px !important;
+    height: 56px !important;
+  }
+}
+
+// =============================================================================
+// ACCESSIBILITY - Reduced motion
+// =============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-form,
+  .timeline,
+  .timeline-item,
+  .experience-card,
+  .experience-form,
+  .empty-state,
+  .empty-icon,
+  .current-badge,
+  .save-button,
+  .add-experience-button {
+    animation: none !important;
+  }
+
+  * {
+    transition: none !important;
+  }
+
+  .experience-card:hover,
+  .add-experience-button:hover {
+    transform: none;
+  }
+
+  .action-button.remove-button:hover {
+    transform: none;
+  }
+}
