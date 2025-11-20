@@ -5,10 +5,10 @@
   [class.selected]="selected()"
   [class.ultra-premium]="enable3dTilt()"
   [attr.aria-label]="'Employee: ' + employee().fullName + ', ' + employee().title"
-  [appTilt3d]="enable3dTilt() ? '' : null"
-  [tiltIntensity]="12"
-  [glareEffect]="true"
-  [scale]="1.03"
+  appTilt3d
+  [tiltIntensity]="enable3dTilt() ? 12 : 0"
+  [glareEffect]="enable3dTilt()"
+  [scale]="enable3dTilt() ? 1.03 : 1"
   (click)="handleCardClick($event)">
 
   <!-- Department Color Accent (Left Border) -->

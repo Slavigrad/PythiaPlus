@@ -187,7 +187,7 @@ export class SkillRadarMiniComponent implements AfterViewInit, OnDestroy {
             pointLabels: {
               font: {
                 size: 11,
-                weight: '600'
+                weight: 600
               },
               color: '#424242'
             }
