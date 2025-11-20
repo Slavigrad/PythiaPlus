@@ -1,0 +1,320 @@
+/**
+ * Skeleton Card Styles
+ *
+ * Design: Animated loading placeholder matching ProjectCard
+ * Features: Shimmer effect, smooth transitions, accessibility
+ */
+
+:host {
+  display: block;
+}
+
+// ============================================================================
+// BASE SKELETON ELEMENT
+// ============================================================================
+
+@mixin skeleton-element {
+  background: linear-gradient(
+    90deg,
+    var(--color-neutral-200) 0%,
+    var(--color-neutral-100) 50%,
+    var(--color-neutral-200) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+// ============================================================================
+// CARD CONTAINER
+// ============================================================================
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  padding: var(--spacing-md);
+  gap: var(--spacing-md);
+  animation: skeleton-fade-in 0.3s ease;
+}
+
+// ============================================================================
+// HEADER
+// ============================================================================
+
+.skeleton-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+}
+
+.skeleton-icon {
+  @include skeleton-element;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.skeleton-header-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-title {
+  @include skeleton-element;
+  height: 20px;
+  width: 70%;
+}
+
+.skeleton-code {
+  @include skeleton-element;
+  height: 14px;
+  width: 40%;
+}
+
+.skeleton-badge {
+  @include skeleton-element;
+  width: 80px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+// ============================================================================
+// BODY
+// ============================================================================
+
+.skeleton-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+// Meta Items
+.skeleton-meta {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.skeleton-meta-item {
+  @include skeleton-element;
+  height: 16px;
+  width: 120px;
+}
+
+// Description Lines
+.skeleton-description {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-line {
+  @include skeleton-element;
+  height: 14px;
+  width: 100%;
+
+  &.short {
+    width: 60%;
+  }
+
+  &.medium {
+    width: 80%;
+  }
+}
+
+// Stats
+.skeleton-stats {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.skeleton-stat {
+  @include skeleton-element;
+  height: 16px;
+  width: 100px;
+}
+
+// Team Avatars
+.skeleton-team {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.skeleton-avatar {
+  @include skeleton-element;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+}
+
+// Tech Badges
+.skeleton-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.skeleton-badge-item {
+  @include skeleton-element;
+  height: 28px;
+  width: 80px;
+  border-radius: var(--radius-md);
+
+  &.small {
+    width: 50px;
+  }
+}
+
+// Milestone
+.skeleton-milestone {
+  padding: var(--spacing-sm);
+  background: var(--color-neutral-50);
+  border-radius: var(--radius-md);
+}
+
+// Ratings
+.skeleton-ratings {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.skeleton-rating {
+  @include skeleton-element;
+  height: 20px;
+  width: 60px;
+}
+
+// ============================================================================
+// FOOTER
+// ============================================================================
+
+.skeleton-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-neutral-200);
+}
+
+.skeleton-progress-label {
+  @include skeleton-element;
+  height: 12px;
+  width: 80px;
+}
+
+.skeleton-progress-bar {
+  @include skeleton-element;
+  height: 8px;
+  width: 100%;
+  border-radius: var(--radius-full);
+}
+
+.skeleton-milestone-count {
+  @include skeleton-element;
+  height: 14px;
+  width: 100px;
+}
+
+.skeleton-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.skeleton-action-btn {
+  @include skeleton-element;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+}
+
+// ============================================================================
+// SCREEN READER
+// ============================================================================
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes skeleton-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ============================================================================
+// RESPONSIVE
+// ============================================================================
+
+@media (max-width: 768px) {
+  .skeleton-card {
+    padding: var(--spacing-sm);
+  }
+
+  .skeleton-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .skeleton-badges {
+    gap: 4px;
+  }
+
+  .skeleton-badge-item {
+    height: 24px;
+    width: 60px;
+
+    &.small {
+      width: 40px;
+    }
+  }
+}
+
+// ============================================================================
+// ACCESSIBILITY
+// ============================================================================
+
+// Reduced motion - disable shimmer animation
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-card,
+  [class^='skeleton-'] {
+    animation: none !important;
+  }
+
+  @mixin skeleton-element {
+    background: var(--color-neutral-200);
+    animation: none;
+  }
+}

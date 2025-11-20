@@ -1,0 +1,167 @@
+<!-- Project Controls Bar -->
+<div class="project-controls">
+  <!-- Left Section: Sorting -->
+  <div class="controls-section controls-left">
+    <!-- Sort By Dropdown -->
+    <div class="sort-control">
+      <label for="sort-by" class="control-label">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
+        </svg>
+        Sort by
+      </label>
+      <select
+        id="sort-by"
+        class="control-select"
+        [value]="sortBy()"
+        (change)="onSortByChange($any($event.target).value)"
+        aria-label="Sort projects by">
+        @for (option of sortOptions; track option.value) {
+          <option [value]="option.value">
+            {{ option.icon }} {{ option.label }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <!-- Sort Direction Toggle -->
+    <button
+      class="sort-direction-btn"
+      (click)="toggleSortDirection()"
+      type="button"
+      [attr.aria-label]="sortDirection() === 'asc' ? 'Sort ascending' : 'Sort descending'"
+      [title]="sortDirection() === 'asc' ? 'Ascending (A→Z, Old→New)' : 'Descending (Z→A, New→Old)'">
+      @if (sortDirection() === 'asc') {
+        <!-- Ascending Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
+        </svg>
+        <span class="direction-label">Asc</span>
+      } @else {
+        <!-- Descending Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
+        </svg>
+        <span class="direction-label">Desc</span>
+      }
+    </button>
+
+    <!-- Results Counter -->
+    <div class="results-counter" role="status" aria-live="polite">
+      @if (totalResults() > 0) {
+        <span class="counter-text">
+          Showing
+          <strong>{{ startIndex() }}-{{ endIndex() }}</strong>
+          of
+          <strong>{{ totalResults() }}</strong>
+        </span>
+      } @else {
+        <span class="counter-text">No results</span>
+      }
+    </div>
+  </div>
+
+  <!-- Right Section: Pagination -->
+  <div class="controls-section controls-right">
+    <!-- Page Size Selector -->
+    <div class="page-size-control">
+      <label for="page-size" class="control-label">Per page</label>
+      <select
+        id="page-size"
+        class="control-select"
+        [value]="pageSize()"
+        (change)="onPageSizeChange(+$any($event.target).value)"
+        aria-label="Items per page">
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav class="pagination-nav" aria-label="Project pagination">
+      <ul class="pagination-list">
+        <!-- First Page Button -->
+        <li>
+          <button
+            class="page-btn page-btn-first"
+            (click)="goToFirstPage()"
+            type="button"
+            [disabled]="isFirstPage()"
+            aria-label="Go to first page"
+            title="First page">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/>
+            </svg>
+          </button>
+        </li>
+
+        <!-- Previous Page Button -->
+        <li>
+          <button
+            class="page-btn page-btn-prev"
+            (click)="goToPreviousPage()"
+            type="button"
+            [disabled]="isFirstPage()"
+            aria-label="Go to previous page"
+            title="Previous page">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+          </button>
+        </li>
+
+        <!-- Page Numbers -->
+        @for (page of visiblePages(); track page) {
+          <li>
+            @if (page === -1) {
+              <!-- Ellipsis -->
+              <span class="page-ellipsis" aria-hidden="true">...</span>
+            } @else {
+              <!-- Page Number Button -->
+              <button
+                class="page-btn page-btn-number"
+                [class.active]="page === currentPage()"
+                (click)="goToPage(page)"
+                type="button"
+                [attr.aria-label]="'Go to page ' + page"
+                [attr.aria-current]="page === currentPage() ? 'page' : null">
+                {{ page }}
+              </button>
+            }
+          </li>
+        }
+
+        <!-- Next Page Button -->
+        <li>
+          <button
+            class="page-btn page-btn-next"
+            (click)="goToNextPage()"
+            type="button"
+            [disabled]="isLastPage()"
+            aria-label="Go to next page"
+            title="Next page">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+          </button>
+        </li>
+
+        <!-- Last Page Button -->
+        <li>
+          <button
+            class="page-btn page-btn-last"
+            (click)="goToLastPage()"
+            type="button"
+            [disabled]="isLastPage()"
+            aria-label="Go to last page"
+            title="Last page">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/>
+            </svg>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

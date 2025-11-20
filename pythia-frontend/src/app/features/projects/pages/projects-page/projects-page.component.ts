@@ -1,10 +1,12 @@
-import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectsService } from '../../services/projects.service';
 import { ProjectCardComponent } from '../../components/project-card/project-card.component';
 import { AdvancedFiltersComponent } from '../../components/advanced-filters/advanced-filters.component';
 import { ProjectSearchComponent } from '../../components/project-search/project-search.component';
 import { ProjectDetailPanelComponent } from '../../components/project-detail-panel/project-detail-panel.component';
+import { ProjectControlsComponent } from '../../components/project-controls/project-controls.component';
+import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
 import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
 
 /**
@@ -27,7 +29,9 @@ import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
     ProjectCardComponent,
     AdvancedFiltersComponent,
     ProjectSearchComponent,
-    ProjectDetailPanelComponent
+    ProjectDetailPanelComponent,
+    ProjectControlsComponent,
+    SkeletonCardComponent
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.scss',
@@ -43,6 +47,9 @@ export class ProjectsPageComponent implements OnInit {
   // Detail panel state
   protected readonly selectedProject = signal<ProjectDetail | null>(null);
   protected readonly isPanelOpen = signal(false);
+
+  // View child reference to controls component
+  protected readonly controlsComponent = viewChild(ProjectControlsComponent);
 
   // Component lifecycle
   ngOnInit(): void {
@@ -173,5 +180,41 @@ export class ProjectsPageComponent implements OnInit {
   protected handleFiltersChange(filters: ProjectQueryParams): void {
     console.log('Filters changed:', filters);
     // Service automatically handles the filter application
+  }
+
+  /**
+   * Handle sort change from controls
+   */
+  protected handleSortChange(sortParams: ProjectQueryParams): void {
+    console.log('Sort changed:', sortParams);
+    // Update service filters with sort parameters
+    const currentFilters = this.projectsService.filters();
+    this.projectsService.applyFilters({
+      ...currentFilters,
+      ...sortParams
+    });
+  }
+
+  /**
+   * Handle pagination change from controls
+   */
+  protected handlePaginationChange(paginationParams: ProjectQueryParams): void {
+    console.log('Pagination changed:', paginationParams);
+    // Update service filters with pagination parameters
+    const currentFilters = this.projectsService.filters();
+    this.projectsService.applyFilters({
+      ...currentFilters,
+      ...paginationParams
+    });
+  }
+
+  /**
+   * Update controls component with total results
+   */
+  protected updateControlsTotalResults(): void {
+    const controls = this.controlsComponent();
+    if (controls) {
+      controls.updateTotalResults(this.projectsService.totalProjects());
+    }
   }
 }
