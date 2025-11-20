@@ -207,11 +207,15 @@
           (click)="saveExperience()"
         >
           @if (editingIndex() === -1) {
-            <mat-icon>add</mat-icon>
-            <span>Add Experience</span>
+            <ng-container>
+              <mat-icon>add</mat-icon>
+              <span>Add Experience</span>
+            </ng-container>
           } @else {
-            <mat-icon>save</mat-icon>
-            <span>Save Changes</span>
+            <ng-container>
+              <mat-icon>save</mat-icon>
+              <span>Save Changes</span>
+            </ng-container>
           }
         </button>
       </div>

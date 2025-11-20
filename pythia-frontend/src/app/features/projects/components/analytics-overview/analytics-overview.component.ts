@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProjectAnalytics } from '../../models/project.model';
+import { ProjectListAnalytics } from '../../../../models';
 
 /**
  * Analytics Overview Component
@@ -34,7 +34,7 @@ export class AnalyticsOverviewComponent {
   // ============================================================================
 
   /** Analytics data from service */
-  readonly analytics = input.required<ProjectAnalytics | null>();
+  readonly analytics = input.required<ProjectListAnalytics | null>();
 
   /** Total project count */
   readonly totalProjects = input(0);
@@ -90,10 +90,10 @@ export class AnalyticsOverviewComponent {
   });
 
   /**
-   * Projects on track
+   * Projects on track (using active projects as proxy)
    */
   protected readonly onTrackProjects = computed(() => {
-    return this.analytics()?.onTrackProjects ?? 0;
+    return this.analytics()?.activeProjects ?? 0;
   });
 
   /**
@@ -106,17 +106,17 @@ export class AnalyticsOverviewComponent {
   });
 
   /**
-   * Total team members
+   * Total team members (from totalEmployeesInvolved)
    */
   protected readonly totalTeamMembers = computed(() => {
-    return this.analytics()?.totalTeamMembers ?? 0;
+    return this.analytics()?.totalEmployeesInvolved ?? 0;
   });
 
   /**
-   * Unique technologies count
+   * Unique technologies count (from topTechnologies)
    */
   protected readonly uniqueTechnologies = computed(() => {
-    return this.analytics()?.uniqueTechnologies ?? 0;
+    return this.analytics()?.topTechnologies.length ?? 0;
   });
 
   /**

@@ -109,7 +109,7 @@
             <th scope="row" class="attribute-cell">Availability</th>
             @for (candidate of candidates(); track candidate.id) {
               <td class="value-cell">
-                @if (candidate.availabilityDetails?.status) {
+                @if (candidate.availabilityDetails.status) {
                   <span
                     class="availability-badge"
                     [class.availability-badge--available]="candidate.availabilityDetails.status === 'Available'"
@@ -129,7 +129,7 @@
             <th scope="row" class="attribute-cell">Technologies</th>
             @for (candidate of candidates(); track candidate.id) {
               <td class="value-cell">
-                @if (candidate.detailedTechnologies?.length) {
+                @if (candidate.detailedTechnologies.length) {
                   <div class="tag-list" role="list">
                     @for (tech of candidate.detailedTechnologies; track tech.name) {
                       <span class="tag" role="listitem">
@@ -149,7 +149,7 @@
             <th scope="row" class="attribute-cell">Trainings</th>
             @for (candidate of candidates(); track candidate.id) {
               <td class="value-cell">
-                @if (candidate.trainings?.length) {
+                @if (candidate.trainings.length) {
                   <ul class="value-list">
                     @for (training of candidate.trainings; track training.name) {
                       <li>{{ formatTraining(training) }}</li>
@@ -167,7 +167,7 @@
             <th scope="row" class="attribute-cell">Certifications</th>
             @for (candidate of candidates(); track candidate.id) {
               <td class="value-cell">
-                @if (candidate.detailedCertifications?.length) {
+                @if (candidate.detailedCertifications.length) {
                   <ul class="value-list">
                     @for (certification of candidate.detailedCertifications; track certification.name) {
                       <li>{{ formatCertification(certification) }}</li>

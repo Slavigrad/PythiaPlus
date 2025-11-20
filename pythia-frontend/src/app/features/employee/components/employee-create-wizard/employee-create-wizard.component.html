@@ -212,11 +212,15 @@
         (click)="onSubmit()"
       >
         @if (loading()) {
-          <mat-icon class="spinner">hourglass_empty</mat-icon>
-          <span>Creating...</span>
+          <ng-container>
+            <mat-icon class="spinner">hourglass_empty</mat-icon>
+            <span>Creating...</span>
+          </ng-container>
         } @else {
-          <mat-icon>star</mat-icon>
-          <span>Summon This Talent</span>
+          <ng-container>
+            <mat-icon>star</mat-icon>
+            <span>Summon This Talent</span>
+          </ng-container>
         }
       </button>
     }

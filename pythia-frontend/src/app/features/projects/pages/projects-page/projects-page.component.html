@@ -53,7 +53,7 @@
 
       <div class="header-stats">
         <div class="stat-badge">
-          <span class="stat-value">{{ totalProjects }}</span>
+          <span class="stat-value">{{ totalProjects() }}</span>
           <span class="stat-label">Projects</span>
         </div>
       </div>
@@ -61,7 +61,7 @@
   </header>
 
   <!-- Loading State with Skeleton Cards -->
-  @if (isLoading) {
+  @if (isLoading()) {
     <div class="loading-container">
       <!-- Show skeleton cards in grid for Command Center view -->
       @if (viewMode() === 'command') {
@@ -178,7 +178,7 @@
           <!-- Analytics Overview (KPI Cards) -->
           <app-analytics-overview
             [analytics]="projectsService.analytics()"
-            [totalProjects]="totalProjects" />
+            [totalProjects]="totalProjects()" />
 
           <!-- Charts Grid -->
           <div class="charts-grid">
@@ -194,7 +194,7 @@
             <!-- Progress Gauge Chart -->
             <app-progress-gauge-chart
               [averageProgress]="projectsService.analytics()?.averageProgress ?? 0"
-              [totalProjects]="totalProjects" />
+              [totalProjects]="totalProjects()" />
 
             <!-- Technology Stack Chart -->
             <app-technology-stack-chart

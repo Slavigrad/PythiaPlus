@@ -172,8 +172,6 @@ export class StatusDistributionChartComponent implements AfterViewInit {
           }
         },
         animation: {
-          animateRotate: true,
-          animateScale: true,
           duration: 1000,
           easing: 'easeOutCubic'
         }
