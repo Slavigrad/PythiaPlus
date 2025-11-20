@@ -114,6 +114,9 @@
                {{ projectsService.analytics()?.completedProjects ?? 0 }} Completed</p>
           </div>
 
+          <!-- Advanced Filters Panel -->
+          <app-advanced-filters (filtersChange)="handleFiltersChange($event)" />
+
           <!-- Enhanced project list with ProjectCard component -->
           <div class="projects-grid">
             @for (project of projectsService.projects(); track project.id) {

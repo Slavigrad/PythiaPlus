@@ -2,7 +2,8 @@ import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@ang
 import { CommonModule } from '@angular/common';
 import { ProjectsService } from '../../services/projects.service';
 import { ProjectCardComponent } from '../../components/project-card/project-card.component';
-import { Project } from '../../../../models';
+import { AdvancedFiltersComponent } from '../../components/advanced-filters/advanced-filters.component';
+import { Project, ProjectQueryParams } from '../../../../models';
 
 /**
  * Projects Page Component
@@ -19,7 +20,7 @@ import { Project } from '../../../../models';
  */
 @Component({
   selector: 'app-projects-page',
-  imports: [CommonModule, ProjectCardComponent],
+  imports: [CommonModule, ProjectCardComponent, AdvancedFiltersComponent],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -102,5 +103,13 @@ export class ProjectsPageComponent implements OnInit {
   protected handleDeleteProject(project: Project): void {
     console.log('Delete project:', project);
     // TODO: Show confirmation dialog
+  }
+
+  /**
+   * Handle filters change
+   */
+  protected handleFiltersChange(filters: ProjectQueryParams): void {
+    console.log('Filters changed:', filters);
+    // Service automatically handles the filter application
   }
 }
