@@ -118,25 +118,25 @@ export class ProjectsPageComponent implements OnInit {
   }
 
   /**
-   * Get total project count
+   * Total project count (computed from service)
    */
-  protected get totalProjects(): number {
-    return this.projectsService.totalProjects();
-  }
+  protected readonly totalProjects = computed(() =>
+    this.projectsService.totalProjects()
+  );
 
   /**
-   * Get loading state
+   * Loading state (computed from service)
    */
-  protected get isLoading(): boolean {
-    return this.projectsService.loading();
-  }
+  protected readonly isLoading = computed(() =>
+    this.projectsService.loading()
+  );
 
   /**
-   * Get error state
+   * Error state (computed from service)
    */
-  protected get error(): string | null {
-    return this.projectsService.error();
-  }
+  protected readonly error = computed(() =>
+    this.projectsService.error()
+  );
 
   /**
    * Handle project card click
@@ -181,11 +181,13 @@ export class ProjectsPageComponent implements OnInit {
   protected openDetailPanel(projectId: number): void {
     // Load detailed project data
     this.projectsService.getProjectById(projectId).subscribe({
-      next: (projectDetail) => {
-        this.selectedProject.set(projectDetail);
-        this.isPanelOpen.set(true);
+      next: (projectDetail: ProjectDetail | null) => {
+        if (projectDetail) {
+          this.selectedProject.set(projectDetail);
+          this.isPanelOpen.set(true);
+        }
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error('Failed to load project details:', err);
         // TODO: Show error notification
       }

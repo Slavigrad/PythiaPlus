@@ -523,6 +523,9 @@ export const MOCK_ANALYTICS: ProjectListAnalytics = {
   totalEmployeesInvolved: 87,
   averageTeamSize: 6.5,
   averageProjectDuration: '8.3 months',
+  totalBudget: 8500000,
+  totalSpent: 6200000,
+  averageProgress: 73.5,
   topTechnologies: [
     { name: 'TypeScript', count: 30, percentage: 71.4 },
     { name: 'React', count: 28, percentage: 66.7 },

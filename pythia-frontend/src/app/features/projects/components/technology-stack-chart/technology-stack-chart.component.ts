@@ -172,8 +172,7 @@ export class TechnologyStackChartComponent implements AfterViewInit {
         scales: {
           x: {
             grid: {
-              color: 'rgba(255, 255, 255, 0.05)',
-              drawBorder: false
+              color: 'rgba(255, 255, 255, 0.05)'
             },
             ticks: {
               color: '#9CA3AF',
@@ -186,14 +185,13 @@ export class TechnologyStackChartComponent implements AfterViewInit {
           },
           y: {
             grid: {
-              display: false,
-              drawBorder: false
+              display: false
             },
             ticks: {
               color: '#E5E7EB',
               font: {
                 size: 12,
-                weight: '500'
+                weight: 500
               }
             }
           }

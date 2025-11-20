@@ -210,6 +210,13 @@ export class ProjectsService {
     this.loadProjects({ sort, order });
   }
 
+  /**
+   * Apply filters and reload projects
+   */
+  applyFilters(filters: ProjectQueryParams): void {
+    this.loadProjects(filters);
+  }
+
   // ============================================================================
   // PUBLIC METHODS - SINGLE PROJECT
   // ============================================================================
@@ -217,11 +224,11 @@ export class ProjectsService {
   /**
    * Get project by ID with full details
    */
-  getProjectById(id: number): void {
+  getProjectById(id: number): Observable<ProjectDetail | null> {
     this.projectLoading.set(true);
     this.projectError.set(null);
 
-    this.http.get<ProjectDetail>(`${this.API_BASE_URL}/projects/${id}`)
+    return this.http.get<ProjectDetail>(`${this.API_BASE_URL}/projects/${id}`)
       .pipe(
         tap((project) => {
           this.selectedProject.set(project);
@@ -232,8 +239,7 @@ export class ProjectsService {
           this.projectLoading.set(false);
           return of(null);
         })
-      )
-      .subscribe();
+      );
   }
 
   /**

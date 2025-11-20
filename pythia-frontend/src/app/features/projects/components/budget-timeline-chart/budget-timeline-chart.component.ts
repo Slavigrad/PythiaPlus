@@ -204,7 +204,7 @@ export class BudgetTimelineChartComponent implements AfterViewInit {
               label: (context) => {
                 const label = context.dataset.label || '';
                 const value = context.parsed.y;
-                return `${label}: $${this.formatNumber(value)}`;
+                return `${label}: $${this.formatNumber(value ?? 0)}`;
               }
             }
           }
@@ -212,8 +212,7 @@ export class BudgetTimelineChartComponent implements AfterViewInit {
         scales: {
           x: {
             grid: {
-              color: 'rgba(255, 255, 255, 0.05)',
-              drawBorder: false
+              color: 'rgba(255, 255, 255, 0.05)'
             },
             ticks: {
               color: '#9CA3AF',
@@ -224,8 +223,7 @@ export class BudgetTimelineChartComponent implements AfterViewInit {
           },
           y: {
             grid: {
-              color: 'rgba(255, 255, 255, 0.05)',
-              drawBorder: false
+              color: 'rgba(255, 255, 255, 0.05)'
             },
             ticks: {
               color: '#9CA3AF',

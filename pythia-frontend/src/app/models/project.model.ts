@@ -254,6 +254,9 @@ export interface ProjectListAnalytics {
   totalEmployeesInvolved: number;
   averageTeamSize: number;
   averageProjectDuration: string;
+  totalBudget: number;
+  totalSpent: number;
+  averageProgress: number;
   topTechnologies: Array<{
     name: string;
     count: number;

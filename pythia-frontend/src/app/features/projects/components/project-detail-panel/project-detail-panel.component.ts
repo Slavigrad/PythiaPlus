@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProjectDetail, ProjectMilestone, ProjectTeamMember } from '../../models/project.model';
+import { ProjectDetail, ProjectMilestone, ProjectTeamMember, ProjectTechnology } from '../../../../models';
 
 /**
  * Project Detail Panel Component
@@ -144,7 +144,7 @@ export class ProjectDetailPanelComponent {
   protected readonly completedMilestones = computed(() => {
     const proj = this.project();
     if (!proj) return [];
-    return proj.milestones.filter(m => m.status === 'COMPLETED');
+    return proj.milestones.filter((m: ProjectMilestone) => m.status === 'COMPLETED');
   });
 
   /**
@@ -152,10 +152,10 @@ export class ProjectDetailPanelComponent {
    */
   protected readonly technologiesByCategory = computed(() => {
     const proj = this.project();
-    if (!proj) return new Map<string, typeof proj.technologies>();
+    if (!proj) return new Map<string, ProjectTechnology[]>();
 
-    const grouped = new Map<string, typeof proj.technologies>();
-    proj.technologies.forEach(tech => {
+    const grouped = new Map<string, ProjectTechnology[]>();
+    proj.technologies.forEach((tech: ProjectTechnology) => {
       const category = tech.category || 'Other';
       if (!grouped.has(category)) {
         grouped.set(category, []);
@@ -174,11 +174,12 @@ export class ProjectDetailPanelComponent {
     if (!proj) return new Map<string, ProjectTeamMember[]>();
 
     const grouped = new Map<string, ProjectTeamMember[]>();
-    proj.team.members.forEach(member => {
-      if (!grouped.has(member.role)) {
-        grouped.set(member.role, []);
+    proj.team.members.forEach((member: ProjectTeamMember) => {
+      const role = member.assignment.role;
+      if (!grouped.has(role)) {
+        grouped.set(role, []);
       }
-      grouped.get(member.role)!.push(member);
+      grouped.get(role)!.push(member);
     });
 
     return grouped;
