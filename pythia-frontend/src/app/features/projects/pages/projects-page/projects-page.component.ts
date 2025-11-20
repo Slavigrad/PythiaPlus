@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject, OnInit, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit, viewChild, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectsService } from '../../services/projects.service';
 import { ProjectCardComponent } from '../../components/project-card/project-card.component';
@@ -7,6 +7,11 @@ import { ProjectSearchComponent } from '../../components/project-search/project-
 import { ProjectDetailPanelComponent } from '../../components/project-detail-panel/project-detail-panel.component';
 import { ProjectControlsComponent } from '../../components/project-controls/project-controls.component';
 import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
+import { AnalyticsOverviewComponent } from '../../components/analytics-overview/analytics-overview.component';
+import { StatusDistributionChartComponent } from '../../components/status-distribution-chart/status-distribution-chart.component';
+import { BudgetTimelineChartComponent } from '../../components/budget-timeline-chart/budget-timeline-chart.component';
+import { ProgressGaugeChartComponent } from '../../components/progress-gauge-chart/progress-gauge-chart.component';
+import { TechnologyStackChartComponent } from '../../components/technology-stack-chart/technology-stack-chart.component';
 import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
 
 /**
@@ -31,7 +36,12 @@ import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
     ProjectSearchComponent,
     ProjectDetailPanelComponent,
     ProjectControlsComponent,
-    SkeletonCardComponent
+    SkeletonCardComponent,
+    AnalyticsOverviewComponent,
+    StatusDistributionChartComponent,
+    BudgetTimelineChartComponent,
+    ProgressGaugeChartComponent,
+    TechnologyStackChartComponent
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.scss',
@@ -50,6 +60,40 @@ export class ProjectsPageComponent implements OnInit {
 
   // View child reference to controls component
   protected readonly controlsComponent = viewChild(ProjectControlsComponent);
+
+  // Computed data for Analytics Temple
+  protected readonly statusDistribution = computed(() => {
+    const projects = this.projectsService.projects();
+    const distribution: Record<string, number> = {
+      'ACTIVE': 0,
+      'COMPLETED': 0,
+      'PLANNING': 0,
+      'ON_HOLD': 0,
+      'CANCELLED': 0
+    };
+
+    projects.forEach(project => {
+      if (distribution.hasOwnProperty(project.status)) {
+        distribution[project.status]++;
+      }
+    });
+
+    return distribution;
+  });
+
+  // Technology usage distribution
+  protected readonly technologyUsage = computed(() => {
+    const projects = this.projectsService.projects();
+    const usage: Record<string, number> = {};
+
+    projects.forEach(project => {
+      project.technologies.forEach(tech => {
+        usage[tech.name] = (usage[tech.name] || 0) + 1;
+      });
+    });
+
+    return usage;
+  });
 
   // Component lifecycle
   ngOnInit(): void {

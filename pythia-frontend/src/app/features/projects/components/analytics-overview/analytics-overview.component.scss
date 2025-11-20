@@ -1,0 +1,370 @@
+/**
+ * Analytics Overview Styles
+ *
+ * Design: KPI cards with cosmic dark aesthetic
+ * Features: Responsive grid, status colors, animations
+ */
+
+:host {
+  display: block;
+}
+
+// ============================================================================
+// SECTION TITLE
+// ============================================================================
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+
+  svg {
+    width: 28px;
+    height: 28px;
+    color: var(--color-primary-500);
+  }
+}
+
+// ============================================================================
+// KPI GRID
+// ============================================================================
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+// ============================================================================
+// KPI CARD
+// ============================================================================
+
+.kpi-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary-500), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.3);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .kpi-icon {
+      transform: scale(1.1) rotate(5deg);
+      background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-400));
+    }
+  }
+
+  // Metric-specific styles
+  &[data-metric="total"] .kpi-icon {
+    background: linear-gradient(135deg, #4F46E5, #6366F1);
+  }
+
+  &[data-metric="active"] .kpi-icon {
+    background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-500));
+  }
+
+  &[data-metric="completed"] .kpi-icon {
+    background: linear-gradient(135deg, #059669, #10B981);
+  }
+
+  &[data-metric="budget"] .kpi-icon {
+    background: linear-gradient(135deg, #D97706, #F59E0B);
+  }
+
+  &[data-metric="timeline"] .kpi-icon {
+    background: linear-gradient(135deg, #2563EB, #3B82F6);
+  }
+
+  &[data-metric="team"] .kpi-icon {
+    background: linear-gradient(135deg, #7C3AED, #8B5CF6);
+  }
+
+  &[data-metric="tech"] .kpi-icon {
+    background: linear-gradient(135deg, #0891B2, #06B6D4);
+  }
+
+  &[data-metric="progress"] .kpi-icon {
+    background: linear-gradient(135deg, #059669, #10B981);
+  }
+
+  // Status-based border colors
+  &[data-status="critical"] {
+    border-color: rgba(220, 38, 38, 0.5);
+
+    &::before {
+      background: linear-gradient(90deg, #DC2626, #991B1B);
+      opacity: 1;
+    }
+  }
+
+  &[data-status="warning"] {
+    border-color: rgba(217, 119, 6, 0.5);
+
+    &::before {
+      background: linear-gradient(90deg, #D97706, #F59E0B);
+      opacity: 1;
+    }
+  }
+
+  &[data-status="excellent"] {
+    border-color: rgba(5, 150, 105, 0.5);
+
+    &::before {
+      background: linear-gradient(90deg, #059669, #10B981);
+      opacity: 1;
+    }
+  }
+}
+
+// ============================================================================
+// KPI ICON
+// ============================================================================
+
+.kpi-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-500));
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: white;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+}
+
+// ============================================================================
+// KPI CONTENT
+// ============================================================================
+
+.kpi-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  color: white;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.kpi-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpi-subtext {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+
+  &.success-rate {
+    color: #10B981;
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+// ============================================================================
+// STATUS INDICATOR
+// ============================================================================
+
+.status-indicator {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  font-size: 20px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+// ============================================================================
+// PROGRESS RING
+// ============================================================================
+
+.progress-ring {
+  position: absolute;
+  bottom: var(--spacing-md);
+  right: var(--spacing-md);
+  width: 48px;
+  height: 48px;
+
+  svg {
+    transform: rotate(-90deg);
+  }
+
+  .progress-ring-bg {
+    stroke: rgba(255, 255, 255, 0.1);
+  }
+
+  .progress-ring-fill {
+    stroke: var(--color-primary-500);
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-status="excellent"] & .progress-ring-fill {
+    stroke: #10B981;
+  }
+
+  [data-status="good"] & .progress-ring-fill {
+    stroke: #3B82F6;
+  }
+
+  [data-status="fair"] & .progress-ring-fill {
+    stroke: #F59E0B;
+  }
+
+  [data-status="poor"] & .progress-ring-fill {
+    stroke: #DC2626;
+  }
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// ============================================================================
+// RESPONSIVE
+// ============================================================================
+
+@media (max-width: 1400px) {
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .kpi-card {
+    padding: var(--spacing-md);
+  }
+
+  .kpi-icon {
+    width: 56px;
+    height: 56px;
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .kpi-value {
+    font-size: 1.75rem;
+  }
+
+  .section-title {
+    font-size: var(--font-size-lg);
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// ============================================================================
+// ACCESSIBILITY
+// ============================================================================
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Focus visible states
+*:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .kpi-card {
+    border-width: 2px;
+  }
+
+  .kpi-value {
+    font-weight: var(--font-weight-extrabold);
+  }
+}

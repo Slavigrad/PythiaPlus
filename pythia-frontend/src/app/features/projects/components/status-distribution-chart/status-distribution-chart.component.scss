@@ -1,0 +1,78 @@
+/**
+ * Status Distribution Chart Styles
+ *
+ * Design: Dark cosmic theme for Chart.js visualization
+ */
+
+:host {
+  display: block;
+}
+
+.chart-container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.2);
+  }
+}
+
+.chart-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: white;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary-500);
+  }
+}
+
+.chart-subtitle {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  padding-left: 28px;
+}
+
+.chart-body {
+  position: relative;
+  height: 300px;
+  width: 100%;
+
+  canvas {
+    max-height: 100%;
+  }
+}
+
+// ============================================================================
+// RESPONSIVE
+// ============================================================================
+
+@media (max-width: 768px) {
+  .chart-container {
+    padding: var(--spacing-md);
+  }
+
+  .chart-body {
+    height: 250px;
+  }
+}
