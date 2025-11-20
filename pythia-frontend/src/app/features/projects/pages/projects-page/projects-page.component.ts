@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectsService } from '../../services/projects.service';
+import { ProjectCardComponent } from '../../components/project-card/project-card.component';
+import { Project } from '../../../../models';
 
 /**
  * Projects Page Component
@@ -17,7 +19,7 @@ import { ProjectsService } from '../../services/projects.service';
  */
 @Component({
   selector: 'app-projects-page',
-  imports: [CommonModule],
+  imports: [CommonModule, ProjectCardComponent],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -68,5 +70,37 @@ export class ProjectsPageComponent implements OnInit {
    */
   protected get error(): string | null {
     return this.projectsService.error();
+  }
+
+  /**
+   * Handle project card click
+   */
+  protected handleProjectClick(project: Project): void {
+    console.log('Project clicked:', project);
+    // TODO: Open project detail panel
+  }
+
+  /**
+   * Handle view details click
+   */
+  protected handleViewDetails(project: Project): void {
+    console.log('View details:', project);
+    // TODO: Open project detail panel
+  }
+
+  /**
+   * Handle edit project click
+   */
+  protected handleEditProject(project: Project): void {
+    console.log('Edit project:', project);
+    // TODO: Open edit form
+  }
+
+  /**
+   * Handle delete project click
+   */
+  protected handleDeleteProject(project: Project): void {
+    console.log('Delete project:', project);
+    // TODO: Show confirmation dialog
   }
 }
