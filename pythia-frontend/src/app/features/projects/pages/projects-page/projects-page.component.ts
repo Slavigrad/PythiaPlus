@@ -12,6 +12,7 @@ import { StatusDistributionChartComponent } from '../../components/status-distri
 import { BudgetTimelineChartComponent } from '../../components/budget-timeline-chart/budget-timeline-chart.component';
 import { ProgressGaugeChartComponent } from '../../components/progress-gauge-chart/progress-gauge-chart.component';
 import { TechnologyStackChartComponent } from '../../components/technology-stack-chart/technology-stack-chart.component';
+import { ConstellationViewComponent } from '../../components/constellation-view/constellation-view.component';
 import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
 
 /**
@@ -41,7 +42,8 @@ import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
     StatusDistributionChartComponent,
     BudgetTimelineChartComponent,
     ProgressGaugeChartComponent,
-    TechnologyStackChartComponent
+    TechnologyStackChartComponent,
+    ConstellationViewComponent
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.scss',
@@ -164,6 +166,13 @@ export class ProjectsPageComponent implements OnInit {
   protected handleDeleteProject(project: Project): void {
     console.log('Delete project:', project);
     // TODO: Show confirmation dialog
+  }
+
+  /**
+   * Handle project selection from Constellation View
+   */
+  protected handleConstellationProjectSelect(projectId: number): void {
+    this.openDetailPanel(projectId);
   }
 
   /**
