@@ -4,6 +4,7 @@ import { EmployeeListComponent } from './features/employee/pages/employee-list/e
 import { EmployeeProfileComponent } from './features/employee/pages/employee-profile/employee-profile.component';
 import { SearchPageComponent } from './pages/search/search-page.component';
 import { MasterDataComponent } from './pages/master-data/master-data.component';
+import { ProjectsPageComponent } from './features/projects/pages/projects-page/projects-page.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -11,6 +12,7 @@ export const routes: Routes = [
   { path: 'search', component: SearchPageComponent },
   { path: 'employees', component: EmployeeListComponent },
   { path: 'employees/:id', component: EmployeeProfileComponent },
+  { path: 'projects', component: ProjectsPageComponent },
   { path: 'master-data', component: MasterDataComponent },
   { path: '**', redirectTo: '/dashboard' }
 ];
