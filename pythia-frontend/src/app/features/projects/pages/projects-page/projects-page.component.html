@@ -175,13 +175,38 @@
       <!-- Analytics Temple View (Phase 4) -->
       @else if (viewMode() === 'analytics') {
         <div class="analytics-temple-view">
-          <div class="coming-soon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
-            </svg>
+          <div class="analytics-header">
             <h2>Analytics Temple</h2>
-            <p>Data visualization coming in Phase 4...</p>
-            <p class="subtitle">Charts, trends, and insights await</p>
+            <p class="subtitle">Transform data into actionable insights</p>
+          </div>
+
+          <!-- Analytics Overview (KPI Cards) -->
+          <app-analytics-overview
+            [analytics]="projectsService.analytics()"
+            [totalProjects]="totalProjects" />
+
+          <!-- Charts Grid -->
+          <div class="charts-grid">
+            <!-- Status Distribution Chart -->
+            <app-status-distribution-chart
+              [statusData]="statusDistribution()" />
+
+            <!-- More charts coming soon -->
+            <div class="chart-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+              </svg>
+              <h3>Budget Timeline</h3>
+              <p>Coming soon...</p>
+            </div>
+
+            <div class="chart-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              <h3>Progress Gauge</h3>
+              <p>Coming soon...</p>
+            </div>
           </div>
         </div>
       }
