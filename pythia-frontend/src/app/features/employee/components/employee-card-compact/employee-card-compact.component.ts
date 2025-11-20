@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxModule, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 
 import { Employee } from '../../../../models/employee.model';
@@ -106,8 +106,7 @@ export class EmployeeCardCompactComponent {
   });
 
   // Actions
-  protected handleCheckboxChange(event: Event): void {
-    event.stopPropagation();
+  protected handleCheckboxChange(event: MatCheckboxChange): void {
     this.selectToggle.emit(this.employee().id);
   }
 

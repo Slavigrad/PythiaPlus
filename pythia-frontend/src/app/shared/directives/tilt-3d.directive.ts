@@ -19,8 +19,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[appTilt3d]',
-  standalone: true
+  selector: '[appTilt3d]'
 })
 export class Tilt3dDirective implements OnInit, OnDestroy {
   // Inputs
