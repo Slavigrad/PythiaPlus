@@ -159,4 +159,12 @@
       }
     </main>
   }
+
+  <!-- Project Detail Panel (Sliding Drawer) -->
+  <app-project-detail-panel
+    [project]="selectedProject()"
+    [isOpen]="isPanelOpen()"
+    (closePanel)="closeDetailPanel()"
+    (edit)="handleEditFromPanel($event)"
+    (delete)="handleDeleteFromPanel($event)" />
 </div>

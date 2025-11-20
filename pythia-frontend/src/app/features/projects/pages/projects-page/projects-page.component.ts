@@ -4,7 +4,8 @@ import { ProjectsService } from '../../services/projects.service';
 import { ProjectCardComponent } from '../../components/project-card/project-card.component';
 import { AdvancedFiltersComponent } from '../../components/advanced-filters/advanced-filters.component';
 import { ProjectSearchComponent } from '../../components/project-search/project-search.component';
-import { Project, ProjectQueryParams } from '../../../../models';
+import { ProjectDetailPanelComponent } from '../../components/project-detail-panel/project-detail-panel.component';
+import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
 
 /**
  * Projects Page Component
@@ -21,7 +22,13 @@ import { Project, ProjectQueryParams } from '../../../../models';
  */
 @Component({
   selector: 'app-projects-page',
-  imports: [CommonModule, ProjectCardComponent, AdvancedFiltersComponent, ProjectSearchComponent],
+  imports: [
+    CommonModule,
+    ProjectCardComponent,
+    AdvancedFiltersComponent,
+    ProjectSearchComponent,
+    ProjectDetailPanelComponent
+  ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -32,6 +39,10 @@ export class ProjectsPageComponent implements OnInit {
 
   // View mode: 'constellation' | 'command' | 'analytics'
   protected readonly viewMode = signal<'constellation' | 'command' | 'analytics'>('command');
+
+  // Detail panel state
+  protected readonly selectedProject = signal<ProjectDetail | null>(null);
+  protected readonly isPanelOpen = signal(false);
 
   // Component lifecycle
   ngOnInit(): void {
@@ -78,20 +89,18 @@ export class ProjectsPageComponent implements OnInit {
    * Handle project card click
    */
   protected handleProjectClick(project: Project): void {
-    console.log('Project clicked:', project);
-    // TODO: Open project detail panel
+    this.openDetailPanel(project.id);
   }
 
   /**
    * Handle view details click
    */
   protected handleViewDetails(project: Project): void {
-    console.log('View details:', project);
-    // TODO: Open project detail panel
+    this.openDetailPanel(project.id);
   }
 
   /**
-   * Handle edit project click
+   * Handle edit project click from card
    */
   protected handleEditProject(project: Project): void {
     console.log('Edit project:', project);
@@ -99,11 +108,63 @@ export class ProjectsPageComponent implements OnInit {
   }
 
   /**
-   * Handle delete project click
+   * Handle delete project click from card
    */
   protected handleDeleteProject(project: Project): void {
     console.log('Delete project:', project);
     // TODO: Show confirmation dialog
+  }
+
+  /**
+   * Open detail panel with project details
+   */
+  protected openDetailPanel(projectId: number): void {
+    // Load detailed project data
+    this.projectsService.getProjectById(projectId).subscribe({
+      next: (projectDetail) => {
+        this.selectedProject.set(projectDetail);
+        this.isPanelOpen.set(true);
+      },
+      error: (err) => {
+        console.error('Failed to load project details:', err);
+        // TODO: Show error notification
+      }
+    });
+  }
+
+  /**
+   * Close detail panel
+   */
+  protected closeDetailPanel(): void {
+    this.isPanelOpen.set(false);
+    // Clear selected project after animation completes
+    setTimeout(() => {
+      if (!this.isPanelOpen()) {
+        this.selectedProject.set(null);
+      }
+    }, 400);
+  }
+
+  /**
+   * Handle edit from detail panel
+   */
+  protected handleEditFromPanel(project: ProjectDetail): void {
+    console.log('Edit project from panel:', project);
+    this.closeDetailPanel();
+    // TODO: Open edit form
+  }
+
+  /**
+   * Handle delete from detail panel
+   */
+  protected handleDeleteFromPanel(project: ProjectDetail): void {
+    console.log('Delete project from panel:', project);
+    // TODO: Show confirmation dialog
+    // After confirmation:
+    // this.projectsService.deleteProject(project.id).subscribe(() => {
+    //   this.closeDetailPanel();
+    //   this.loadProjects();
+    // });
   }
 
   /**
