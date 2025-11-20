@@ -1,0 +1,303 @@
+###
+### Pythia API - Project Management Visionary Dataset Tests
+### Base Path: /api/v1/projects
+###
+### Description: Comprehensive tests for the Project Management System using the visionary dataset
+### Author: Pythia Team
+### Date: 2025-11-20
+###
+### This test suite demonstrates the full power of the project management system with:
+### - 15 flagship projects across diverse industries
+### - 37 project tags (AI/ML, Cloud Native, FinTech, HealthTech, etc.)
+### - 47 technology assignments (Python, Kubernetes, React, etc.)
+### - 34 skill mappings (Machine Learning, Microservices, etc.)
+### - 20 team assignments with leads and architects
+### - 21 project milestones with various statuses
+###
+### Prerequisites:
+### 1. Backend running on http://localhost:8080
+### 2. Visionary dataset loaded (migrations 006 and 007)
+### 3. Database: pythia-pgvector
+###
+
+@baseUrl = http://localhost:8080
+@apiPath = /api/v1
+
+###############################################################################
+### SECTION 1: PROJECT LISTING & FILTERING
+###############################################################################
+
+### 1.1 Get all projects (should return 15 flagship projects)
+GET {{baseUrl}}{{apiPath}}/projects
+Accept: application/json
+
+###
+
+### 1.2 Filter by status - Get ACTIVE projects
+# Expected: QuantumTrade, ArtisanMarket, CityPulse, ChainTrack, GameVerse, FreshBite, DataStream, TalentHub, ConversaAI
+GET {{baseUrl}}{{apiPath}}/projects?status=ACTIVE
+Accept: application/json
+
+###
+
+### 1.3 Filter by status - Get COMPLETED projects
+# Expected: MediConnect, Legacy to Cloud, ShieldGuard, SafeSpace, Monolith to Microservices
+GET {{baseUrl}}{{apiPath}}/projects?status=COMPLETED
+Accept: application/json
+
+###
+
+### 1.4 Filter by industry - FinTech projects
+# Expected: QuantumTrade AI Platform
+GET {{baseUrl}}{{apiPath}}/projects?industry=Financial Technology
+Accept: application/json
+
+###
+
+### 1.5 Filter by industry - Healthcare projects
+# Expected: MediConnect Telemedicine
+GET {{baseUrl}}{{apiPath}}/projects?industry=Healthcare
+Accept: application/json
+
+###
+
+### 1.6 Filter by company - Get projects by specific company
+# Example: QuantumTrade Financial
+GET {{baseUrl}}{{apiPath}}/projects?company=QuantumTrade Financial
+Accept: application/json
+
+###
+
+### 1.7 Combined filters - ACTIVE projects in specific industry
+GET {{baseUrl}}{{apiPath}}/projects?status=ACTIVE&industry=E-Commerce
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 2: PROJECT DETAILS
+###############################################################################
+
+### 2.1 Get QuantumTrade AI Platform details (flagship AI/ML project)
+# Expected: Full project details with budget €500K-€1M, team size 6-10, 4 team members
+# Technologies: Python, AWS, Kubernetes, PostgreSQL, React
+# Team: Marcus Chen (Lead), Isabella Romano (ML Engineer), Viktor Petrov (Data Engineer), Diego Santos (Analyst)
+# Milestones: 4 milestones (3 completed, 1 in progress)
+GET {{baseUrl}}{{apiPath}}/projects/1
+Accept: application/json
+
+###
+
+### 2.2 Get MediConnect Telemedicine details (HealthTech project)
+# Expected: COMPLETED status, HIPAA compliance, mobile apps
+# Team: 3 members, 4 milestones all completed
+GET {{baseUrl}}{{apiPath}}/projects/2
+Accept: application/json
+
+###
+
+### 2.3 Get CityPulse IoT Network details (IoT + Analytics)
+# Expected: €1M-€5M budget, 11-20 team size, 10,000+ sensors deployed
+# 3 milestones (2 completed, 1 pending)
+GET {{baseUrl}}{{apiPath}}/projects/3
+Accept: application/json
+
+###
+
+### 2.4 Get Monolith to Microservices details (Modernization project)
+# Expected: COMPLETED, €1M-€5M budget, Kafka event bus, 10 microservices
+# 4 milestones all completed
+GET {{baseUrl}}{{apiPath}}/projects/14
+Accept: application/json
+
+###
+
+### 2.5 Get DevToolkit Open Source details (Open Source project)
+# Expected: <€100K budget, 1-5 team size, GitHub repository
+# Open source developer tools
+GET {{baseUrl}}{{apiPath}}/projects/10
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 3: FULL-TEXT SEARCH
+###############################################################################
+
+### 3.1 Search for AI/ML projects
+# Expected: QuantumTrade, SafeSpace, ConversaAI
+GET {{baseUrl}}{{apiPath}}/projects/search?q=machine learning
+Accept: application/json
+
+###
+
+### 3.2 Search for Kubernetes projects
+# Expected: QuantumTrade, CityPulse, Legacy to Cloud, ShieldGuard, Monolith to Microservices
+GET {{baseUrl}}{{apiPath}}/projects/search?q=kubernetes
+Accept: application/json
+
+###
+
+### 3.3 Search for blockchain projects
+# Expected: ChainTrack Supply Network
+GET {{baseUrl}}{{apiPath}}/projects/search?q=blockchain
+Accept: application/json
+
+###
+
+### 3.4 Search for microservices architecture
+# Expected: QuantumTrade, Monolith to Microservices
+GET {{baseUrl}}{{apiPath}}/projects/search?q=microservices
+Accept: application/json
+
+###
+
+### 3.5 Search for real-time projects
+# Expected: QuantumTrade, DataStream Analytics
+GET {{baseUrl}}{{apiPath}}/projects/search?q=real-time
+Accept: application/json
+
+###
+
+### 3.6 Search for mobile projects
+# Expected: MediConnect, GameVerse, FreshBite
+GET {{baseUrl}}{{apiPath}}/projects/search?q=mobile
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 4: PROJECT STATISTICS
+###############################################################################
+
+### 4.1 Get overall project statistics
+# Expected:
+# - Total projects: 15
+# - By status: ACTIVE (9), COMPLETED (5)
+# - By complexity: LOW, MEDIUM, HIGH, VERY_HIGH distribution
+# - Budget ranges: <€100K to €1M-€5M
+# - Average success rating, client satisfaction
+# - Industries represented
+GET {{baseUrl}}{{apiPath}}/projects/stats
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 5: CREATE NEW PROJECT
+###############################################################################
+
+### 5.1 Create a new AI/ML project
+POST {{baseUrl}}{{apiPath}}/projects
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "VisionAI Image Recognition",
+  "code": "VAI-IMG-2025",
+  "description": "Advanced computer vision platform for real-time image recognition and classification. Features custom CNN models, edge deployment, and API integration.",
+  "company": "VisionTech AI",
+  "industry": "Artificial Intelligence",
+  "projectType": "Product Development",
+  "budgetRange": "€250K-€500K",
+  "teamSizeRange": "6-10",
+  "startDate": "2025-01-15",
+  "status": "PLANNING",
+  "priority": "HIGH",
+  "complexity": "VERY_HIGH",
+  "websiteUrl": "https://visiontech.ai",
+  "repositoryUrl": "https://github.com/visiontech/vision-ai"
+}
+
+###
+
+### 5.2 Create a startup MVP project
+POST {{baseUrl}}{{apiPath}}/projects
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "QuickPay Mobile Wallet",
+  "code": "QP-WALLET-2025",
+  "description": "Mobile-first digital wallet for instant peer-to-peer payments. MVP focusing on core payment features and security.",
+  "company": "QuickPay Startup",
+  "industry": "FinTech",
+  "projectType": "Startup MVP",
+  "budgetRange": "<€100K",
+  "teamSizeRange": "1-5",
+  "startDate": "2025-02-01",
+  "status": "PLANNING",
+  "priority": "CRITICAL",
+  "complexity": "MEDIUM"
+}
+
+###
+
+###############################################################################
+### SECTION 6: UPDATE PROJECT
+###############################################################################
+
+### 6.1 Update project status to ACTIVE
+# Note: Replace {projectId} with actual ID from create response
+PUT {{baseUrl}}{{apiPath}}/projects/16
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "ACTIVE",
+  "priority": "CRITICAL"
+}
+
+###
+
+### 6.2 Update project with completion details
+PUT {{baseUrl}}{{apiPath}}/projects/16
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "COMPLETED",
+  "endDate": "2025-12-31",
+  "successRating": 4.8,
+  "clientSatisfaction": 4.9
+}
+
+###
+
+###############################################################################
+### SECTION 7: DELETE PROJECT
+###############################################################################
+
+### 7.1 Delete a project
+# Note: Replace {projectId} with actual ID
+# WARNING: This will cascade delete all related data (team assignments, milestones, etc.)
+DELETE {{baseUrl}}{{apiPath}}/projects/16
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 8: ADVANCED QUERIES
+###############################################################################
+
+### 8.1 Get high-budget projects (€500K+)
+# Manual filter - get all and filter client-side, or use search
+GET {{baseUrl}}{{apiPath}}/projects/search?q=€500K OR €1M
+Accept: application/json
+
+###
+
+### 8.2 Get projects with high success ratings
+# Search for completed projects and filter by rating
+GET {{baseUrl}}{{apiPath}}/projects?status=COMPLETED
+Accept: application/json
+
+###
+
+### 8.3 Get enterprise-scale projects (11-20 team size)
+# Expected: CityPulse, ShieldGuard, Monolith to Microservices
+GET {{baseUrl}}{{apiPath}}/projects/search?q=11-20
+Accept: application/json
+
+###
+

@@ -1,0 +1,1133 @@
+openapi: 3.0.3
+info:
+  title: Pythia Project Management API
+  description: |
+    Comprehensive REST API for managing projects, team assignments, milestones, and tags in the Pythia system.
+
+    ## Features
+    - **15 Flagship Projects** across diverse industries (FinTech, HealthTech, IoT, Blockchain, etc.)
+    - **Team Management** with leads, architects, and role assignments
+    - **Milestone Tracking** with status, deliverables, and due dates
+    - **Tag-based Organization** with categories and analytics
+    - **Full-text Search** across projects
+    - **Rich Analytics** and statistics
+
+    ## Visionary Dataset
+    The API is populated with a comprehensive visionary dataset:
+    - 15 flagship projects (€100K to €5M budgets)
+    - 20 team assignments with detailed roles
+    - 21 project milestones
+    - 37 tag assignments across 15 tags
+    - 47 technology mappings
+    - 34 skill mappings
+
+    ## For Angular 20 Developers
+    Use this OpenAPI spec to:
+    - Generate TypeScript client with `ng-openapi-gen` or `openapi-generator`
+    - Auto-generate models and services
+    - Get type-safe API calls
+    - View interactive docs with Swagger UI
+
+    ## Authentication
+    Currently using CORS for localhost:4200 (Angular frontend).
+    Future: JWT-based authentication.
+
+  version: 1.0.0
+  contact:
+    name: Pythia Team
+    email: team@pythia.dev
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.pythia.dev/v1
+    description: Production server (future)
+
+tags:
+  - name: Projects
+    description: Project management operations (CRUD, search, stats)
+  - name: Employee Projects
+    description: Team assignment and employee-project relationships
+  - name: Milestones
+    description: Project milestone tracking and management
+  - name: Tags
+    description: Project categorization and tagging
+
+paths:
+  # ============================================================================
+  # PROJECTS API
+  # ============================================================================
+
+  /projects:
+    get:
+      tags: [Projects]
+      summary: Get all projects
+      description: Retrieve all projects with optional filtering
+      operationId: getAllProjects
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ProjectStatus'
+        - name: industry
+          in: query
+          schema:
+            type: string
+        - name: company
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectListResponse'
+
+    post:
+      tags: [Projects]
+      summary: Create project
+      operationId: createProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /projects/{id}:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+
+    get:
+      tags: [Projects]
+      summary: Get project by ID
+      operationId: getProjectById
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Projects]
+      summary: Update project
+      operationId: updateProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectRequest'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Projects]
+      summary: Delete project
+      operationId: deleteProject
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /projects/search:
+    get:
+      tags: [Projects]
+      summary: Search projects
+      operationId: searchProjects
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectListResponse'
+
+  /projects/stats:
+    get:
+      tags: [Projects]
+      summary: Get project statistics
+      operationId: getProjectStats
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectStatsResponse'
+
+  # ============================================================================
+  # EMPLOYEE PROJECTS API
+  # ============================================================================
+
+  /employee-projects:
+    get:
+      tags: [Employee Projects]
+      summary: Get all employee-project assignments
+      operationId: getAllEmployeeProjects
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeProjectDto'
+
+    post:
+      tags: [Employee Projects]
+      summary: Assign employee to project
+      operationId: createEmployeeProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEmployeeProjectRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeProjectDto'
+
+  /employee-projects/employee/{employeeId}:
+    parameters:
+      - name: employeeId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [Employee Projects]
+      summary: Get employee's projects
+      operationId: getEmployeeProjects
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeProjectDto'
+
+  /employee-projects/project/{projectId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [Employee Projects]
+      summary: Get project's team members
+      operationId: getProjectTeam
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeProjectDto'
+
+  /employee-projects/leads:
+    get:
+      tags: [Employee Projects]
+      summary: Get all project leads
+      operationId: getProjectLeads
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeProjectDto'
+
+  /employee-projects/architects:
+    get:
+      tags: [Employee Projects]
+      summary: Get all architects
+      operationId: getArchitects
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeProjectDto'
+
+  # ============================================================================
+  # MILESTONES API
+  # ============================================================================
+
+  /milestones:
+    get:
+      tags: [Milestones]
+      summary: Get all milestones
+      operationId: getAllMilestones
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/MilestoneStatus'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MilestoneDto'
+
+    post:
+      tags: [Milestones]
+      summary: Create milestone
+      operationId: createMilestone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMilestoneRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilestoneDto'
+
+  /milestones/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [Milestones]
+      summary: Get milestone by ID
+      operationId: getMilestoneById
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilestoneDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Milestones]
+      summary: Update milestone
+      operationId: updateMilestone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMilestoneRequest'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilestoneDto'
+    delete:
+      tags: [Milestones]
+      summary: Delete milestone
+      operationId: deleteMilestone
+      responses:
+        '204':
+          description: Deleted
+
+  /milestones/project/{projectId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [Milestones]
+      summary: Get project milestones
+      operationId: getProjectMilestones
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MilestoneDto'
+
+  /milestones/overdue:
+    get:
+      tags: [Milestones]
+      summary: Get overdue milestones
+      operationId: getOverdueMilestones
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MilestoneDto'
+
+  /milestones/upcoming:
+    get:
+      tags: [Milestones]
+      summary: Get upcoming milestones
+      operationId: getUpcomingMilestones
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MilestoneDto'
+
+  # ============================================================================
+  # TAGS API
+  # ============================================================================
+
+  /tags:
+    get:
+      tags: [Tags]
+      summary: Get all tags
+      operationId: getAllTags
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TagDto'
+    post:
+      tags: [Tags]
+      summary: Create tag
+      operationId: createTag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagDto'
+
+  /tags/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [Tags]
+      summary: Get tag by ID
+      operationId: getTagById
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagDto'
+    put:
+      tags: [Tags]
+      summary: Update tag
+      operationId: updateTag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTagRequest'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagDto'
+    delete:
+      tags: [Tags]
+      summary: Delete tag
+      operationId: deleteTag
+      responses:
+        '204':
+          description: Deleted
+
+  /tags/{tagId}/projects:
+    parameters:
+      - name: tagId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [Tags]
+      summary: Get projects with tag
+      operationId: getProjectsByTag
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectDto'
+
+  /tags/{tagId}/projects/{projectId}:
+    parameters:
+      - name: tagId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    post:
+      tags: [Tags]
+      summary: Assign tag to project
+      operationId: assignTagToProject
+      responses:
+        '204':
+          description: Assigned
+    delete:
+      tags: [Tags]
+      summary: Remove tag from project
+      operationId: removeTagFromProject
+      responses:
+        '204':
+          description: Removed
+
+  /tags/stats:
+    get:
+      tags: [Tags]
+      summary: Get tag statistics
+      operationId: getTagStats
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagStatsResponse'
+
+components:
+  parameters:
+    ProjectId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+  responses:
+    BadRequest:
+      description: Bad request
+    NotFound:
+      description: Resource not found
+    InternalError:
+      description: Internal server error
+
+  schemas:
+    # ========================================================================
+    # ENUMS
+    # ========================================================================
+
+    ProjectStatus:
+      type: string
+      enum: [PLANNING, ACTIVE, ON_HOLD, COMPLETED, CANCELLED, ARCHIVED]
+
+    ProjectPriority:
+      type: string
+      enum: [LOW, MEDIUM, HIGH, CRITICAL]
+
+    ProjectComplexity:
+      type: string
+      enum: [LOW, MEDIUM, HIGH, VERY_HIGH]
+
+    MilestoneStatus:
+      type: string
+      enum: [PENDING, IN_PROGRESS, COMPLETED, DELAYED]
+
+    # ========================================================================
+    # PROJECT SCHEMAS
+    # ========================================================================
+
+    ProjectDto:
+      type: object
+      required: [id, name, code, status]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          maxLength: 200
+          example: QuantumTrade AI Platform
+        code:
+          type: string
+          maxLength: 50
+          example: QT-AI-2024
+        description:
+          type: string
+          example: Next-generation algorithmic trading platform
+        company:
+          type: string
+          maxLength: 200
+          example: QuantumTrade Financial
+        industry:
+          type: string
+          maxLength: 100
+          example: Financial Technology
+        projectType:
+          type: string
+          maxLength: 100
+          example: Product Development
+        budgetRange:
+          type: string
+          maxLength: 50
+          example: €500K-€1M
+        teamSizeRange:
+          type: string
+          maxLength: 20
+          example: 6-10
+        startDate:
+          type: string
+          format: date
+          example: "2023-01-15"
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        priority:
+          $ref: '#/components/schemas/ProjectPriority'
+        complexity:
+          $ref: '#/components/schemas/ProjectComplexity'
+        successRating:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+          nullable: true
+          example: 4.8
+        clientSatisfaction:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+          nullable: true
+          example: 4.7
+        websiteUrl:
+          type: string
+          maxLength: 500
+          nullable: true
+        repositoryUrl:
+          type: string
+          maxLength: 500
+          nullable: true
+        documentationUrl:
+          type: string
+          maxLength: 500
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateProjectRequest:
+      type: object
+      required: [name, code, company, industry, projectType, startDate, status]
+      properties:
+        name:
+          type: string
+          maxLength: 200
+        code:
+          type: string
+          maxLength: 50
+        description:
+          type: string
+        company:
+          type: string
+          maxLength: 200
+        industry:
+          type: string
+          maxLength: 100
+        projectType:
+          type: string
+          maxLength: 100
+        budgetRange:
+          type: string
+          maxLength: 50
+        teamSizeRange:
+          type: string
+          maxLength: 20
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        priority:
+          $ref: '#/components/schemas/ProjectPriority'
+        complexity:
+          $ref: '#/components/schemas/ProjectComplexity'
+        websiteUrl:
+          type: string
+          maxLength: 500
+        repositoryUrl:
+          type: string
+          maxLength: 500
+        documentationUrl:
+          type: string
+          maxLength: 500
+
+
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        endDate:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        priority:
+          $ref: '#/components/schemas/ProjectPriority'
+        complexity:
+          $ref: '#/components/schemas/ProjectComplexity'
+        successRating:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+        clientSatisfaction:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+        websiteUrl:
+          type: string
+          maxLength: 500
+        repositoryUrl:
+          type: string
+          maxLength: 500
+        documentationUrl:
+          type: string
+          maxLength: 500
+
+    ProjectListResponse:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectDto'
+        total:
+          type: integer
+          example: 15
+        filters:
+          type: object
+          properties:
+            status:
+              type: string
+            industry:
+              type: string
+            company:
+              type: string
+
+    ProjectStatsResponse:
+      type: object
+      properties:
+        totalProjects:
+          type: integer
+          example: 15
+        activeProjects:
+          type: integer
+          example: 9
+        completedProjects:
+          type: integer
+          example: 5
+        averageSuccessRating:
+          type: number
+          format: double
+          example: 4.6
+        averageClientSatisfaction:
+          type: number
+          format: double
+          example: 4.5
+        projectsByStatus:
+          type: object
+          additionalProperties:
+            type: integer
+        projectsByIndustry:
+          type: object
+          additionalProperties:
+            type: integer
+
+    # ========================================================================
+    # EMPLOYEE PROJECT SCHEMAS
+    # ========================================================================
+
+    EmployeeProjectDto:
+      type: object
+      required: [employeeId, projectId, startDate]
+      properties:
+        employeeId:
+          type: integer
+          format: int64
+          example: 1
+        projectId:
+          type: integer
+          format: int64
+          example: 1
+        employeeName:
+          type: string
+          example: Marcus Chen
+        projectName:
+          type: string
+          example: QuantumTrade AI Platform
+        projectCode:
+          type: string
+          example: QT-AI-2024
+        roleId:
+          type: integer
+          format: int64
+          nullable: true
+        roleDescription:
+          type: string
+          example: Technical Lead & Backend Architect
+        startDate:
+          type: string
+          format: date
+          example: "2023-01-15"
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        isLead:
+          type: boolean
+          example: true
+        isArchitect:
+          type: boolean
+          example: true
+        responsibilities:
+          type: string
+          example: Leading backend development, architecture design
+        achievements:
+          type: string
+          nullable: true
+          example: Designed scalable microservices architecture
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateEmployeeProjectRequest:
+      type: object
+      required: [employeeId, projectId, startDate]
+      properties:
+        employeeId:
+          type: integer
+          format: int64
+        projectId:
+          type: integer
+          format: int64
+        roleId:
+          type: integer
+          format: int64
+          nullable: true
+        roleDescription:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        isLead:
+          type: boolean
+          default: false
+        isArchitect:
+          type: boolean
+          default: false
+        responsibilities:
+          type: string
+        achievements:
+          type: string
+          nullable: true
+
+
+
+    # ========================================================================
+    # MILESTONE SCHEMAS
+    # ========================================================================
+
+    MilestoneDto:
+      type: object
+      required: [id, projectId, name, dueDate, status]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        projectId:
+          type: integer
+          format: int64
+          example: 1
+        projectName:
+          type: string
+          example: QuantumTrade AI Platform
+        projectCode:
+          type: string
+          example: QT-AI-2024
+        name:
+          type: string
+          maxLength: 200
+          example: MVP Launch
+        description:
+          type: string
+          example: Launch minimum viable product with core features
+        dueDate:
+          type: string
+          format: date
+          example: "2023-06-30"
+        completedDate:
+          type: string
+          format: date
+          nullable: true
+          example: "2023-06-28"
+        status:
+          $ref: '#/components/schemas/MilestoneStatus'
+        deliverables:
+          type: string
+          example: MVP release, API documentation, deployment guide
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateMilestoneRequest:
+      type: object
+      required: [projectId, name, dueDate, status]
+      properties:
+        projectId:
+          type: integer
+          format: int64
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/MilestoneStatus'
+        deliverables:
+          type: string
+
+    UpdateMilestoneRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        completedDate:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/MilestoneStatus'
+        deliverables:
+          type: string
+
+    # ========================================================================
+    # TAG SCHEMAS
+    # ========================================================================
+
+    TagDto:
+      type: object
+      required: [id, name, category, color]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          maxLength: 100
+          example: AI/ML
+        category:
+          type: string
+          maxLength: 50
+          example: Technology
+        color:
+          type: string
+          maxLength: 20
+          example: "#FF6B6B"
+        projectCount:
+          type: integer
+          example: 3
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateTagRequest:
+      type: object
+      required: [name, category, color]
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        category:
+          type: string
+          maxLength: 50
+        color:
+          type: string
+          maxLength: 20
+          pattern: '^#[0-9A-Fa-f]{6}$'
+
+    UpdateTagRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        category:
+          type: string
+          maxLength: 50
+        color:
+          type: string
+          maxLength: 20
+          pattern: '^#[0-9A-Fa-f]{6}$'
+
+    TagStatsResponse:
+      type: object
+      properties:
+        totalTags:
+          type: integer
+          example: 15
+        tagsByCategory:
+          type: object
+          additionalProperties:
+            type: integer
+        mostUsedTags:
+          type: array
+          items:
+            type: object
+            properties:
+              tagId:
+                type: integer
+                format: int64
+              tagName:
+                type: string
+              projectCount:
+                type: integer

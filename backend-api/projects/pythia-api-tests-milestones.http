@@ -1,0 +1,388 @@
+###
+### Pythia API - Project Milestones Tests
+### Base Path: /api/v1/milestones
+###
+### Description: Tests for managing project milestones and deliverables
+### Author: Pythia Team
+### Date: 2025-11-20
+###
+### This test suite covers:
+### - Creating and managing project milestones
+### - Tracking milestone status (PENDING, IN_PROGRESS, COMPLETED)
+### - Managing deliverables and due dates
+### - Querying overdue and upcoming milestones
+### - Milestone completion tracking
+###
+### Prerequisites:
+### 1. Backend running on http://localhost:8080
+### 2. Visionary dataset loaded (21 milestones across 6 projects)
+### 3. Projects in database
+###
+
+@baseUrl = http://localhost:8080
+@apiPath = /api/v1
+
+###############################################################################
+### SECTION 1: GET MILESTONES
+###############################################################################
+
+### 1.1 Get all milestones
+# Expected: 21 milestones from visionary dataset
+GET {{baseUrl}}{{apiPath}}/milestones
+Accept: application/json
+
+###
+
+### 1.2 Get milestones for specific project (QuantumTrade - ID 1)
+# Expected: 4 milestones (MVP Launch, ML Model v1.0, Scale to 100K Users, Real-time Analytics Dashboard)
+GET {{baseUrl}}{{apiPath}}/milestones/project/1
+Accept: application/json
+
+###
+
+### 1.3 Get milestones for MediConnect project (ID 2)
+# Expected: 4 milestones (HIPAA Compliance, iOS Launch, Android Launch, Project Completion)
+GET {{baseUrl}}{{apiPath}}/milestones/project/2
+Accept: application/json
+
+###
+
+### 1.4 Get milestones for CityPulse IoT project (ID 3)
+# Expected: 3 milestones (Pilot Deployment, Full City Rollout, Predictive Maintenance AI)
+GET {{baseUrl}}{{apiPath}}/milestones/project/3
+Accept: application/json
+
+###
+
+### 1.5 Get milestones for Monolith to Microservices project (ID 14)
+# Expected: 4 milestones (Domain Modeling, Event Bus, First 10 Services, Monolith Decommissioned)
+GET {{baseUrl}}{{apiPath}}/milestones/project/14
+Accept: application/json
+
+###
+
+### 1.6 Get specific milestone by ID
+GET {{baseUrl}}{{apiPath}}/milestones/1
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 2: FILTER MILESTONES BY STATUS
+###############################################################################
+
+### 2.1 Get all COMPLETED milestones
+# Expected: Most milestones from completed projects
+GET {{baseUrl}}{{apiPath}}/milestones?status=COMPLETED
+Accept: application/json
+
+###
+
+### 2.2 Get all IN_PROGRESS milestones
+# Expected: Real-time Analytics Dashboard from QuantumTrade
+GET {{baseUrl}}{{apiPath}}/milestones?status=IN_PROGRESS
+Accept: application/json
+
+###
+
+### 2.3 Get all PENDING milestones
+# Expected: Predictive Maintenance AI from CityPulse
+GET {{baseUrl}}{{apiPath}}/milestones?status=PENDING
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 3: OVERDUE AND UPCOMING MILESTONES
+###############################################################################
+
+### 3.1 Get overdue milestones
+# Expected: Milestones with due_date in the past and status != COMPLETED
+GET {{baseUrl}}{{apiPath}}/milestones/overdue
+Accept: application/json
+
+###
+
+### 3.2 Get upcoming milestones (next 30 days)
+# Expected: Milestones due within next 30 days
+GET {{baseUrl}}{{apiPath}}/milestones/upcoming
+Accept: application/json
+
+###
+
+### 3.3 Get upcoming milestones (next 90 days)
+GET {{baseUrl}}{{apiPath}}/milestones/upcoming?days=90
+Accept: application/json
+
+###
+
+### 3.4 Get milestones due this month
+GET {{baseUrl}}{{apiPath}}/milestones/upcoming?days=30
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 4: CREATE MILESTONES
+###############################################################################
+
+### 4.1 Create planning milestone for new project
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 5,
+  "name": "Requirements Gathering Complete",
+  "description": "Complete business requirements analysis and technical specifications for blockchain supply chain tracking",
+  "dueDate": "2024-02-28",
+  "status": "IN_PROGRESS",
+  "deliverables": "Business requirements document, technical specifications, architecture diagrams, smart contract designs"
+}
+
+###
+
+### 4.2 Create development milestone
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 5,
+  "name": "Smart Contract Development",
+  "description": "Develop and test core smart contracts for supply chain tracking",
+  "dueDate": "2024-04-30",
+  "status": "PENDING",
+  "deliverables": "Solidity smart contracts, unit tests, security audit report, deployment scripts"
+}
+
+###
+
+### 4.3 Create deployment milestone
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 5,
+  "name": "Testnet Deployment",
+  "description": "Deploy smart contracts to Ethereum testnet and conduct integration testing",
+  "dueDate": "2024-06-15",
+  "status": "PENDING",
+  "deliverables": "Deployed contracts on testnet, integration test results, performance benchmarks"
+}
+
+###
+
+### 4.4 Create release milestone
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 5,
+  "name": "Mainnet Launch",
+  "description": "Production deployment to Ethereum mainnet",
+  "dueDate": "2024-08-31",
+  "status": "PENDING",
+  "deliverables": "Production deployment, monitoring setup, user documentation, launch announcement"
+}
+
+###
+
+### 4.5 Create compliance milestone
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 7,
+  "name": "GDPR Compliance Certification",
+  "description": "Achieve GDPR compliance for user data handling in multiplayer game",
+  "dueDate": "2024-05-31",
+  "status": "IN_PROGRESS",
+  "deliverables": "GDPR compliance documentation, privacy policy, data processing agreements, audit report"
+}
+
+###
+
+### 4.6 Create technical milestone
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 11,
+  "name": "Real-time Pipeline at Scale",
+  "description": "Achieve 1M events/second processing capability",
+  "dueDate": "2024-07-31",
+  "status": "IN_PROGRESS",
+  "deliverables": "Kafka cluster scaled, performance benchmarks, monitoring dashboards, optimization report"
+}
+
+###
+
+###############################################################################
+### SECTION 5: UPDATE MILESTONES
+###############################################################################
+
+### 5.1 Mark milestone as completed
+PUT {{baseUrl}}{{apiPath}}/milestones/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "COMPLETED",
+  "completedDate": "2023-06-28",
+  "deliverables": "MVP release with core trading features, API documentation, deployment guide"
+}
+
+###
+
+### 5.2 Update milestone status to IN_PROGRESS
+PUT {{baseUrl}}{{apiPath}}/milestones/22
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "IN_PROGRESS"
+}
+
+###
+
+### 5.3 Extend milestone due date
+PUT {{baseUrl}}{{apiPath}}/milestones/22
+Content-Type: application/json
+Accept: application/json
+
+{
+  "dueDate": "2024-03-31",
+  "description": "Extended due date due to additional requirements"
+}
+
+###
+
+### 5.4 Update milestone with partial completion
+PUT {{baseUrl}}{{apiPath}}/milestones/23
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "IN_PROGRESS",
+  "deliverables": "Smart contracts 80% complete, 3 of 4 contracts deployed to testnet, security audit in progress"
+}
+
+###
+
+### 5.5 Mark milestone as delayed
+PUT {{baseUrl}}{{apiPath}}/milestones/24
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "DELAYED",
+  "description": "Testnet deployment delayed due to security audit findings. Additional testing required."
+}
+
+###
+
+###############################################################################
+### SECTION 6: DELETE MILESTONES
+###############################################################################
+
+### 6.1 Delete a milestone
+DELETE {{baseUrl}}{{apiPath}}/milestones/22
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 7: MILESTONE STATISTICS
+###############################################################################
+
+### 7.1 Get milestone completion statistics for project
+GET {{baseUrl}}{{apiPath}}/milestones/project/1/stats
+Accept: application/json
+
+###
+
+### 7.2 Get overall milestone statistics
+GET {{baseUrl}}{{apiPath}}/milestones/stats
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 8: ADVANCED QUERIES
+###############################################################################
+
+### 8.1 Get milestones by date range
+GET {{baseUrl}}{{apiPath}}/milestones?startDate=2023-01-01&endDate=2023-12-31
+Accept: application/json
+
+###
+
+### 8.2 Get critical milestones (upcoming in next 7 days)
+GET {{baseUrl}}{{apiPath}}/milestones/upcoming?days=7
+Accept: application/json
+
+###
+
+### 8.3 Get completed milestones for specific project
+GET {{baseUrl}}{{apiPath}}/milestones/project/2?status=COMPLETED
+Accept: application/json
+
+###
+
+### 8.4 Get milestones with deliverables
+GET {{baseUrl}}{{apiPath}}/milestones?hasDeliverables=true
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 9: VALIDATION TESTS
+###############################################################################
+
+### 9.1 Try to create milestone for non-existent project (should fail)
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 9999,
+  "name": "Invalid Milestone",
+  "description": "This should fail",
+  "dueDate": "2024-12-31",
+  "status": "PENDING"
+}
+
+###
+
+### 9.2 Try to create milestone with past due date (should warn or fail)
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 1,
+  "name": "Past Due Milestone",
+  "description": "Milestone with due date in the past",
+  "dueDate": "2020-01-01",
+  "status": "PENDING"
+}
+
+###
+
+### 9.3 Try to create milestone without required fields (should fail)
+POST {{baseUrl}}{{apiPath}}/milestones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "projectId": 1,
+  "name": "Incomplete Milestone"
+}
+
+###
+

@@ -1,0 +1,501 @@
+###
+### Pythia API - Project Tags Tests
+### Base Path: /api/v1/tags
+###
+### Description: Tests for managing project tags and categorization
+### Author: Pythia Team
+### Date: 2025-11-20
+###
+### This test suite covers:
+### - Creating and managing project tags
+### - Categorizing projects with tags
+### - Tag-based project discovery
+### - Tag statistics and analytics
+### - Color-coded tag visualization
+###
+### Prerequisites:
+### 1. Backend running on http://localhost:8080
+### 2. Visionary dataset loaded (15 tags, 37 tag assignments)
+### 3. Projects in database
+###
+
+@baseUrl = http://localhost:8080
+@apiPath = /api/v1
+
+###############################################################################
+### SECTION 1: GET TAGS
+###############################################################################
+
+### 1.1 Get all tags
+# Expected: 15 tags from visionary dataset
+# AI/ML, Cloud Native, Mobile First, Enterprise, Startup MVP, Open Source,
+# FinTech, HealthTech, E-Commerce, DevOps, Real-time, Blockchain, IoT, Security, Analytics
+GET {{baseUrl}}{{apiPath}}/tags
+Accept: application/json
+
+###
+
+### 1.2 Get specific tag by ID
+GET {{baseUrl}}{{apiPath}}/tags/1
+Accept: application/json
+
+###
+
+### 1.3 Get tag by name
+GET {{baseUrl}}{{apiPath}}/tags/name/AI%2FML
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 2: FILTER TAGS BY CATEGORY
+###############################################################################
+
+### 2.1 Get all Technology tags
+# Expected: AI/ML, Blockchain, IoT
+GET {{baseUrl}}{{apiPath}}/tags?category=Technology
+Accept: application/json
+
+###
+
+### 2.2 Get all Industry tags
+# Expected: FinTech, HealthTech, E-Commerce
+GET {{baseUrl}}{{apiPath}}/tags?category=Industry
+Accept: application/json
+
+###
+
+### 2.3 Get all Infrastructure tags
+# Expected: Cloud Native
+GET {{baseUrl}}{{apiPath}}/tags?category=Infrastructure
+Accept: application/json
+
+###
+
+### 2.4 Get all Practice tags
+# Expected: DevOps
+GET {{baseUrl}}{{apiPath}}/tags?category=Practice
+Accept: application/json
+
+###
+
+### 2.5 Get all Focus tags
+# Expected: Security, Analytics
+GET {{baseUrl}}{{apiPath}}/tags?category=Focus
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 3: GET PROJECTS BY TAG
+###############################################################################
+
+### 3.1 Get all AI/ML projects
+# Expected: QuantumTrade, SafeSpace, ConversaAI
+GET {{baseUrl}}{{apiPath}}/tags/1/projects
+Accept: application/json
+
+###
+
+### 3.2 Get all Cloud Native projects
+# Expected: Multiple projects using cloud infrastructure
+GET {{baseUrl}}{{apiPath}}/tags/2/projects
+Accept: application/json
+
+###
+
+### 3.3 Get all FinTech projects
+# Expected: QuantumTrade
+GET {{baseUrl}}{{apiPath}}/tags/7/projects
+Accept: application/json
+
+###
+
+### 3.4 Get all HealthTech projects
+# Expected: MediConnect
+GET {{baseUrl}}{{apiPath}}/tags/8/projects
+Accept: application/json
+
+###
+
+### 3.5 Get all DevOps projects
+# Expected: Legacy to Cloud, Monolith to Microservices
+GET {{baseUrl}}{{apiPath}}/tags/10/projects
+Accept: application/json
+
+###
+
+### 3.6 Get all Blockchain projects
+# Expected: ChainTrack
+GET {{baseUrl}}{{apiPath}}/tags/12/projects
+Accept: application/json
+
+###
+
+### 3.7 Get all Security projects
+# Expected: ShieldGuard, SafeSpace
+GET {{baseUrl}}{{apiPath}}/tags/14/projects
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 4: CREATE TAGS
+###############################################################################
+
+### 4.1 Create a new technology tag
+POST {{baseUrl}}{{apiPath}}/tags
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Quantum Computing",
+  "category": "Technology",
+  "color": "#9B59B6"
+}
+
+###
+
+### 4.2 Create a new industry tag
+POST {{baseUrl}}{{apiPath}}/tags
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "EdTech",
+  "category": "Industry",
+  "color": "#3498DB"
+}
+
+###
+
+### 4.3 Create a new architecture tag
+POST {{baseUrl}}{{apiPath}}/tags
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Event-Driven",
+  "category": "Architecture",
+  "color": "#E74C3C"
+}
+
+###
+
+### 4.4 Create a new scale tag
+POST {{baseUrl}}{{apiPath}}/tags
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Global Scale",
+  "category": "Scale",
+  "color": "#F39C12"
+}
+
+###
+
+### 4.5 Create a new methodology tag
+POST {{baseUrl}}{{apiPath}}/tags
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Agile",
+  "category": "Methodology",
+  "color": "#2ECC71"
+}
+
+###
+
+###############################################################################
+### SECTION 5: UPDATE TAGS
+###############################################################################
+
+### 5.1 Update tag name and color
+PUT {{baseUrl}}{{apiPath}}/tags/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "AI/ML & Data Science",
+  "color": "#E74C3C"
+}
+
+###
+
+### 5.2 Update tag category
+PUT {{baseUrl}}{{apiPath}}/tags/16
+Content-Type: application/json
+Accept: application/json
+
+{
+  "category": "Emerging Technology"
+}
+
+###
+
+### 5.3 Update tag color only
+PUT {{baseUrl}}{{apiPath}}/tags/17
+Content-Type: application/json
+Accept: application/json
+
+{
+  "color": "#1ABC9C"
+}
+
+###
+
+###############################################################################
+### SECTION 6: ASSIGN TAGS TO PROJECTS
+###############################################################################
+
+### 6.1 Assign AI/ML tag to a project
+POST {{baseUrl}}{{apiPath}}/tags/1/projects/11
+Accept: application/json
+
+###
+
+### 6.2 Assign multiple tags to a project
+# Assign Cloud Native tag
+POST {{baseUrl}}{{apiPath}}/tags/2/projects/11
+Accept: application/json
+
+###
+
+# Assign Real-time tag
+POST {{baseUrl}}{{apiPath}}/tags/11/projects/11
+Accept: application/json
+
+###
+
+# Assign Analytics tag
+POST {{baseUrl}}{{apiPath}}/tags/15/projects/11
+Accept: application/json
+
+###
+
+### 6.3 Assign industry tag to project
+POST {{baseUrl}}{{apiPath}}/tags/7/projects/9
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 7: REMOVE TAGS FROM PROJECTS
+###############################################################################
+
+### 7.1 Remove tag from project
+DELETE {{baseUrl}}{{apiPath}}/tags/1/projects/11
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 8: TAG STATISTICS
+###############################################################################
+
+### 8.1 Get tag usage statistics
+# Expected: Count of projects per tag
+GET {{baseUrl}}{{apiPath}}/tags/stats
+Accept: application/json
+
+###
+
+### 8.2 Get most popular tags
+# Expected: Tags sorted by number of projects
+GET {{baseUrl}}{{apiPath}}/tags/popular
+Accept: application/json
+
+###
+
+### 8.3 Get tag statistics by category
+GET {{baseUrl}}{{apiPath}}/tags/stats/by-category
+Accept: application/json
+
+###
+
+### 8.4 Get projects count for specific tag
+GET {{baseUrl}}{{apiPath}}/tags/1/count
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 9: SEARCH AND FILTER
+###############################################################################
+
+### 9.1 Search tags by name
+GET {{baseUrl}}{{apiPath}}/tags/search?q=AI
+Accept: application/json
+
+###
+
+### 9.2 Search tags by name (partial match)
+GET {{baseUrl}}{{apiPath}}/tags/search?q=Tech
+Accept: application/json
+
+###
+
+### 9.3 Get tags with color filter
+GET {{baseUrl}}{{apiPath}}/tags?color=%23FF6B6B
+Accept: application/json
+
+###
+
+### 9.4 Get unused tags (tags with no projects)
+GET {{baseUrl}}{{apiPath}}/tags/unused
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 10: BULK OPERATIONS
+###############################################################################
+
+### 10.1 Get all tags for a project
+GET {{baseUrl}}{{apiPath}}/tags/project/1
+Accept: application/json
+
+###
+
+### 10.2 Assign multiple tags to project at once
+POST {{baseUrl}}{{apiPath}}/tags/project/5/bulk
+Content-Type: application/json
+Accept: application/json
+
+{
+  "tagIds": [12, 2, 11]
+}
+
+###
+
+### 10.3 Replace all tags for a project
+PUT {{baseUrl}}{{apiPath}}/tags/project/5
+Content-Type: application/json
+Accept: application/json
+
+{
+  "tagIds": [12, 7, 14]
+}
+
+###
+
+### 10.4 Remove all tags from project
+DELETE {{baseUrl}}{{apiPath}}/tags/project/5
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 11: DELETE TAGS
+###############################################################################
+
+### 11.1 Delete a tag
+# WARNING: This will remove the tag from all projects
+DELETE {{baseUrl}}{{apiPath}}/tags/16
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 12: TAG ANALYTICS
+###############################################################################
+
+### 12.1 Get tag co-occurrence matrix
+# Which tags are commonly used together
+GET {{baseUrl}}{{apiPath}}/tags/analytics/co-occurrence
+Accept: application/json
+
+###
+
+### 12.2 Get tag trends over time
+# Tag usage by project start dates
+GET {{baseUrl}}{{apiPath}}/tags/analytics/trends
+Accept: application/json
+
+###
+
+### 12.3 Get tag distribution by project status
+# How tags are distributed across ACTIVE vs COMPLETED projects
+GET {{baseUrl}}{{apiPath}}/tags/analytics/by-status
+Accept: application/json
+
+###
+
+### 12.4 Get tag cloud data
+# Tag names with usage counts for visualization
+GET {{baseUrl}}{{apiPath}}/tags/cloud
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 13: VALIDATION TESTS
+###############################################################################
+
+### 13.1 Try to create duplicate tag (should fail)
+POST {{baseUrl}}{{apiPath}}/tags
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "AI/ML",
+  "category": "Technology",
+  "color": "#FF6B6B"
+}
+
+###
+
+### 13.2 Try to create tag without required fields (should fail)
+POST {{baseUrl}}{{apiPath}}/tags
+Content-Type: application/json
+Accept: application/json
+
+{
+  "color": "#FF6B6B"
+}
+
+###
+
+### 13.3 Try to assign non-existent tag to project (should fail)
+POST {{baseUrl}}{{apiPath}}/tags/9999/projects/1
+Accept: application/json
+
+###
+
+### 13.4 Try to assign tag to non-existent project (should fail)
+POST {{baseUrl}}{{apiPath}}/tags/1/projects/9999
+Accept: application/json
+
+###
+
+###############################################################################
+### SECTION 14: VISIONARY DATASET VERIFICATION
+###############################################################################
+
+### 14.1 Verify AI/ML tag has 3 projects
+# Expected: QuantumTrade, SafeSpace, ConversaAI
+GET {{baseUrl}}{{apiPath}}/tags/name/AI%2FML
+Accept: application/json
+
+###
+
+### 14.2 Verify FinTech tag projects
+GET {{baseUrl}}{{apiPath}}/tags/name/FinTech
+Accept: application/json
+
+###
+
+### 14.3 Verify DevOps tag projects
+GET {{baseUrl}}{{apiPath}}/tags/name/DevOps
+Accept: application/json
+
+###
+
+### 14.4 Get all tags sorted by project count
+GET {{baseUrl}}{{apiPath}}/tags?sortBy=projectCount&order=desc
+Accept: application/json
+
+###
+
