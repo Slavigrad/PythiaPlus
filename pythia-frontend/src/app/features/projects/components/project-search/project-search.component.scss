@@ -1,0 +1,232 @@
+/**
+ * Project Search Component Styles
+ *
+ * Design: Modern search bar with smooth animations
+ * Features: Debounced input, loading spinner, clear button
+ */
+
+:host {
+  display: block;
+}
+
+.project-search {
+  margin-bottom: var(--spacing-lg);
+}
+
+// ============================================================================
+// SEARCH WRAPPER
+// ============================================================================
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: white;
+  border: 2px solid var(--color-neutral-300);
+  border-radius: var(--radius-lg);
+  padding: 0 var(--spacing-md);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    border-color: var(--color-neutral-400);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:focus-within {
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1), var(--shadow-md);
+
+    .search-icon {
+      color: var(--color-primary-600);
+    }
+  }
+}
+
+// ============================================================================
+// SEARCH ICON
+// ============================================================================
+
+.search-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-neutral-500);
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+// ============================================================================
+// SEARCH INPUT
+// ============================================================================
+
+.search-input {
+  flex: 1;
+  padding: var(--spacing-md) 0;
+  border: none;
+  background: transparent;
+  color: var(--color-neutral-900);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+
+  &::placeholder {
+    color: var(--color-neutral-500);
+  }
+
+  // Remove default search input styles
+  &::-webkit-search-decoration,
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration {
+    display: none;
+  }
+}
+
+// ============================================================================
+// LOADING SPINNER
+// ============================================================================
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.spinner-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary-500);
+  animation: spin 1s linear infinite;
+}
+
+.spinner-circle {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 10;
+  transform-origin: center;
+  animation: spinner-dash 1.5s ease-in-out infinite;
+}
+
+// ============================================================================
+// CLEAR BUTTON
+// ============================================================================
+
+.clear-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--color-neutral-100);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--color-neutral-600);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  animation: clear-button-appear 0.2s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: var(--color-neutral-200);
+    color: var(--color-neutral-900);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+// ============================================================================
+// SCREEN READER ONLY
+// ============================================================================
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner-dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+@keyframes clear-button-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// ============================================================================
+// RESPONSIVE
+// ============================================================================
+
+@media (max-width: 768px) {
+  .search-input {
+    font-size: var(--font-size-sm);
+
+    &::placeholder {
+      font-size: var(--font-size-sm);
+    }
+  }
+
+  .search-wrapper {
+    padding: 0 var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .search-input::placeholder {
+    content: 'Search projects...';
+  }
+}

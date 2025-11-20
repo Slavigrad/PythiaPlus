@@ -19,3 +19,6 @@ export * from './search-response.model';
 
 // Facet models
 export * from './facet.model';
+
+// Project models
+export * from './project.model';
