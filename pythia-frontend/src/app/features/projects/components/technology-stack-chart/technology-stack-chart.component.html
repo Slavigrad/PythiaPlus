@@ -1,0 +1,29 @@
+<!-- Technology Stack Chart -->
+<div class="chart-container">
+  <div class="chart-header">
+    <h3 class="chart-title">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+      </svg>
+      Technology Stack
+    </h3>
+    <div class="chart-subtitle">
+      Top 10 of {{ totalTech() }} technologies
+    </div>
+  </div>
+
+  <div class="chart-body">
+    <canvas id="techStackChart"></canvas>
+  </div>
+
+  <div class="chart-footer">
+    <div class="footer-stat">
+      <span class="stat-label">Total Technologies:</span>
+      <span class="stat-value">{{ totalTech() }}</span>
+    </div>
+    <div class="footer-stat">
+      <span class="stat-label">Total Usage:</span>
+      <span class="stat-value">{{ totalUsage() }} instances</span>
+    </div>
+  </div>
+</div>

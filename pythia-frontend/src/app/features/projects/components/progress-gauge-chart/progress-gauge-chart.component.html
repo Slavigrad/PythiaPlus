@@ -1,0 +1,38 @@
+<!-- Progress Gauge Chart -->
+<div class="chart-container">
+  <div class="chart-header">
+    <h3 class="chart-title">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+      </svg>
+      Average Progress
+    </h3>
+    <div class="chart-subtitle">
+      Across {{ totalProjects() }} projects
+    </div>
+  </div>
+
+  <div class="chart-body">
+    <canvas id="progressGauge"></canvas>
+
+    <div class="gauge-footer">
+      <div class="status-indicator" [style.color]="progressColor()">
+        <span class="status-dot" [style.background]="progressColor()"></span>
+        <span class="status-text">{{ progressStatus() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-legend">
+    <div class="legend-row">
+      <span class="legend-label">Status:</span>
+      <span class="legend-value" [style.color]="progressColor()">
+        {{ progressStatus() }}
+      </span>
+    </div>
+    <div class="legend-row">
+      <span class="legend-label">Remaining:</span>
+      <span class="legend-value">{{ 100 - averageProgress() }}%</span>
+    </div>
+  </div>
+</div>

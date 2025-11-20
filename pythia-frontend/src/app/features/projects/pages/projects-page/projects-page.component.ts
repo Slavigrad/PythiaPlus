@@ -9,6 +9,9 @@ import { ProjectControlsComponent } from '../../components/project-controls/proj
 import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
 import { AnalyticsOverviewComponent } from '../../components/analytics-overview/analytics-overview.component';
 import { StatusDistributionChartComponent } from '../../components/status-distribution-chart/status-distribution-chart.component';
+import { BudgetTimelineChartComponent } from '../../components/budget-timeline-chart/budget-timeline-chart.component';
+import { ProgressGaugeChartComponent } from '../../components/progress-gauge-chart/progress-gauge-chart.component';
+import { TechnologyStackChartComponent } from '../../components/technology-stack-chart/technology-stack-chart.component';
 import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
 
 /**
@@ -35,7 +38,10 @@ import { Project, ProjectDetail, ProjectQueryParams } from '../../../../models';
     ProjectControlsComponent,
     SkeletonCardComponent,
     AnalyticsOverviewComponent,
-    StatusDistributionChartComponent
+    StatusDistributionChartComponent,
+    BudgetTimelineChartComponent,
+    ProgressGaugeChartComponent,
+    TechnologyStackChartComponent
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.scss',
@@ -73,6 +79,20 @@ export class ProjectsPageComponent implements OnInit {
     });
 
     return distribution;
+  });
+
+  // Technology usage distribution
+  protected readonly technologyUsage = computed(() => {
+    const projects = this.projectsService.projects();
+    const usage: Record<string, number> = {};
+
+    projects.forEach(project => {
+      project.technologies.forEach(tech => {
+        usage[tech.name] = (usage[tech.name] || 0) + 1;
+      });
+    });
+
+    return usage;
   });
 
   // Component lifecycle
