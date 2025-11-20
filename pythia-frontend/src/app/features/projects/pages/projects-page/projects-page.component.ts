@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProjectsService } from '../../services/projects.service';
 import { ProjectCardComponent } from '../../components/project-card/project-card.component';
 import { AdvancedFiltersComponent } from '../../components/advanced-filters/advanced-filters.component';
+import { ProjectSearchComponent } from '../../components/project-search/project-search.component';
 import { Project, ProjectQueryParams } from '../../../../models';
 
 /**
@@ -20,7 +21,7 @@ import { Project, ProjectQueryParams } from '../../../../models';
  */
 @Component({
   selector: 'app-projects-page',
-  imports: [CommonModule, ProjectCardComponent, AdvancedFiltersComponent],
+  imports: [CommonModule, ProjectCardComponent, AdvancedFiltersComponent, ProjectSearchComponent],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

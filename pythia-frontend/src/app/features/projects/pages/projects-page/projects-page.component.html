@@ -114,6 +114,9 @@
                {{ projectsService.analytics()?.completedProjects ?? 0 }} Completed</p>
           </div>
 
+          <!-- Search Bar -->
+          <app-project-search />
+
           <!-- Advanced Filters Panel -->
           <app-advanced-filters (filtersChange)="handleFiltersChange($event)" />
 
