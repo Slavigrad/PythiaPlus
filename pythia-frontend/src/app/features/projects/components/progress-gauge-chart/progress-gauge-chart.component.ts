@@ -121,8 +121,8 @@ export class ProgressGaugeChartComponent implements AfterViewInit {
     const ctx = this.canvas.getContext('2d');
     if (!ctx) return;
 
-    const config: ChartConfiguration = {
-      type: 'doughnut' as ChartType,
+    const config: ChartConfiguration<'doughnut'> = {
+      type: 'doughnut',
       data: {
         labels: ['Progress', 'Remaining'],
         datasets: [{
@@ -150,8 +150,6 @@ export class ProgressGaugeChartComponent implements AfterViewInit {
           }
         },
         animation: {
-          animateRotate: true,
-          animateScale: true,
           duration: 1500,
           easing: 'easeOutCubic'
         }

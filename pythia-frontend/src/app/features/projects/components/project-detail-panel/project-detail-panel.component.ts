@@ -78,26 +78,21 @@ export class ProjectDetailPanelComponent {
 
     let score = 0;
     const weights = {
-      progress: 0.3,
-      budget: 0.25,
-      timeline: 0.25,
-      satisfaction: 0.2
+      progress: 0.4,
+      milestones: 0.3,
+      teamStability: 0.3
     };
 
-    // Progress contribution
-    score += (proj.analytics.progress.overall / 100) * weights.progress * 100;
+    // Progress contribution (0-100)
+    score += proj.analytics.progress * weights.progress;
 
-    // Budget contribution (penalize over-budget)
-    const budgetRatio = proj.analytics.budget.spent / proj.analytics.budget.allocated;
-    const budgetScore = budgetRatio <= 1 ? 100 : Math.max(0, 100 - (budgetRatio - 1) * 100);
-    score += budgetScore * weights.budget;
+    // Milestones contribution (percentage on time)
+    const milestonesScore = proj.analytics.milestonesOnTime * 100;
+    score += milestonesScore * weights.milestones;
 
-    // Timeline contribution
-    const timelineScore = proj.analytics.timeline.onTrack ? 100 : 50;
-    score += timelineScore * weights.timeline;
-
-    // Satisfaction contribution
-    score += (proj.analytics.satisfaction.overall / 5) * weights.satisfaction * 100;
+    // Team stability contribution (lower turnover = better)
+    const teamScore = Math.max(0, 100 - (proj.analytics.teamTurnover * 10));
+    score += teamScore * weights.teamStability;
 
     return Math.round(score);
   });
@@ -114,18 +109,16 @@ export class ProjectDetailPanelComponent {
   });
 
   /**
-   * Budget status class
+   * Budget status class (based on project progress as proxy)
    */
   protected readonly budgetStatusClass = computed(() => {
     const proj = this.project();
     if (!proj) return '';
 
-    const spent = proj.analytics.budget.spent;
-    const allocated = proj.analytics.budget.allocated;
-    const ratio = spent / allocated;
+    const progress = proj.analytics.progress;
 
-    if (ratio <= 0.7) return 'budget-healthy';
-    if (ratio <= 0.9) return 'budget-warning';
+    if (progress >= 70) return 'budget-healthy';
+    if (progress >= 40) return 'budget-warning';
     return 'budget-critical';
   });
 
@@ -186,6 +179,28 @@ export class ProjectDetailPanelComponent {
   });
 
   /**
+   * External links computed from URL fields
+   */
+  protected readonly externalLinks = computed(() => {
+    const proj = this.project();
+    if (!proj) return [];
+
+    const links: Array<{ url: string; type: string }> = [];
+
+    if (proj.websiteUrl) {
+      links.push({ url: proj.websiteUrl, type: 'Website' });
+    }
+    if (proj.repositoryUrl) {
+      links.push({ url: proj.repositoryUrl, type: 'Repository' });
+    }
+    if (proj.documentationUrl) {
+      links.push({ url: proj.documentationUrl, type: 'Documentation' });
+    }
+
+    return links;
+  });
+
+  /**
    * Format currency
    */
   protected formatCurrency(value: number): string {
@@ -223,9 +238,10 @@ export class ProjectDetailPanelComponent {
    */
   protected getMilestoneUrgency(milestone: ProjectMilestone): string {
     if (milestone.status === 'COMPLETED') return 'milestone-completed';
-    if (milestone.status === 'BLOCKED') return 'milestone-blocked';
+    if (milestone.status === 'CANCELLED') return 'milestone-blocked';
+    if (milestone.status === 'DELAYED') return 'milestone-delayed';
 
-    const days = this.daysUntil(milestone.targetDate);
+    const days = this.daysUntil(milestone.dueDate);
     if (days < 0) return 'milestone-overdue';
     if (days <= 7) return 'milestone-urgent';
     if (days <= 30) return 'milestone-soon';

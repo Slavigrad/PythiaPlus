@@ -75,33 +75,28 @@
         </h3>
 
         <div class="analytics-grid">
-          <!-- Budget Card -->
+          <!-- Duration Card -->
           <div class="analytics-card" [class]="budgetStatusClass()">
-            <div class="card-icon">💰</div>
+            <div class="card-icon">⏱️</div>
             <div class="card-content">
-              <div class="card-label">Budget</div>
-              <div class="card-value">{{ formatCurrency(project()!.analytics.budget.spent) }}</div>
+              <div class="card-label">Duration</div>
+              <div class="card-value">{{ project()!.analytics.duration }}</div>
               <div class="card-subtext">
-                of {{ formatCurrency(project()!.analytics.budget.allocated) }}
-                ({{ (project()!.analytics.budget.spent / project()!.analytics.budget.allocated * 100).toFixed(0) }}%)
+                {{ project()!.analytics.durationDays }} days
               </div>
             </div>
           </div>
 
           <!-- Timeline Card -->
-          <div class="analytics-card" [class.timeline-delayed]="!project()!.analytics.timeline.onTrack">
+          <div class="analytics-card">
             <div class="card-icon">📅</div>
             <div class="card-content">
               <div class="card-label">Timeline</div>
               <div class="card-value">
-                @if (project()!.analytics.timeline.onTrack) {
-                  On Track
-                } @else {
-                  {{ project()!.analytics.timeline.daysDelayed }} days behind
-                }
+                {{ project()!.status }}
               </div>
               <div class="card-subtext">
-                {{ formatDate(project()!.timeline.startDate) }} - {{ formatDate(project()!.timeline.endDate) }}
+                {{ formatDate(project()!.startDate) }} - {{ formatDate(project()!.endDate || 'Ongoing') }}
               </div>
             </div>
           </div>
@@ -111,9 +106,9 @@
             <div class="card-icon">👥</div>
             <div class="card-content">
               <div class="card-label">Team Size</div>
-              <div class="card-value">{{ project()!.team.summary.totalMembers }}</div>
+              <div class="card-value">{{ project()!.team.totalMembers }}</div>
               <div class="card-subtext">
-                {{ project()!.team.summary.activeMembers }} active
+                {{ project()!.team.activeMembers }} active
               </div>
             </div>
           </div>
@@ -123,9 +118,9 @@
             <div class="card-icon">📊</div>
             <div class="card-content">
               <div class="card-label">Progress</div>
-              <div class="card-value">{{ project()!.analytics.progress.overall }}%</div>
+              <div class="card-value">{{ project()!.analytics.progress }}%</div>
               <div class="card-subtext">
-                {{ project()!.analytics.progress.milestonesCompleted }} of {{ project()!.analytics.progress.totalMilestones }} milestones
+                {{ completedMilestones().length }} of {{ project()!.milestones.length }} milestones
               </div>
             </div>
           </div>
@@ -307,7 +302,7 @@
       </section>
 
       <!-- External Links -->
-      @if (project()!.externalLinks && project()!.externalLinks.length > 0) {
+      @if (externalLinks().length > 0) {
         <section class="links-section" aria-labelledby="links-title">
           <h3 id="links-title" class="section-title">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -317,7 +312,7 @@
           </h3>
 
           <div class="external-links">
-            @for (link of project()!.externalLinks; track link.url) {
+            @for (link of externalLinks(); track link.url) {
               <a
                 [href]="link.url"
                 target="_blank"

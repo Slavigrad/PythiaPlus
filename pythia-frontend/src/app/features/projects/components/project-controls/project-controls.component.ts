@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, computed, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProjectQueryParams } from '../../models/project.model';
+import { ProjectQueryParams } from '../../../../models';
 
 /**
  * Project Controls Component
