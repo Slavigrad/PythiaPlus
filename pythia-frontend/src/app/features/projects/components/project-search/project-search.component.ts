@@ -55,8 +55,18 @@ export class ProjectSearchComponent {
 
   constructor() {
     // Set up effect to handle debounced search
+    // Note: Skip initial run to avoid duplicate loadProjects() call
+    // (page component already loads projects in ngOnInit)
+    let isFirstRun = true;
+
     effect(() => {
       const query = this.searchQuery();
+
+      // Skip first run (initialization) - page already loads projects
+      if (isFirstRun) {
+        isFirstRun = false;
+        return;
+      }
 
       // Clear existing timer
       if (this.debounceTimer) {
