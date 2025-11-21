@@ -25,7 +25,13 @@ import {
   ProjectComplexity,
   PaginationMetadata,
   ProjectListAnalytics,
-  ProjectListResponse
+  ProjectListResponse,
+  ProjectDetail,
+  ProjectTeamDetailed,
+  ProjectTeamMember,
+  ProjectAnalytics,
+  ProjectMilestone,
+  ProjectRequiredSkill
 } from '../../../models/project.model';
 
 import {
@@ -34,7 +40,8 @@ import {
   ProjectTechnologyBackend,
   ProjectTagBackend,
   ProjectTeamMemberBackend,
-  ProjectMilestoneBackend
+  ProjectMilestoneBackend,
+  ProjectSkillBackend
 } from '../../../models/project-backend.model';
 
 /**
@@ -277,5 +284,194 @@ export function mapProjectListResponse(backend: ProjectListResponseBackend): Pro
       averageSuccessRating: 0,
       averageClientSatisfaction: 0
     }
+  };
+}
+
+/**
+ * Map backend team member to frontend team member model
+ */
+function mapTeamMember(member: ProjectTeamMemberBackend): ProjectTeamMember {
+  return {
+    employee: {
+      id: member.employeeId,
+      fullName: member.employeeName,
+      title: member.employeeTitle,
+      email: member.employeeEmail,
+      avatar: member.employeeAvatar,
+      city: undefined,
+      country: undefined,
+      availability: 'AVAILABLE' // Default, could be enhanced later
+    },
+    assignment: {
+      role: member.role,
+      roleId: member.roleId,
+      startDate: member.startDate,
+      endDate: member.endDate,
+      allocation: member.allocation,
+      isLead: member.isLead,
+      isArchitect: member.isArchitect,
+      responsibilities: member.responsibilities,
+      achievements: member.achievements,
+      duration: calculateDuration(member.startDate, member.endDate)
+    }
+  };
+}
+
+/**
+ * Map backend team members to frontend team detailed model
+ */
+function mapTeamDetailed(
+  teamMembers: ProjectTeamMemberBackend[],
+  teamSize: number,
+  activeTeamSize: number
+): ProjectTeamDetailed {
+  const members = (teamMembers || []).map(mapTeamMember);
+  const formerMembers = teamSize - activeTeamSize;
+
+  return {
+    totalMembers: teamSize,
+    activeMembers: activeTeamSize,
+    formerMembers: formerMembers > 0 ? formerMembers : 0,
+    members
+  };
+}
+
+/**
+ * Map backend milestone to frontend milestone model
+ */
+function mapMilestone(milestone: ProjectMilestoneBackend): ProjectMilestone {
+  return {
+    id: milestone.id,
+    name: milestone.name,
+    description: milestone.description,
+    dueDate: milestone.dueDate,
+    completedDate: milestone.completedDate,
+    status: milestone.status as any,
+    deliverables: milestone.deliverables
+  };
+}
+
+/**
+ * Map backend skill to frontend required skill model
+ */
+function mapRequiredSkill(skill: ProjectSkillBackend): ProjectRequiredSkill {
+  return {
+    id: skill.skillId,
+    name: skill.skillName,
+    importance: skill.importance as any,
+    minProficiency: skill.minProficiency as any
+  };
+}
+
+/**
+ * Calculate team turnover rate
+ * Formula: (former members / total members) * 100
+ */
+function calculateTeamTurnover(teamSize: number, activeTeamSize: number): number {
+  if (teamSize === 0) return 0;
+  const formerMembers = teamSize - activeTeamSize;
+  return formerMembers / teamSize;
+}
+
+/**
+ * Calculate average team allocation
+ */
+function calculateAverageAllocation(teamMembers: ProjectTeamMemberBackend[]): number {
+  if (!teamMembers || teamMembers.length === 0) return 0;
+  const totalAllocation = teamMembers.reduce((sum, member) => sum + member.allocation, 0);
+  return Math.round(totalAllocation / teamMembers.length);
+}
+
+/**
+ * Calculate milestones on-time percentage
+ * Formula: (completed on time / total completed) or (upcoming not delayed / total upcoming)
+ */
+function calculateMilestonesOnTime(milestones: ProjectMilestoneBackend[]): number {
+  if (!milestones || milestones.length === 0) return 1; // 100% if no milestones
+
+  const completed = milestones.filter(m => m.status === 'COMPLETED');
+  const delayed = milestones.filter(m => m.status === 'DELAYED');
+
+  // If we have completed milestones, calculate based on those
+  if (completed.length > 0) {
+    const onTime = completed.length - delayed.length;
+    return Math.max(0, onTime / completed.length);
+  }
+
+  // Otherwise, if there are any delayed milestones, it's 0%
+  if (delayed.length > 0) {
+    return 0;
+  }
+
+  // All milestones are on track
+  return 1;
+}
+
+/**
+ * Map backend analytics data to frontend analytics model
+ * This function calculates analytics from available backend data
+ */
+function mapAnalytics(backend: ProjectBackend): ProjectAnalytics {
+  const durationDays = calculateDurationDays(backend.startDate, backend.endDate);
+  const progress = calculateProgress(backend.completedMilestones || 0, backend.totalMilestones || 0);
+  const teamTurnover = calculateTeamTurnover(backend.teamSize || 0, backend.activeTeamSize || 0);
+  const averageAllocation = calculateAverageAllocation(backend.teamMembers || []);
+  const milestonesOnTime = calculateMilestonesOnTime(backend.milestones || []);
+
+  return {
+    duration: calculateDuration(backend.startDate, backend.endDate),
+    durationDays,
+    progress,
+    teamTurnover,
+    averageAllocation,
+    technologyCount: backend.technologies?.length || 0,
+    milestonesOnTime
+  };
+}
+
+/**
+ * Map backend project detail response to frontend project detail model
+ *
+ * This mapper transforms the backend DTO structure (with flat arrays)
+ * into the nested frontend structure expected by detail components.
+ */
+export function mapProjectDetail(backend: ProjectBackend): ProjectDetail {
+  return {
+    id: backend.id,
+    name: backend.name,
+    code: backend.code,
+    description: backend.description,
+    company: backend.company,
+    industry: backend.industry,
+    projectType: backend.projectType,
+    budgetRange: backend.budgetRange,
+    teamSizeRange: backend.teamSizeRange,
+    startDate: backend.startDate,
+    endDate: backend.endDate,
+    status: backend.status,
+    priority: backend.priority,
+    complexity: mapComplexity(backend.complexity),
+    successRating: backend.successRating ?? 0,
+    clientSatisfaction: backend.clientSatisfaction ?? 0,
+    websiteUrl: backend.websiteUrl,
+    repositoryUrl: backend.repositoryUrl,
+    documentationUrl: backend.documentationUrl,
+    createdAt: backend.createdAt,
+    updatedAt: backend.updatedAt,
+
+    // Transform flattened backend data into nested frontend structures
+    team: mapTeamDetailed(
+      backend.teamMembers || [],
+      backend.teamSize || 0,
+      backend.activeTeamSize || 0
+    ),
+
+    technologies: (backend.technologies || []).map(mapTechnology),
+    requiredSkills: (backend.skills || []).map(mapRequiredSkill),
+    milestones: (backend.milestones || []).map(mapMilestone),
+    tags: (backend.tags || []).map(mapTag),
+
+    // Calculate analytics from available data
+    analytics: mapAnalytics(backend)
   };
 }
