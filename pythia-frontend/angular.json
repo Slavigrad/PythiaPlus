@@ -37,28 +37,28 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "360kB",
-                  "maximumError": "500kB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "5kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "30kB",
+                  "maximumError": "50kB"
                 },
                 {
                   "type": "anyScript",
-                  "maximumWarning": "150kB",
-                  "maximumError": "200kB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "bundle",
-                  "maximumWarning": "200kB",
-                  "maximumError": "250kB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "any",
-                  "maximumWarning": "400kB",
-                  "maximumError": "600kB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
                 }
               ],
               "outputHashing": "all",

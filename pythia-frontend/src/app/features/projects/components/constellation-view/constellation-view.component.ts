@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as THREE from 'three';
-import { Project } from '../../models/project.model';
+import { Project } from '../../../../models';
 
 /**
  * Constellation View Component
@@ -50,7 +50,7 @@ export class ConstellationViewComponent implements AfterViewInit, OnDestroy {
   readonly projects = input.required<Project[]>();
 
   /** Project selected event */
-  readonly projectSelect = output<Project>();
+  readonly projectSelect = output<number>();
 
   // ============================================================================
   // VIEW CHILDREN
@@ -201,7 +201,7 @@ export class ConstellationViewComponent implements AfterViewInit, OnDestroy {
       const z = Math.sin(angle) * distance;
 
       // Size based on team size (or default)
-      const teamSize = project.team?.summary?.totalMembers || 5;
+      const teamSize = project.team?.totalMembers || 5;
       const size = 0.5 + (teamSize / 20);
 
       // Create orb
@@ -260,7 +260,7 @@ export class ConstellationViewComponent implements AfterViewInit, OnDestroy {
     // Animate project orbs (floating)
     const time = Date.now() * 0.001;
     this.projectMeshes.forEach((mesh, id) => {
-      const originalY = mesh.userData.originalY;
+      const originalY = mesh.userData['originalY'];
       mesh.position.y = originalY + Math.sin(time + id * 0.5) * 0.5;
       mesh.rotation.y += 0.01;
     });
@@ -295,11 +295,11 @@ export class ConstellationViewComponent implements AfterViewInit, OnDestroy {
   private setupEventListeners(): void {
     const canvas = this.renderer.domElement;
 
-    canvas.addEventListener('mousedown', (e) => this.onMouseDown(e));
-    canvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
+    canvas.addEventListener('mousedown', (e: MouseEvent) => this.onMouseDown(e));
+    canvas.addEventListener('mousemove', (e: MouseEvent) => this.onMouseMove(e));
     canvas.addEventListener('mouseup', () => this.onMouseUp());
-    canvas.addEventListener('wheel', (e) => this.onMouseWheel(e));
-    canvas.addEventListener('click', (e) => this.onClick(e));
+    canvas.addEventListener('wheel', (e: WheelEvent) => this.onMouseWheel(e));
+    canvas.addEventListener('click', (e: MouseEvent) => this.onClick(e));
   }
 
   /**
@@ -367,8 +367,8 @@ export class ConstellationViewComponent implements AfterViewInit, OnDestroy {
 
     if (intersects.length > 0) {
       const selectedMesh = intersects[0].object as THREE.Mesh;
-      const project = selectedMesh.userData.project;
-      this.projectSelect.emit(project);
+      const project = selectedMesh.userData['project'];
+      this.projectSelect.emit(project.id);
     }
   }
 

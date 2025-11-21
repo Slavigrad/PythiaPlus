@@ -120,8 +120,8 @@ export class StatusDistributionChartComponent implements AfterViewInit {
     const ctx = this.canvas.getContext('2d');
     if (!ctx) return;
 
-    const config: ChartConfiguration = {
-      type: 'doughnut' as ChartType,
+    const config: ChartConfiguration<'doughnut'> = {
+      type: 'doughnut',
       data: {
         labels: data.labels,
         datasets: [{
