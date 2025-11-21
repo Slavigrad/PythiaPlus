@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, map } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import {
   Project,
@@ -14,6 +14,8 @@ import {
   AddProjectTechnologyRequest,
   ProjectListAnalytics
 } from '../../../models';
+import { ProjectListResponseBackend } from '../../../models/project-backend.model';
+import { mapProjectListResponse } from '../utils/project-mappers';
 
 /**
  * Projects Service
@@ -149,8 +151,9 @@ export class ProjectsService {
 
     const httpParams = this.buildHttpParams(this.filters());
 
-    this.http.get<ProjectListResponse>(`${this.API_BASE_URL}/projects`, { params: httpParams })
+    this.http.get<ProjectListResponseBackend>(`${this.API_BASE_URL}/projects`, { params: httpParams })
       .pipe(
+        map(backendResponse => mapProjectListResponse(backendResponse)),
         tap((response) => {
           this.projects.set(response.projects);
           this.analytics.set(response.analytics);

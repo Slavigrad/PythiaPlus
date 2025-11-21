@@ -22,3 +22,4 @@ export * from './facet.model';
 
 // Project models
 export * from './project.model';
+export * from './project-backend.model';
