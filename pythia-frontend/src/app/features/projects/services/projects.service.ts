@@ -14,8 +14,8 @@ import {
   AddProjectTechnologyRequest,
   ProjectListAnalytics
 } from '../../../models';
-import { ProjectListResponseBackend } from '../../../models/project-backend.model';
-import { mapProjectListResponse } from '../utils/project-mappers';
+import { ProjectListResponseBackend, ProjectBackend } from '../../../models/project-backend.model';
+import { mapProjectListResponse, mapProjectDetail } from '../utils/project-mappers';
 
 /**
  * Projects Service
@@ -231,8 +231,9 @@ export class ProjectsService {
     this.projectLoading.set(true);
     this.projectError.set(null);
 
-    return this.http.get<ProjectDetail>(`${this.API_BASE_URL}/projects/${id}`)
+    return this.http.get<ProjectBackend>(`${this.API_BASE_URL}/projects/${id}`)
       .pipe(
+        map(backendProject => mapProjectDetail(backendProject)),
         tap((project) => {
           this.selectedProject.set(project);
           this.projectLoading.set(false);
@@ -264,8 +265,9 @@ export class ProjectsService {
     this.createLoading.set(true);
     this.createError.set(null);
 
-    return this.http.post<ProjectDetail>(`${this.API_BASE_URL}/projects`, data)
+    return this.http.post<ProjectBackend>(`${this.API_BASE_URL}/projects`, data)
       .pipe(
+        map(backendProject => mapProjectDetail(backendProject)),
         tap((project) => {
           this.createLoading.set(false);
           // Optionally refresh the list
@@ -290,8 +292,9 @@ export class ProjectsService {
     this.updateLoading.set(true);
     this.updateError.set(null);
 
-    return this.http.put<ProjectDetail>(`${this.API_BASE_URL}/projects/${id}`, data)
+    return this.http.put<ProjectBackend>(`${this.API_BASE_URL}/projects/${id}`, data)
       .pipe(
+        map(backendProject => mapProjectDetail(backendProject)),
         tap((project) => {
           this.updateLoading.set(false);
           // Update selected project if it's the one being edited
@@ -347,8 +350,9 @@ export class ProjectsService {
    * Add team member to project
    */
   addTeamMember(projectId: number, data: AddProjectTeamMemberRequest): Observable<ProjectDetail> {
-    return this.http.post<ProjectDetail>(`${this.API_BASE_URL}/projects/${projectId}/team`, data)
+    return this.http.post<ProjectBackend>(`${this.API_BASE_URL}/projects/${projectId}/team`, data)
       .pipe(
+        map(backendProject => mapProjectDetail(backendProject)),
         tap((project) => {
           if (this.selectedProject()?.id === projectId) {
             this.selectedProject.set(project);
@@ -368,10 +372,11 @@ export class ProjectsService {
     employeeId: number,
     data: UpdateProjectTeamMemberRequest
   ): Observable<ProjectDetail> {
-    return this.http.put<ProjectDetail>(
+    return this.http.put<ProjectBackend>(
       `${this.API_BASE_URL}/projects/${projectId}/team/${employeeId}`,
       data
     ).pipe(
+      map(backendProject => mapProjectDetail(backendProject)),
       tap((project) => {
         if (this.selectedProject()?.id === projectId) {
           this.selectedProject.set(project);
@@ -410,10 +415,11 @@ export class ProjectsService {
    * Add technology to project
    */
   addTechnology(projectId: number, data: AddProjectTechnologyRequest): Observable<ProjectDetail> {
-    return this.http.post<ProjectDetail>(
+    return this.http.post<ProjectBackend>(
       `${this.API_BASE_URL}/projects/${projectId}/technologies`,
       data
     ).pipe(
+      map(backendProject => mapProjectDetail(backendProject)),
       tap((project) => {
         if (this.selectedProject()?.id === projectId) {
           this.selectedProject.set(project);
