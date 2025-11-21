@@ -264,8 +264,8 @@ export class ProjectControlsComponent {
    */
   private emitSortChange(): void {
     this.sortChange.emit({
-      sortBy: this.sortBy(),
-      sortDirection: this.sortDirection()
+      sort: this.sortBy() as ProjectQueryParams['sort'],
+      order: this.sortDirection()
     });
   }
 
@@ -275,7 +275,7 @@ export class ProjectControlsComponent {
   private emitPaginationChange(): void {
     this.paginationChange.emit({
       page: this.currentPage(),
-      pageSize: this.pageSize()
+      size: this.pageSize()
     });
   }
 }

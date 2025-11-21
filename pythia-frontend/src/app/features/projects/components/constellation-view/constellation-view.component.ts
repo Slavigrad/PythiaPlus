@@ -50,7 +50,7 @@ export class ConstellationViewComponent implements AfterViewInit, OnDestroy {
   readonly projects = input.required<Project[]>();
 
   /** Project selected event */
-  readonly projectSelect = output<Project>();
+  readonly projectSelect = output<number>();
 
   // ============================================================================
   // VIEW CHILDREN
@@ -368,7 +368,7 @@ export class ConstellationViewComponent implements AfterViewInit, OnDestroy {
     if (intersects.length > 0) {
       const selectedMesh = intersects[0].object as THREE.Mesh;
       const project = selectedMesh.userData['project'];
-      this.projectSelect.emit(project);
+      this.projectSelect.emit(project.id);
     }
   }
 

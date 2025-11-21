@@ -213,6 +213,17 @@ export class ProjectDetailPanelComponent {
   }
 
   /**
+   * Get initials from full name
+   */
+  protected getInitials(fullName: string): string {
+    return fullName
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase();
+  }
+
+  /**
    * Format date
    */
   protected formatDate(date: string): string {
