@@ -1,0 +1,1752 @@
+openapi: 3.0.3
+info:
+  title: Pythia+ Employees API
+  description: |
+    **Pythia+ Employee Management API Specification**
+
+    This specification documents all API endpoints required by the frontend `/employees` page
+    and employee-related operations in the Pythia+ talent search platform.
+
+    ## Frontend Integration Points
+
+    The Angular frontend (`http://localhost:4200/employees`) requires these APIs to function:
+
+    1. **Employee List Page** (`/employees`)
+       - GET /api/v1/employees - List all employees with filtering
+       - Supports 3 view modes (Grid, List, Gallery)
+       - Advanced filtering by search, status, department, seniority, skills
+       - Export to CSV functionality
+       - Comparison mode for multiple employees
+
+    2. **Employee Profile Page** (`/employees/{id}`)
+       - GET /api/v1/employees/{id} - Fetch single employee details
+       - PUT /api/v1/employees/{id} - Update employee profile
+       - PATCH /api/v1/employees/{id} - Partial update
+
+    3. **Employee Creation Wizard**
+       - POST /api/v1/employees - Create new employee
+       - Multi-step wizard with draft auto-save
+
+    ## Data Models
+
+    - **Employee**: Complete profile with all related data
+    - **EmployeeListItem**: Simplified version for list views (HAL/HATEOAS format)
+    - **EmployeeCreate**: Request payload for creating employees
+    - **EmployeeUpdate**: Request payload for updating employees
+
+    ## Authentication
+
+    All endpoints require authentication (implementation TBD - JWT/OAuth2).
+
+    ## Error Handling
+
+    All endpoints follow standard HTTP status codes:
+    - 200: Success
+    - 201: Created
+    - 400: Bad Request (validation error)
+    - 404: Not Found
+    - 409: Conflict (duplicate email)
+    - 500: Internal Server Error
+
+  version: 1.0.0
+  contact:
+    name: Pythia+ Development Team
+    url: https://github.com/Slavigrad/PythiaPlus
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.pythia-plus.com/api/v1
+    description: Production server (future)
+
+tags:
+  - name: employees
+    description: Employee management operations
+  - name: employee-list
+    description: Employee listing and filtering (PRIORITY)
+  - name: employee-profile
+    description: Single employee operations
+  - name: employee-create
+    description: Employee creation wizard
+
+paths:
+  # =============================================================================
+  # PRIORITY ENDPOINT: GET /api/v1/employees
+  # =============================================================================
+  /employees:
+    get:
+      tags:
+        - employees
+        - employee-list
+      summary: List all employees
+      description: |
+        **PRIORITY ENDPOINT** - Required for employee list page to function.
+
+        Returns a list of all employees with optional filtering capabilities.
+
+        ## Frontend Usage
+
+        Called by `EmployeeListComponent` on page load:
+        - `pythia-frontend/src/app/features/employee/pages/employee-list/employee-list.component.ts:304`
+
+        ## Expected Behavior
+
+        1. Returns array of Employee objects (full profiles, not simplified)
+        2. Frontend performs client-side filtering (search, status, department, seniority, skills)
+        3. Virtual scrolling for 1000+ employees
+        4. Used for all 3 view modes: Grid, List, Gallery
+
+        ## Alternative: HAL/HATEOAS Format (Future Enhancement)
+
+        The frontend also has a model for HAL/HATEOAS pagination format:
+        ```json
+        {
+          "_embedded": {
+            "employees": [...]
+          },
+          "_links": {
+            "self": { "href": "/api/v1/employees" }
+          },
+          "page": {
+            "size": 20,
+            "totalElements": 150,
+            "totalPages": 8,
+            "number": 0
+          }
+        }
+        ```
+
+        **Current Implementation**: Return simple array of Employee[]
+        **Future Enhancement**: Add pagination with HAL/HATEOAS
+      operationId: listEmployees
+      parameters:
+        - name: page
+          in: query
+          description: Page number (0-indexed) - Future enhancement
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Page size - Future enhancement
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: sort
+          in: query
+          description: Sort field - Future enhancement
+          required: false
+          schema:
+            type: string
+            example: fullName,asc
+      responses:
+        '200':
+          description: Successful response with list of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+              examples:
+                multipleEmployees:
+                  summary: List of employees
+                  value:
+                    - id: 1
+                      fullName: "Sarah Chen"
+                      title: "Senior Kotlin Developer"
+                      email: "sarah.chen@example.com"
+                      phone: "+41 79 123 4567"
+                      location: "Zurich, Switzerland"
+                      profilePicture: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+                      summary: "Passionate Kotlin developer with 8 years of experience in backend systems"
+                      department: "Engineering"
+                      seniority: "Senior"
+                      yearsExperience: 8
+                      availability: "available"
+                      technologies:
+                        - id: 1
+                          name: "Kotlin"
+                          proficiency: "expert"
+                          years: 5
+                        - id: 2
+                          name: "Spring Boot"
+                          proficiency: "expert"
+                          years: 6
+                      skills:
+                        - id: 1
+                          name: "Microservices"
+                          proficiency: "advanced"
+                          years: 4
+                      certifications:
+                        - id: 1
+                          name: "AWS Solutions Architect"
+                          issuedOn: "2023-01-15"
+                          expiresOn: "2026-01-15"
+                      languages:
+                        - id: 1
+                          name: "English"
+                          proficiency: "fluent"
+                          level: "C2"
+                        - id: 2
+                          name: "German"
+                          proficiency: "advanced"
+                          level: "B2"
+                      workExperiences:
+                        - id: 1
+                          company: "Tech Corp"
+                          role: "Senior Backend Developer"
+                          startDate: "2020-03-01"
+                          endDate: null
+                          description: "Leading backend team for microservices architecture"
+                      educations:
+                        - id: 1
+                          institution: "ETH Zurich"
+                          degree: "MSc"
+                          field: "Computer Science"
+                          startYear: 2012
+                          endYear: 2015
+                      createdAt: "2024-01-15T10:30:00Z"
+                      updatedAt: "2024-11-20T14:22:00Z"
+                    - id: 2
+                      fullName: "Max Mueller"
+                      title: "Lead Frontend Architect"
+                      email: "max.mueller@example.com"
+                      phone: "+41 79 987 6543"
+                      location: "Bern, Switzerland"
+                      profilePicture: "https://api.dicebear.com/7.x/avataaars/svg?seed=Max"
+                      summary: "Frontend architecture specialist with expertise in Angular and React"
+                      department: "Engineering"
+                      seniority: "Lead"
+                      yearsExperience: 12
+                      availability: "busy"
+                      technologies:
+                        - id: 3
+                          name: "Angular"
+                          proficiency: "expert"
+                          years: 8
+                        - id: 4
+                          name: "TypeScript"
+                          proficiency: "expert"
+                          years: 10
+                      skills:
+                        - id: 2
+                          name: "System Design"
+                          proficiency: "expert"
+                          years: 12
+                      certifications: []
+                      languages:
+                        - id: 3
+                          name: "German"
+                          proficiency: "native"
+                          level: "C2"
+                        - id: 1
+                          name: "English"
+                          proficiency: "fluent"
+                          level: "C1"
+                      workExperiences:
+                        - id: 2
+                          company: "Digital AG"
+                          role: "Lead Frontend Architect"
+                          startDate: "2018-06-01"
+                          endDate: null
+                          description: "Architecting frontend systems for enterprise applications"
+                      educations:
+                        - id: 2
+                          institution: "University of Bern"
+                          degree: "BSc"
+                          field: "Software Engineering"
+                          startYear: 2008
+                          endYear: 2012
+                      createdAt: "2024-02-01T09:15:00Z"
+                      updatedAt: "2024-11-21T11:45:00Z"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    # =============================================================================
+    # POST /api/v1/employees - Create Employee
+    # =============================================================================
+    post:
+      tags:
+        - employees
+        - employee-create
+      summary: Create new employee
+      description: |
+        Creates a new employee profile with all associated data.
+
+        ## Frontend Usage
+
+        Called by `EmployeeCreateService` after multi-step wizard completion:
+        - `pythia-frontend/src/app/features/employee/services/employee-create.service.ts:340`
+
+        ## Required Fields
+
+        - `fullName` (min 2 characters)
+        - `email` (valid email format)
+
+        ## Optional Fields
+
+        All other fields are optional. The frontend wizard has 6 steps:
+        1. The Essence: fullName, email (required)
+        2. The Foundation: title, department, seniority, location, etc.
+        3. The Arsenal: technologies, skills
+        4. The Journey: work experiences
+        5. The Credentials: education, certifications, languages
+        6. The Oracle Speaks: preview and submit
+
+        ## Validation Rules
+
+        - Email must be unique (409 if duplicate)
+        - Technology/skill names can be new or reference existing IDs
+        - Language references must exist (404 if not found)
+        - Date fields use ISO 8601 format (YYYY-MM-DD)
+      operationId: createEmployee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeCreate'
+            examples:
+              minimalEmployee:
+                summary: Minimal valid employee (required fields only)
+                value:
+                  fullName: "Anna Schmidt"
+                  email: "anna.schmidt@example.com"
+              completeEmployee:
+                summary: Complete employee with all optional fields
+                value:
+                  fullName: "Lucas Dubois"
+                  email: "lucas.dubois@example.com"
+                  title: "Senior Full Stack Developer"
+                  phone: "+41 79 555 1234"
+                  city: "Geneva"
+                  country: "Switzerland"
+                  profilePicture: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lucas"
+                  summary: "Full stack developer with passion for clean architecture"
+                  department: "Engineering"
+                  seniority: "Senior"
+                  yearsExperience: 7
+                  availability: "available"
+                  technologies:
+                    - name: "Java"
+                      proficiency: "expert"
+                      yearsOfExperience: 7
+                    - name: "React"
+                      proficiency: "advanced"
+                      yearsOfExperience: 5
+                  skills:
+                    - name: "API Design"
+                      proficiency: "advanced"
+                      yearsOfExperience: 6
+                  certifications:
+                    - name: "Oracle Certified Professional"
+                      issuingOrganization: "Oracle"
+                      issueDate: "2022-05-01"
+                      expiryDate: "2025-05-01"
+                      credentialId: "OCP-12345"
+                  languages:
+                    - languageId: 1
+                      level: "fluent"
+                    - languageId: 2
+                      level: "advanced"
+                  workExperiences:
+                    - company: "Startup GmbH"
+                      role: "Full Stack Developer"
+                      startDate: "2020-01-01"
+                      endDate: null
+                      description: "Building scalable web applications"
+                  educations:
+                    - institution: "EPFL"
+                      degree: "MSc"
+                      fieldOfStudy: "Computer Science"
+                      startDate: "2014-09-01"
+                      endDate: "2016-06-30"
+      responses:
+        '201':
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeCreateResponse'
+              example:
+                id: 42
+                fullName: "Lucas Dubois"
+                email: "lucas.dubois@example.com"
+                message: "Employee created successfully"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: Referenced entity not found (technology, skill, language, certification)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found"
+                message: "Language with ID 99 not found"
+                status: 404
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Conflict"
+                message: "Email already exists: lucas.dubois@example.com"
+                status: 409
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # =============================================================================
+  # GET /api/v1/employees/{id} - Get Employee by ID
+  # =============================================================================
+  /employees/{id}:
+    get:
+      tags:
+        - employees
+        - employee-profile
+      summary: Get employee by ID
+      description: |
+        Returns a complete employee profile with all related data.
+
+        ## Frontend Usage
+
+        Called by `EmployeeProfileComponent` when viewing employee details:
+        - Route: `/employees/:id`
+        - Component: `pythia-frontend/src/app/features/employee/pages/employee-profile/employee-profile.component.ts`
+        - Service: `employee.service.ts:60` - `getEmployeeById(id)`
+
+        ## Response Structure
+
+        Returns full Employee object with all nested relationships:
+        - Technologies (with proficiency and years)
+        - Skills (with proficiency and years)
+        - Certifications (with issue/expiry dates)
+        - Languages (with proficiency levels)
+        - Work Experiences (with date ranges)
+        - Education (with institutions and degrees)
+      operationId: getEmployeeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Successful response with employee details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+              example:
+                id: 1
+                fullName: "Sarah Chen"
+                title: "Senior Kotlin Developer"
+                email: "sarah.chen@example.com"
+                phone: "+41 79 123 4567"
+                location: "Zurich, Switzerland"
+                profilePicture: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+                summary: "Passionate Kotlin developer with 8 years of experience in backend systems"
+                department: "Engineering"
+                seniority: "Senior"
+                yearsExperience: 8
+                availability: "available"
+                technologies:
+                  - id: 1
+                    name: "Kotlin"
+                    proficiency: "expert"
+                    years: 5
+                  - id: 2
+                    name: "Spring Boot"
+                    proficiency: "expert"
+                    years: 6
+                skills:
+                  - id: 1
+                    name: "Microservices"
+                    proficiency: "advanced"
+                    years: 4
+                certifications:
+                  - id: 1
+                    name: "AWS Solutions Architect"
+                    issuedOn: "2023-01-15"
+                    expiresOn: "2026-01-15"
+                languages:
+                  - id: 1
+                    name: "English"
+                    proficiency: "fluent"
+                    level: "C2"
+                  - id: 2
+                    name: "German"
+                    proficiency: "advanced"
+                    level: "B2"
+                workExperiences:
+                  - id: 1
+                    company: "Tech Corp"
+                    role: "Senior Backend Developer"
+                    startDate: "2020-03-01"
+                    endDate: null
+                    description: "Leading backend team for microservices architecture"
+                educations:
+                  - id: 1
+                    institution: "ETH Zurich"
+                    degree: "MSc"
+                    field: "Computer Science"
+                    startYear: 2012
+                    endYear: 2015
+                createdAt: "2024-01-15T10:30:00Z"
+                updatedAt: "2024-11-20T14:22:00Z"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    # =============================================================================
+    # PUT /api/v1/employees/{id} - Update Employee
+    # =============================================================================
+    put:
+      tags:
+        - employees
+        - employee-profile
+      summary: Update employee (full or partial)
+      description: |
+        Updates an existing employee profile. All fields are optional.
+
+        ## Frontend Usage
+
+        Called by `EmployeeService.updateEmployee()`:
+        - `pythia-frontend/src/app/features/employee/services/employee.service.ts:95`
+
+        ## Update Strategy
+
+        - **Scalar fields** (name, email, etc.): Update if provided, preserve if omitted
+        - **Array fields** (technologies, skills, etc.): **DELETE ALL + INSERT** strategy
+          - Send `[]` to clear all items
+          - Omit field to keep existing items unchanged
+          - Send array to replace all existing items
+
+        ## Important Notes
+
+        - Array fields are NOT merged - they replace existing data
+        - To add one technology, you must send ALL technologies (old + new)
+        - Empty arrays clear the data
+        - Omitted fields preserve existing values
+
+        ## Example: Update only basic info
+        ```json
+        {
+          "title": "Lead Kotlin Developer",
+          "seniority": "Lead"
+        }
+        ```
+        This preserves all other fields including technologies, skills, etc.
+
+        ## Example: Update technologies
+        ```json
+        {
+          "technologies": [
+            { "technologyId": 1, "proficiency": "expert", "years": 6 },
+            { "technologyId": 5, "proficiency": "advanced", "years": 2 }
+          ]
+        }
+        ```
+        This REPLACES all existing technologies with these two.
+      operationId: updateEmployee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeUpdateRequest'
+            examples:
+              updateBasicInfo:
+                summary: Update basic information only
+                value:
+                  title: "Lead Kotlin Developer"
+                  seniority: "Lead"
+                  yearsExperience: 10
+              updateTechnologies:
+                summary: Update technologies (replaces all)
+                value:
+                  technologies:
+                    - technologyId: 1
+                      proficiency: "expert"
+                      years: 6
+                    - technologyId: 5
+                      proficiency: "advanced"
+                      years: 2
+              updateAvailability:
+                summary: Update availability status
+                value:
+                  availability: "notice_period"
+              clearCertifications:
+                summary: Clear all certifications
+                value:
+                  certifications: []
+      responses:
+        '200':
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeUpdateResponse'
+              example:
+                message: "Employee updated successfully"
+                employee:
+                  id: 1
+                  fullName: "Sarah Chen"
+                  title: "Lead Kotlin Developer"
+                  seniority: "Lead"
+                  yearsExperience: 10
+                  # ... full employee object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    # =============================================================================
+    # PATCH /api/v1/employees/{id} - Partial Update Employee
+    # =============================================================================
+    patch:
+      tags:
+        - employees
+        - employee-profile
+      summary: Partial update employee
+      description: |
+        Partially updates an existing employee profile.
+
+        ## Frontend Usage
+
+        Called by `EmployeeService.patchEmployee()`:
+        - `pythia-frontend/src/app/features/employee/services/employee.service.ts:124`
+
+        ## Behavior
+
+        **Note**: In the current implementation, PATCH behaves identically to PUT.
+        Both use the same DELETE ALL + INSERT strategy for array fields.
+
+        This endpoint exists for semantic correctness and future differentiation.
+
+        ## Future Enhancement
+
+        Consider implementing true PATCH behavior with RFC 6902 JSON Patch:
+        ```json
+        [
+          { "op": "replace", "path": "/title", "value": "Lead Developer" },
+          { "op": "add", "path": "/technologies/-", "value": {...} }
+        ]
+        ```
+      operationId: patchEmployee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeUpdateRequest'
+            example:
+              availability: "available"
+      responses:
+        '200':
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeUpdateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    # =============================================================================
+    # DELETE /api/v1/employees/{id} - Delete Employee (FUTURE)
+    # =============================================================================
+    delete:
+      tags:
+        - employees
+        - employee-profile
+      summary: Delete employee (NOT YET IMPLEMENTED IN FRONTEND)
+      description: |
+        Deletes an employee and all associated data.
+
+        ## Status: NOT IMPLEMENTED
+
+        The frontend does not currently have UI or service methods for deleting employees.
+
+        ## Future Implementation
+
+        When implementing delete functionality:
+        1. Add `deleteEmployee(id)` method to EmployeeService
+        2. Add delete confirmation dialog with warning
+        3. Handle cascade deletion of related data (technologies, skills, etc.)
+        4. Consider soft delete vs hard delete strategy
+        5. Add audit log entry for compliance
+
+        ## Recommended Behavior
+
+        - Soft delete: Set `deletedAt` timestamp, keep data for audit
+        - Hard delete: Cascade delete all related entities
+        - Return 204 No Content on success
+      operationId: deleteEmployee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID to delete
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '204':
+          description: Employee deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+# =============================================================================
+# COMPONENTS - Reusable Schemas, Responses, Parameters
+# =============================================================================
+components:
+  schemas:
+    # ===========================================================================
+    # EMPLOYEE - Complete Profile
+    # ===========================================================================
+    Employee:
+      type: object
+      required:
+        - id
+        - fullName
+        - email
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique employee identifier
+          example: 1
+        fullName:
+          type: string
+          minLength: 2
+          maxLength: 255
+          description: Full name of the employee
+          example: "Sarah Chen"
+        title:
+          type: string
+          maxLength: 255
+          description: Job title or role
+          example: "Senior Kotlin Developer"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: Email address (must be unique)
+          example: "sarah.chen@example.com"
+        phone:
+          type: string
+          maxLength: 50
+          description: Phone number in international format
+          example: "+41 79 123 4567"
+        location:
+          type: string
+          maxLength: 255
+          description: Current location (city, country)
+          example: "Zurich, Switzerland"
+        profilePicture:
+          type: string
+          format: uri
+          description: URL to profile picture
+          example: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+        summary:
+          type: string
+          maxLength: 2000
+          description: Professional summary or bio
+          example: "Passionate Kotlin developer with 8 years of experience"
+        department:
+          type: string
+          maxLength: 100
+          description: Department or team
+          example: "Engineering"
+        seniority:
+          type: string
+          enum:
+            - Junior
+            - Mid-Level
+            - Senior
+            - Lead
+            - Principal
+            - Staff
+          description: Seniority level
+          example: "Senior"
+        yearsExperience:
+          type: integer
+          minimum: 0
+          maximum: 50
+          description: Total years of professional experience
+          example: 8
+        availability:
+          type: string
+          enum:
+            - available
+            - busy
+            - unavailable
+            - notice_period
+          description: Current availability status
+          example: "available"
+        technologies:
+          type: array
+          description: Technologies with proficiency levels
+          items:
+            $ref: '#/components/schemas/Technology'
+        skills:
+          type: array
+          description: Skills with proficiency levels
+          items:
+            $ref: '#/components/schemas/Skill'
+        certifications:
+          type: array
+          description: Professional certifications
+          items:
+            $ref: '#/components/schemas/Certification'
+        languages:
+          type: array
+          description: Language proficiencies
+          items:
+            $ref: '#/components/schemas/Language'
+        workExperiences:
+          type: array
+          description: Work history
+          items:
+            $ref: '#/components/schemas/WorkExperience'
+        educations:
+          type: array
+          description: Educational background
+          items:
+            $ref: '#/components/schemas/Education'
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when employee was created
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when employee was last updated
+          example: "2024-11-20T14:22:00Z"
+
+    # ===========================================================================
+    # TECHNOLOGY
+    # ===========================================================================
+    Technology:
+      type: object
+      required:
+        - id
+        - name
+        - proficiency
+        - years
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Technology ID
+          example: 1
+        name:
+          type: string
+          maxLength: 100
+          description: Technology name
+          example: "Kotlin"
+        proficiency:
+          type: string
+          enum:
+            - beginner
+            - intermediate
+            - advanced
+            - expert
+          description: Proficiency level
+          example: "expert"
+        years:
+          type: integer
+          minimum: 0
+          maximum: 50
+          description: Years of experience with this technology
+          example: 5
+
+    # ===========================================================================
+    # SKILL
+    # ===========================================================================
+    Skill:
+      type: object
+      required:
+        - id
+        - name
+        - proficiency
+        - years
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Skill ID
+          example: 1
+        name:
+          type: string
+          maxLength: 100
+          description: Skill name
+          example: "Microservices Architecture"
+        proficiency:
+          type: string
+          enum:
+            - beginner
+            - intermediate
+            - advanced
+            - expert
+          description: Proficiency level
+          example: "advanced"
+        years:
+          type: integer
+          minimum: 0
+          maximum: 50
+          description: Years of experience with this skill
+          example: 4
+
+    # ===========================================================================
+    # CERTIFICATION
+    # ===========================================================================
+    Certification:
+      type: object
+      required:
+        - id
+        - name
+        - issuedOn
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Certification ID
+          example: 1
+        name:
+          type: string
+          maxLength: 255
+          description: Certification name
+          example: "AWS Solutions Architect Professional"
+        issuedOn:
+          type: string
+          format: date
+          description: Issue date (ISO 8601)
+          example: "2023-01-15"
+        expiresOn:
+          type: string
+          format: date
+          nullable: true
+          description: Expiration date (ISO 8601) or null if no expiry
+          example: "2026-01-15"
+
+    # ===========================================================================
+    # LANGUAGE
+    # ===========================================================================
+    Language:
+      type: object
+      required:
+        - id
+        - name
+        - proficiency
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Language ID
+          example: 1
+        name:
+          type: string
+          maxLength: 100
+          description: Language name
+          example: "English"
+        proficiency:
+          type: string
+          enum:
+            - native
+            - fluent
+            - advanced
+            - intermediate
+            - beginner
+          description: Language proficiency level (CEFR-based)
+          example: "fluent"
+        level:
+          type: string
+          maxLength: 10
+          description: CEFR level (A1, A2, B1, B2, C1, C2, native)
+          example: "C2"
+
+    # ===========================================================================
+    # WORK EXPERIENCE
+    # ===========================================================================
+    WorkExperience:
+      type: object
+      required:
+        - id
+        - company
+        - role
+        - startDate
+        - description
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Work experience ID
+          example: 1
+        company:
+          type: string
+          maxLength: 255
+          description: Company name
+          example: "Tech Corp AG"
+        role:
+          type: string
+          maxLength: 255
+          description: Job title/role
+          example: "Senior Backend Developer"
+        startDate:
+          type: string
+          format: date
+          description: Start date (ISO 8601)
+          example: "2020-03-01"
+        endDate:
+          type: string
+          format: date
+          nullable: true
+          description: End date (ISO 8601) or null if current position
+          example: null
+        description:
+          type: string
+          maxLength: 2000
+          description: Job responsibilities and achievements
+          example: "Leading backend team for microservices architecture"
+
+    # ===========================================================================
+    # EDUCATION
+    # ===========================================================================
+    Education:
+      type: object
+      required:
+        - id
+        - institution
+        - degree
+        - field
+        - startYear
+        - endYear
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Education ID
+          example: 1
+        institution:
+          type: string
+          maxLength: 255
+          description: Educational institution
+          example: "ETH Zurich"
+        degree:
+          type: string
+          maxLength: 100
+          description: Degree type (BSc, MSc, PhD, etc.)
+          example: "MSc"
+        field:
+          type: string
+          maxLength: 255
+          description: Field of study
+          example: "Computer Science"
+        startYear:
+          type: integer
+          minimum: 1950
+          maximum: 2100
+          description: Start year
+          example: 2012
+        endYear:
+          type: integer
+          minimum: 1950
+          maximum: 2100
+          description: End year
+          example: 2015
+
+    # ===========================================================================
+    # EMPLOYEE CREATE - Request Body
+    # ===========================================================================
+    EmployeeCreate:
+      type: object
+      required:
+        - fullName
+        - email
+      properties:
+        # Required fields
+        fullName:
+          type: string
+          minLength: 2
+          maxLength: 255
+          description: Full name (REQUIRED)
+          example: "Anna Schmidt"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: Email address (REQUIRED, must be unique)
+          example: "anna.schmidt@example.com"
+
+        # Optional basic info
+        title:
+          type: string
+          maxLength: 255
+          example: "Senior Full Stack Developer"
+        phone:
+          type: string
+          maxLength: 50
+          example: "+41 79 555 1234"
+        city:
+          type: string
+          maxLength: 100
+          example: "Geneva"
+        country:
+          type: string
+          maxLength: 100
+          example: "Switzerland"
+        location:
+          type: string
+          maxLength: 255
+          description: Combined location (city, country)
+          example: "Geneva, Switzerland"
+        profilePicture:
+          type: string
+          format: uri
+          example: "https://api.dicebear.com/7.x/avataaars/svg?seed=Anna"
+        summary:
+          type: string
+          maxLength: 2000
+          example: "Passionate full stack developer"
+        department:
+          type: string
+          maxLength: 100
+          example: "Engineering"
+        seniority:
+          type: string
+          enum:
+            - Junior
+            - Mid-Level
+            - Senior
+            - Lead
+            - Principal
+            - Staff
+          example: "Senior"
+        yearsExperience:
+          type: integer
+          minimum: 0
+          maximum: 50
+          example: 7
+        availability:
+          type: string
+          enum:
+            - available
+            - busy
+            - unavailable
+            - notice_period
+          example: "available"
+
+        # Optional arrays
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeCreateTechnology'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeCreateSkill'
+        certifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeCreateCertification'
+        languages:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeCreateLanguage'
+        workExperiences:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeCreateWorkExperience'
+        educations:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeCreateEducation'
+
+    # ===========================================================================
+    # EMPLOYEE CREATE - Nested Objects
+    # ===========================================================================
+    EmployeeCreateTechnology:
+      type: object
+      required:
+        - name
+        - proficiency
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          description: Technology name (can be new or existing)
+          example: "Java"
+        proficiency:
+          type: string
+          enum:
+            - beginner
+            - intermediate
+            - advanced
+            - expert
+          example: "expert"
+        yearsOfExperience:
+          type: integer
+          minimum: 0
+          maximum: 50
+          example: 7
+
+    EmployeeCreateSkill:
+      type: object
+      required:
+        - name
+        - proficiency
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          description: Skill name (can be new or existing)
+          example: "API Design"
+        proficiency:
+          type: string
+          enum:
+            - beginner
+            - intermediate
+            - advanced
+            - expert
+          example: "advanced"
+        yearsOfExperience:
+          type: integer
+          minimum: 0
+          maximum: 50
+          example: 6
+
+    EmployeeCreateCertification:
+      type: object
+      required:
+        - name
+        - issuingOrganization
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Oracle Certified Professional"
+        issuingOrganization:
+          type: string
+          maxLength: 255
+          example: "Oracle"
+        issueDate:
+          type: string
+          format: date
+          example: "2022-05-01"
+        expiryDate:
+          type: string
+          format: date
+          example: "2025-05-01"
+        credentialId:
+          type: string
+          maxLength: 255
+          example: "OCP-12345"
+        credentialUrl:
+          type: string
+          format: uri
+          example: "https://www.oracle.com/verify/OCP-12345"
+
+    EmployeeCreateLanguage:
+      type: object
+      required:
+        - languageId
+        - level
+      properties:
+        languageId:
+          type: integer
+          format: int64
+          description: Reference to existing language ID
+          example: 1
+        level:
+          type: string
+          enum:
+            - native
+            - fluent
+            - advanced
+            - intermediate
+            - beginner
+          example: "fluent"
+
+    EmployeeCreateWorkExperience:
+      type: object
+      required:
+        - company
+        - role
+        - startDate
+        - description
+      properties:
+        company:
+          type: string
+          maxLength: 255
+          example: "Startup GmbH"
+        role:
+          type: string
+          maxLength: 255
+          example: "Full Stack Developer"
+        startDate:
+          type: string
+          format: date
+          example: "2020-01-01"
+        endDate:
+          type: string
+          format: date
+          nullable: true
+          description: null for current position
+          example: null
+        description:
+          type: string
+          maxLength: 2000
+          example: "Building scalable web applications"
+
+    EmployeeCreateEducation:
+      type: object
+      required:
+        - institution
+        - degree
+      properties:
+        institution:
+          type: string
+          maxLength: 255
+          example: "EPFL"
+        degree:
+          type: string
+          maxLength: 100
+          example: "MSc"
+        fieldOfStudy:
+          type: string
+          maxLength: 255
+          example: "Computer Science"
+        startDate:
+          type: string
+          format: date
+          example: "2014-09-01"
+        endDate:
+          type: string
+          format: date
+          example: "2016-06-30"
+
+    # ===========================================================================
+    # EMPLOYEE CREATE RESPONSE
+    # ===========================================================================
+    EmployeeCreateResponse:
+      type: object
+      required:
+        - id
+        - fullName
+        - email
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID of newly created employee
+          example: 42
+        fullName:
+          type: string
+          example: "Anna Schmidt"
+        email:
+          type: string
+          format: email
+          example: "anna.schmidt@example.com"
+        message:
+          type: string
+          example: "Employee created successfully"
+
+    # ===========================================================================
+    # EMPLOYEE UPDATE REQUEST
+    # ===========================================================================
+    EmployeeUpdateRequest:
+      type: object
+      description: |
+        All fields are optional. Omitted fields preserve existing values.
+
+        **IMPORTANT**: Array fields use DELETE ALL + INSERT strategy:
+        - Omit field: Keep existing data unchanged
+        - Send []: Clear all data
+        - Send array: Replace all existing data
+      properties:
+        # Basic fields
+        fullName:
+          type: string
+          minLength: 2
+          maxLength: 255
+          example: "Sarah Chen"
+        title:
+          type: string
+          maxLength: 255
+          example: "Lead Kotlin Developer"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: "sarah.chen@example.com"
+        phone:
+          type: string
+          maxLength: 50
+          example: "+41 79 123 4567"
+        location:
+          type: string
+          maxLength: 255
+          example: "Zurich, Switzerland"
+        profilePicture:
+          type: string
+          format: uri
+          example: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+        summary:
+          type: string
+          maxLength: 2000
+          example: "Updated professional summary"
+        department:
+          type: string
+          maxLength: 100
+          example: "Engineering"
+        seniority:
+          type: string
+          enum:
+            - Junior
+            - Mid-Level
+            - Senior
+            - Lead
+            - Principal
+            - Staff
+          example: "Lead"
+        yearsExperience:
+          type: integer
+          minimum: 0
+          maximum: 50
+          example: 10
+        availability:
+          type: string
+          enum:
+            - available
+            - busy
+            - unavailable
+            - notice_period
+          example: "available"
+
+        # Array fields (DELETE ALL + INSERT)
+        technologies:
+          type: array
+          description: REPLACES all existing technologies
+          items:
+            $ref: '#/components/schemas/TechnologyUpdateItem'
+        skills:
+          type: array
+          description: REPLACES all existing skills
+          items:
+            $ref: '#/components/schemas/SkillUpdateItem'
+        certifications:
+          type: array
+          description: REPLACES all existing certifications
+          items:
+            $ref: '#/components/schemas/CertificationUpdateItem'
+        languages:
+          type: array
+          description: REPLACES all existing languages
+          items:
+            $ref: '#/components/schemas/LanguageUpdateItem'
+        workExperiences:
+          type: array
+          description: REPLACES all existing work experiences
+          items:
+            $ref: '#/components/schemas/WorkExperienceUpdateItem'
+        educations:
+          type: array
+          description: REPLACES all existing educations
+          items:
+            $ref: '#/components/schemas/EducationUpdateItem'
+
+    # ===========================================================================
+    # EMPLOYEE UPDATE - Nested Objects
+    # ===========================================================================
+    TechnologyUpdateItem:
+      type: object
+      required:
+        - technologyId
+      properties:
+        technologyId:
+          type: integer
+          format: int64
+          description: Reference to existing technology
+          example: 1
+        proficiency:
+          type: string
+          enum:
+            - beginner
+            - intermediate
+            - advanced
+            - expert
+          example: "expert"
+        years:
+          type: integer
+          minimum: 0
+          maximum: 50
+          example: 6
+
+    SkillUpdateItem:
+      type: object
+      required:
+        - skillId
+      properties:
+        skillId:
+          type: integer
+          format: int64
+          description: Reference to existing skill
+          example: 1
+        proficiency:
+          type: string
+          enum:
+            - beginner
+            - intermediate
+            - advanced
+            - expert
+          example: "advanced"
+        years:
+          type: integer
+          minimum: 0
+          maximum: 50
+          example: 5
+
+    CertificationUpdateItem:
+      type: object
+      required:
+        - certificationId
+      properties:
+        certificationId:
+          type: integer
+          format: int64
+          description: Reference to existing certification
+          example: 1
+        issuedOn:
+          type: string
+          format: date
+          example: "2023-01-15"
+        expiresOn:
+          type: string
+          format: date
+          nullable: true
+          example: "2026-01-15"
+
+    LanguageUpdateItem:
+      type: object
+      required:
+        - languageId
+      properties:
+        languageId:
+          type: integer
+          format: int64
+          description: Reference to existing language
+          example: 1
+        level:
+          type: string
+          maxLength: 10
+          description: CEFR level or proficiency
+          example: "C2"
+
+    WorkExperienceUpdateItem:
+      type: object
+      required:
+        - company
+        - role
+        - startDate
+      properties:
+        company:
+          type: string
+          maxLength: 255
+          example: "Tech Corp AG"
+        role:
+          type: string
+          maxLength: 255
+          example: "Lead Backend Developer"
+        startDate:
+          type: string
+          format: date
+          example: "2020-03-01"
+        endDate:
+          type: string
+          format: date
+          nullable: true
+          example: null
+        description:
+          type: string
+          maxLength: 2000
+          example: "Leading backend team"
+
+    EducationUpdateItem:
+      type: object
+      required:
+        - institution
+        - degree
+        - field
+        - startYear
+      properties:
+        institution:
+          type: string
+          maxLength: 255
+          example: "ETH Zurich"
+        degree:
+          type: string
+          maxLength: 100
+          example: "MSc"
+        field:
+          type: string
+          maxLength: 255
+          example: "Computer Science"
+        startYear:
+          type: integer
+          minimum: 1950
+          maximum: 2100
+          example: 2012
+        endYear:
+          type: integer
+          minimum: 1950
+          maximum: 2100
+          nullable: true
+          example: 2015
+
+    # ===========================================================================
+    # EMPLOYEE UPDATE RESPONSE
+    # ===========================================================================
+    EmployeeUpdateResponse:
+      type: object
+      required:
+        - message
+        - employee
+      properties:
+        message:
+          type: string
+          example: "Employee updated successfully"
+        employee:
+          $ref: '#/components/schemas/Employee'
+
+    # ===========================================================================
+    # ERROR RESPONSE
+    # ===========================================================================
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - status
+      properties:
+        error:
+          type: string
+          description: Error type
+          example: "Bad Request"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Validation failed: email is required"
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: "2024-11-21T15:30:00Z"
+        path:
+          type: string
+          description: Request path
+          example: "/api/v1/employees"
+
+  # =============================================================================
+  # REUSABLE RESPONSES
+  # =============================================================================
+  responses:
+    BadRequest:
+      description: Bad Request - Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Bad Request"
+            message: "Validation failed: email is required"
+            status: 400
+            timestamp: "2024-11-21T15:30:00Z"
+            path: "/api/v1/employees"
+
+    NotFound:
+      description: Not Found - Employee does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Not Found"
+            message: "Employee with ID 999 not found"
+            status: 404
+            timestamp: "2024-11-21T15:30:00Z"
+            path: "/api/v1/employees/999"
+
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Internal Server Error"
+            message: "An unexpected error occurred"
+            status: 500
+            timestamp: "2024-11-21T15:30:00Z"
+            path: "/api/v1/employees"
+
+  # =============================================================================
+  # SECURITY SCHEMES (Future)
+  # =============================================================================
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT authentication (to be implemented)
+
+# Apply security globally (when implemented)
+# security:
+#   - bearerAuth: []
