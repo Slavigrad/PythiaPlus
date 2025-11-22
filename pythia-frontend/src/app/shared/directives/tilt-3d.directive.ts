@@ -1,8 +1,14 @@
 /**
- * 3D Tilt Directive - Pythia+ Ultra Premium
+ * 3D Tilt Directive - Pythia+ Ultra Premium (Angular 20)
  *
  * Adds interactive 3D tilt effect to elements based on mouse movement
  * Creates premium parallax effect for cards and interactive elements
+ *
+ * Modern Angular 20 Features:
+ * - Signal inputs for reactive configuration
+ * - host object for event bindings (no @HostListener decorators)
+ * - Computed signals for derived styles
+ * - inject() function for DI
  *
  * Usage:
  * <div appTilt3d [tiltIntensity]="15" [glareEffect]="true">Content</div>
@@ -11,31 +17,44 @@
 import {
   Directive,
   ElementRef,
-  HostListener,
   input,
   OnInit,
   OnDestroy,
-  Renderer2
+  Renderer2,
+  inject,
+  computed
 } from '@angular/core';
 
 @Directive({
-  selector: '[appTilt3d]'
+  selector: '[appTilt3d]',
+  host: {
+    '(mouseenter)': 'onMouseEnter()',
+    '(mouseleave)': 'onMouseLeave()',
+    '(mousemove)': 'onMouseMove($event)',
+    '[style.transform-style]': '"preserve-3d"',
+    '[style.transition]': 'transitionStyle()'
+  }
 })
 export class Tilt3dDirective implements OnInit, OnDestroy {
-  // Inputs
+  // Signal Inputs
   readonly tiltIntensity = input(15); // Max tilt angle in degrees
   readonly glareEffect = input(false); // Enable glare overlay
   readonly scale = input(1.05); // Scale on hover
   readonly speed = input(300); // Transition speed in ms
   readonly perspective = input(1000); // CSS perspective value
 
+  // Computed Signals
+  protected readonly transitionStyle = computed(() =>
+    `transform ${this.speed()}ms cubic-bezier(0.23, 1, 0.32, 1)`
+  );
+
+  // Dependencies (inject function - Angular 20 pattern)
+  private readonly el = inject(ElementRef<HTMLElement>);
+  private readonly renderer = inject(Renderer2);
+
+  // Internal State
   private glareElement: HTMLElement | null = null;
   private isHovering = false;
-
-  constructor(
-    private el: ElementRef<HTMLElement>,
-    private renderer: Renderer2
-  ) {}
 
   ngOnInit(): void {
     this.setupElement();
@@ -51,9 +70,8 @@ export class Tilt3dDirective implements OnInit, OnDestroy {
   }
 
   private setupElement(): void {
-    const element = this.el.nativeElement;
-    this.renderer.setStyle(element, 'transform-style', 'preserve-3d');
-    this.renderer.setStyle(element, 'transition', `transform ${this.speed()}ms cubic-bezier(0.23, 1, 0.32, 1)`);
+    // Note: transform-style and transition are now set via host binding
+    // This keeps the directive cleaner and more Angular 20-compliant
   }
 
   private createGlareElement(): void {
@@ -77,16 +95,15 @@ export class Tilt3dDirective implements OnInit, OnDestroy {
     this.renderer.appendChild(element, this.glareElement);
   }
 
-  @HostListener('mouseenter')
-  onMouseEnter(): void {
+  // Event Handlers (bound via host object - Angular 20 pattern)
+  protected onMouseEnter(): void {
     this.isHovering = true;
     if (this.glareElement) {
       this.renderer.setStyle(this.glareElement, 'opacity', '1');
     }
   }
 
-  @HostListener('mouseleave')
-  onMouseLeave(): void {
+  protected onMouseLeave(): void {
     this.isHovering = false;
     this.resetTilt();
     if (this.glareElement) {
@@ -94,8 +111,7 @@ export class Tilt3dDirective implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('mousemove', ['$event'])
-  onMouseMove(event: MouseEvent): void {
+  protected onMouseMove(event: MouseEvent): void {
     if (!this.isHovering) return;
 
     const element = this.el.nativeElement;
