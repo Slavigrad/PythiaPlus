@@ -1,0 +1,29 @@
+/**
+ * Models Barrel Export
+ *
+ * Centralized export point for all model interfaces
+ * Usage: import { Employee, Candidate, SearchParams } from '@app/models';
+ */
+
+// Shared models
+export * from './pagination.model';
+
+// Employee models
+export * from './employee.model';
+export * from './employee-update.model';
+export * from './employee-list-response.model';
+
+// Candidate models
+export * from './candidate.model';
+
+// Search models
+export * from './search-params.model';
+export * from './search-response.model';
+export * from './internal-filters.model';
+
+// Facet models
+export * from './facet.model';
+
+// Project models
+export * from './project.model';
+export * from './project-backend.model';
