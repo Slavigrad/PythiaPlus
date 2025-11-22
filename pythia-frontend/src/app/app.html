@@ -47,6 +47,16 @@
       </nav>
 
       <div class="header-actions">
+        <!-- Global Dark/Light Mode Toggle -->
+        <button
+          mat-icon-button
+          [class.active]="themeService.isDarkMode()"
+          (click)="themeService.toggleTheme()"
+          [matTooltip]="themeService.getThemeLabel()"
+          aria-label="Toggle dark mode">
+          <mat-icon>{{ themeService.getThemeIcon() }}</mat-icon>
+        </button>
+
         <div class="user-avatar" aria-label="User profile">
           <span class="avatar-placeholder">DU</span>
         </div>

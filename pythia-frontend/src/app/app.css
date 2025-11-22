@@ -112,6 +112,22 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
+
+  /* Dark mode toggle button styling */
+  button[mat-icon-button] {
+    color: rgba(255, 255, 255, 0.9);
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    &.active {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+  }
 }
 
 .user-avatar {

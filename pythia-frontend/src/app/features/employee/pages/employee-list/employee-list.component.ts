@@ -24,7 +24,6 @@ import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-
 import { Employee } from '../../../../models/employee.model';
 import { Availability, Seniority } from '../../../../core/constants/employee.constants';
 import { EmployeeService } from '../../services/employee.service';
-import { ThemeService } from '../../../../core/services/theme.service';
 
 import { EmployeeCardComponent } from '../../components/employee-card/employee-card.component';
 import { EmployeeCardCompactComponent } from '../../components/employee-card-compact/employee-card-compact.component';
@@ -63,7 +62,6 @@ export interface EmployeeFilters {
 export class EmployeeListComponent {
   private readonly employeeService = inject(EmployeeService);
   private readonly router = inject(Router);
-  protected readonly themeService = inject(ThemeService);
 
   // Expose Math for template
   protected readonly Math = Math;

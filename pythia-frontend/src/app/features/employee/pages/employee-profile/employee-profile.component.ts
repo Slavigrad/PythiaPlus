@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EmployeeService } from '../../services/employee.service';
-import { NotificationService } from '../../services/notification.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { Employee, EmployeeUpdateRequest } from '../../../../models';
 import { ProfileSectionEditDialogComponent, ProfileSectionEditDialogData } from '../../components/shared/profile-section-edit-dialog/profile-section-edit-dialog';
 import { BasicInfoEditComponent } from '../../components/edit-sections/basic-info-edit/basic-info-edit.component';
