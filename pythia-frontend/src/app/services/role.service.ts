@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BaseDataService } from '../core/services/base-data.service';
-import { Role, RoleResponse, RoleRequest } from '../models/role.model';
+import { BaseDataService, DataResponse } from '../core/services/base-data.service';
+import { Role, RoleRequest } from '../models/role.model';
 
 /**
  * Role Service
@@ -21,21 +21,20 @@ export class RoleService extends BaseDataService<Role, RoleRequest> {
     return [
       role.name,
       role.description,
-      role.level,
       role.code || ''
     ];
   }
 
-  protected getItemNotFoundMessage(): string {
+  protected override getItemNotFoundMessage(): string {
     return 'Role not found.';
   }
 
-  protected getDuplicateMessage(): string {
+  protected override getDuplicateMessage(): string {
     return 'A role with this name already exists.';
   }
 
   // Backward compatibility aliases
-  loadRoles(): Observable<RoleResponse> {
+  loadRoles(): Observable<DataResponse<Role>> {
     return this.load();
   }
 

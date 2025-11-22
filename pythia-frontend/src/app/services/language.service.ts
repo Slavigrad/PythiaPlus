@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BaseDataService } from '../core/services/base-data.service';
-import { Language, LanguageResponse, LanguageRequest } from '../models/language.model';
+import { BaseDataService, DataResponse } from '../core/services/base-data.service';
+import { Language, LanguageRequest } from '../models/language.model';
 
 /**
  * Language Service
@@ -20,21 +20,21 @@ export class LanguageService extends BaseDataService<Language, LanguageRequest> 
   protected getSearchFields(language: Language): string[] {
     return [
       language.name,
-      language.nativeName,
-      language.code
+      language.description,
+      language.code || ''
     ];
   }
 
-  protected getItemNotFoundMessage(): string {
+  protected override getItemNotFoundMessage(): string {
     return 'Language not found.';
   }
 
-  protected getDuplicateMessage(): string {
+  protected override getDuplicateMessage(): string {
     return 'A language with this name already exists.';
   }
 
   // Backward compatibility aliases
-  loadLanguages(): Observable<LanguageResponse> {
+  loadLanguages(): Observable<DataResponse<Language>> {
     return this.load();
   }
 

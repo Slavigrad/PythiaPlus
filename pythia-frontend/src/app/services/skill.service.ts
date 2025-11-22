@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BaseDataService } from '../core/services/base-data.service';
-import { Skill, SkillResponse, SkillRequest } from '../models/skill.model';
+import { BaseDataService, DataResponse } from '../core/services/base-data.service';
+import { Skill, SkillRequest } from '../models/skill.model';
 
 /**
  * Skill Service
@@ -26,16 +26,16 @@ export class SkillService extends BaseDataService<Skill, SkillRequest> {
     ];
   }
 
-  protected getItemNotFoundMessage(): string {
+  protected override getItemNotFoundMessage(): string {
     return 'Skill not found.';
   }
 
-  protected getDuplicateMessage(): string {
+  protected override getDuplicateMessage(): string {
     return 'A skill with this name already exists.';
   }
 
   // Backward compatibility aliases
-  loadSkills(): Observable<SkillResponse> {
+  loadSkills(): Observable<DataResponse<Skill>> {
     return this.load();
   }
 

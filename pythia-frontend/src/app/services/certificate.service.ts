@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BaseDataService } from '../core/services/base-data.service';
-import { Certificate, CertificateResponse, CertificateRequest } from '../models/certificate.model';
+import { BaseDataService, DataResponse } from '../core/services/base-data.service';
+import { Certificate, CertificateRequest } from '../models/certificate.model';
 
 /**
  * Certificate Service
@@ -21,21 +21,20 @@ export class CertificateService extends BaseDataService<Certificate, Certificate
     return [
       certificate.name,
       certificate.description,
-      certificate.issuer,
       certificate.code || ''
     ];
   }
 
-  protected getItemNotFoundMessage(): string {
+  protected override getItemNotFoundMessage(): string {
     return 'Certificate not found.';
   }
 
-  protected getDuplicateMessage(): string {
+  protected override getDuplicateMessage(): string {
     return 'A certificate with this name already exists.';
   }
 
   // Backward compatibility aliases
-  loadCertificates(): Observable<CertificateResponse> {
+  loadCertificates(): Observable<DataResponse<Certificate>> {
     return this.load();
   }
 

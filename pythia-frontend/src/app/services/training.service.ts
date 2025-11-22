@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BaseDataService } from '../core/services/base-data.service';
-import { Training, TrainingResponse, TrainingRequest } from '../models/training.model';
+import { BaseDataService, DataResponse } from '../core/services/base-data.service';
+import { Training, TrainingRequest } from '../models/training.model';
 
 /**
  * Training Service
@@ -21,21 +21,20 @@ export class TrainingService extends BaseDataService<Training, TrainingRequest> 
     return [
       training.name,
       training.description,
-      training.provider,
       training.code || ''
     ];
   }
 
-  protected getItemNotFoundMessage(): string {
+  protected override getItemNotFoundMessage(): string {
     return 'Training not found.';
   }
 
-  protected getDuplicateMessage(): string {
+  protected override getDuplicateMessage(): string {
     return 'A training with this name already exists.';
   }
 
   // Backward compatibility aliases
-  loadTrainings(): Observable<TrainingResponse> {
+  loadTrainings(): Observable<DataResponse<Training>> {
     return this.load();
   }
 
