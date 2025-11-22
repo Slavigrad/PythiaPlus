@@ -1,13 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, tap, map } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import {
   Employee,
   EmployeeUpdateRequest,
   EmployeeUpdateResponse,
-  EmployeeListResponse,
-  EmployeeListItem
+  EmployeeListResponse
 } from '../../../models';
 
 /**
@@ -31,27 +30,59 @@ export class EmployeeService {
   readonly error = signal<string | null>(null);
 
   // Signal state for employee list
-  readonly employees = signal<EmployeeListItem[]>([]);
+  readonly employees = signal<Employee[]>([]);
   readonly listLoading = signal(false);
   readonly listError = signal<string | null>(null);
-  readonly pageMetadata = signal<{ size: number; totalElements: number; totalPages: number; number: number } | null>(null);
+  readonly pageMetadata = signal<{ page: number; size: number; totalElements: number; totalPages: number } | null>(null);
 
   // Update operation state
   readonly updateLoading = signal(false);
   readonly updateError = signal<string | null>(null);
 
   /**
-   * Fetch all employees
-   * Returns an observable for flexible subscription handling
+   * Get all employees with pagination (Pythia Hybrid format)
+   *
+   * @param page Page number (0-indexed, default: 0)
+   * @param size Number of employees per page (default: 20, max: 100)
+   * @param sort Optional sort criteria (e.g., "fullName,asc")
+   * @returns Observable of EmployeeListResponse with employees and pagination metadata
    */
-  getAllEmployees(): Observable<Employee[]> {
-    return this.http.get<Employee[]>(`${this.API_BASE_URL}/employees`)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          console.error('Failed to fetch employees:', error);
-          throw error;
-        })
-      );
+  getAllEmployees(
+    page: number = 0,
+    size: number = 20,
+    sort?: string
+  ): Observable<EmployeeListResponse> {
+    // Build query parameters
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
+
+    // Update signal state
+    this.listLoading.set(true);
+    this.listError.set(null);
+
+    return this.http.get<EmployeeListResponse>(
+      `${this.API_BASE_URL}/employees`,
+      { params }
+    ).pipe(
+      tap(response => {
+        // Update signals with response data
+        this.employees.set(response.employees);
+        this.pageMetadata.set(response.pagination);
+        this.listLoading.set(false);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        const errorMsg = this.getErrorMessage(error);
+        this.listError.set(errorMsg);
+        this.listLoading.set(false);
+        console.error('Failed to fetch employees:', error);
+        throw error;
+      })
+    );
   }
 
   /**
