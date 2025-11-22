@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseDataService, DataResponse } from '../core/services/base-data.service';
-import { Technology, TechnologyResponse, TechnologyRequest } from '../models/technology.model';
+import { Technology, TechnologyRequest } from '../models/technology.model';
 
 /**
  * Technology Service
@@ -59,14 +59,14 @@ export class TechnologyService extends BaseDataService<Technology, TechnologyReq
   /**
    * Custom error message for 404 responses
    */
-  protected getItemNotFoundMessage(): string {
+  protected override getItemNotFoundMessage(): string {
     return 'Technology not found.';
   }
 
   /**
    * Custom error message for 409 (duplicate) responses
    */
-  protected getDuplicateMessage(): string {
+  protected override getDuplicateMessage(): string {
     return 'A technology with this name already exists.';
   }
 
@@ -74,7 +74,7 @@ export class TechnologyService extends BaseDataService<Technology, TechnologyReq
    * Load all technologies
    * Alias for base load() method with proper return type
    */
-  loadTechnologies(): Observable<TechnologyResponse> {
+  loadTechnologies(): Observable<DataResponse<Technology>> {
     return this.load();
   }
 
