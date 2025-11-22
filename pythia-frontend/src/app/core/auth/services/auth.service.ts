@@ -44,9 +44,10 @@ export class AuthService {
     this.currentUser() !== null && this.token() !== null
   );
 
-  readonly isAdmin = computed(() =>
-    this.currentUser()?.role === 'admin'
-  );
+  readonly isAdmin = computed(() => {
+    const role = this.currentUser()?.role;
+    return role === 'admin' || role === 'ADMIN';
+  });
 
   readonly isHR = computed(() =>
     this.currentUser()?.role === 'hr' || this.isAdmin()
@@ -55,6 +56,18 @@ export class AuthService {
   readonly isManager = computed(() =>
     this.currentUser()?.role === 'manager' || this.isHR()
   );
+
+  readonly isRegularUser = computed(() => {
+    const role = this.currentUser()?.role;
+    return role === 'USER' || role === 'viewer';
+  });
+
+  readonly userInitials = computed(() => {
+    const user = this.currentUser();
+    if (!user) return '?';
+    const initials = `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`;
+    return initials.toUpperCase();
+  });
 
   readonly hasRole = (role: UserRole) => computed(() => {
     const user = this.currentUser();
@@ -83,6 +96,7 @@ export class AuthService {
 
   /**
    * Login with credentials
+   * Supports "Remember Me" for persistent sessions
    */
   login(credentials: LoginCredentials): Observable<User> {
     this.loading.set(true);
@@ -91,7 +105,8 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.API_BASE_URL}/login`, credentials)
       .pipe(
         tap(response => {
-          this.setAuthState(response.user, response.token, response.refreshToken);
+          const rememberMe = credentials.rememberMe ?? false;
+          this.setAuthState(response.user, response.token, response.refreshToken, rememberMe);
           this.loading.set(false);
 
           // Navigate to redirect URL or default
@@ -164,30 +179,59 @@ export class AuthService {
   // PRIVATE METHODS
   // =========================================================================
 
-  private setAuthState(user: User, token: string, refreshToken: string): void {
+  /**
+   * Set authentication state
+   * Uses localStorage for "Remember Me", sessionStorage otherwise
+   */
+  private setAuthState(user: User, token: string, refreshToken: string, rememberMe: boolean = false): void {
     this.currentUser.set(user);
     this.token.set(token);
 
-    // Persist to localStorage
-    localStorage.setItem(this.STORAGE_KEY_USER, JSON.stringify(user));
-    localStorage.setItem(this.STORAGE_KEY_TOKEN, token);
-    localStorage.setItem(this.STORAGE_KEY_REFRESH, refreshToken);
+    // Choose storage based on "Remember Me"
+    const storage = rememberMe ? localStorage : sessionStorage;
+
+    // Persist auth state
+    storage.setItem(this.STORAGE_KEY_USER, JSON.stringify(user));
+    storage.setItem(this.STORAGE_KEY_TOKEN, token);
+    storage.setItem(this.STORAGE_KEY_REFRESH, refreshToken);
+
+    // Store rememberMe flag
+    if (rememberMe) {
+      localStorage.setItem('pythia-remember-me', 'true');
+    }
   }
 
+  /**
+   * Clear authentication state from all storages
+   */
   private clearAuthState(): void {
     this.currentUser.set(null);
     this.token.set(null);
     this.error.set(null);
 
-    // Clear localStorage
-    localStorage.removeItem(this.STORAGE_KEY_USER);
-    localStorage.removeItem(this.STORAGE_KEY_TOKEN);
-    localStorage.removeItem(this.STORAGE_KEY_REFRESH);
+    // Clear both localStorage and sessionStorage
+    [localStorage, sessionStorage].forEach(storage => {
+      storage.removeItem(this.STORAGE_KEY_USER);
+      storage.removeItem(this.STORAGE_KEY_TOKEN);
+      storage.removeItem(this.STORAGE_KEY_REFRESH);
+    });
+    localStorage.removeItem('pythia-remember-me');
   }
 
+  /**
+   * Load authentication state from storage on app init
+   * Checks both localStorage (Remember Me) and sessionStorage
+   */
   private loadFromStorage(): void {
-    const userJson = localStorage.getItem(this.STORAGE_KEY_USER);
-    const token = localStorage.getItem(this.STORAGE_KEY_TOKEN);
+    // Try localStorage first (Remember Me sessions)
+    let userJson = localStorage.getItem(this.STORAGE_KEY_USER);
+    let token = localStorage.getItem(this.STORAGE_KEY_TOKEN);
+
+    // Fallback to sessionStorage
+    if (!userJson || !token) {
+      userJson = sessionStorage.getItem(this.STORAGE_KEY_USER);
+      token = sessionStorage.getItem(this.STORAGE_KEY_TOKEN);
+    }
 
     if (userJson && token) {
       try {
@@ -263,8 +307,16 @@ export class MockAuthService extends AuthService {
         if (mockUser && mockUser.password === credentials.password) {
           const mockToken = `mock-jwt-token-${Date.now()}`;
           const mockRefreshToken = `mock-refresh-token-${Date.now()}`;
+          const rememberMe = credentials.rememberMe ?? false;
 
-          this.setAuthState(mockUser.user, mockToken, mockRefreshToken);
+          // Call parent's setAuthState method (private, but accessible via 'this')
+          const storage = rememberMe ? localStorage : sessionStorage;
+          storage.setItem('pythia-user', JSON.stringify(mockUser.user));
+          storage.setItem('pythia-token', mockToken);
+          storage.setItem('pythia-refresh-token', mockRefreshToken);
+
+          this.currentUser.set(mockUser.user);
+          this.token.set(mockToken);
           this.loading.set(false);
 
           // Navigate to redirect URL
@@ -281,14 +333,5 @@ export class MockAuthService extends AuthService {
         }
       }, 500);
     });
-  }
-
-  private setAuthState(user: User, token: string, refreshToken: string): void {
-    this.currentUser.set(user);
-    this.token.set(token);
-
-    localStorage.setItem('pythia-user', JSON.stringify(user));
-    localStorage.setItem('pythia-token', token);
-    localStorage.setItem('pythia-refresh-token', refreshToken);
   }
 }
