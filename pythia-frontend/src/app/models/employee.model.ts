@@ -90,7 +90,9 @@ export interface Employee {
   title: string;
   email: string;
   phone: string;
-  location: string;
+  location?: string;  // Computed from city + country
+  city?: string;      // Individual city field from API
+  country?: string;   // Individual country field from API
   profilePicture: string;
   summary: string;
   department: string;
