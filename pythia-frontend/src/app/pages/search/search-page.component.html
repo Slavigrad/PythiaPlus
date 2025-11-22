@@ -82,12 +82,12 @@
   }
 
   <!-- Result Filter Strip (Internal Search + Quick Chips) -->
-  @if (searchService.hasResults() && !searchService.loading()) {
+  @if (searchService.totalResultCount() > 0 && !searchService.loading()) {
     <app-result-filter-strip />
   }
 
   <!-- Reset Search Results Button (when cache is active) -->
-  @if (searchService.isCacheActive() && searchService.hasResults()) {
+  @if (searchService.isCacheActive() && searchService.totalResultCount() > 0) {
     <div class="reset-cache-container">
       <button
         type="button"
@@ -178,8 +178,15 @@
   <!-- No Results -->
   @if (!searchService.hasResults() && !searchService.isEmpty() && !searchService.loading() && !searchService.hasError()) {
     <div class="no-results">
-      <p>No candidates found for "{{ searchService.lastQuery() }}"</p>
-      <p class="hint">Try adjusting your search terms or broadening your criteria.</p>
+      @if (searchService.hasInternalFilters()) {
+        <!-- No results due to internal filters -->
+        <p>No candidates match your current filters</p>
+        <p class="hint">Try removing some filters or adjusting your search criteria.</p>
+      } @else {
+        <!-- No results from backend search -->
+        <p>No candidates found for "{{ searchService.lastQuery() }}"</p>
+        <p class="hint">Try adjusting your search terms or broadening your criteria.</p>
+      }
     </div>
   }
 </div>
