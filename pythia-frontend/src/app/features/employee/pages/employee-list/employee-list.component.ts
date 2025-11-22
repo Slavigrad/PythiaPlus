@@ -13,7 +13,7 @@
 import { Component, signal, computed, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -45,6 +45,7 @@ export interface EmployeeFilters {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
@@ -73,7 +74,7 @@ export class EmployeeListComponent {
   protected readonly selectedEmployees = signal<number[]>([]);
 
   // Ultra Premium Features
-  protected readonly ultraPremiumMode = signal(true); // Enable all premium features
+  protected readonly ultraPremiumMode = signal(false); // Basic mode by default
   protected readonly virtualScrollEnabled = signal(true); // Virtual scrolling for performance
   protected readonly groupingEnabled = signal(false); // Smart grouping/categorization
   protected readonly groupBy = signal<'department' | 'seniority' | 'availability' | 'none'>('none');

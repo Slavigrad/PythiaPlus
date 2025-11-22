@@ -32,12 +32,17 @@
     <div class="avatar-wrapper" [class.pulsing]="isPulsing()">
       <div class="avatar-gradient" [style.background]="'linear-gradient(135deg, ' + avatarColor() + ' 0%, ' + departmentColor() + ' 100%)'"></div>
       <div class="avatar">
+        <!-- Always render initials as base layer -->
+        <span class="initials" [style.background-color]="avatarColor()">
+          {{ initials() }}
+        </span>
+        <!-- Image renders on top if available -->
         @if (getProfilePicture()) {
-          <img [src]="getProfilePicture()" [alt]="employee().fullName" />
-        } @else {
-          <span class="initials" [style.background-color]="avatarColor()">
-            {{ initials() }}
-          </span>
+          <img
+            class="avatar-image"
+            [src]="getProfilePicture()"
+            [alt]="employee().fullName"
+            (error)="onImageError($event)" />
         }
       </div>
     </div>
