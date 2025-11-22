@@ -45,6 +45,14 @@ import {
   ProjectSkillBackend
 } from '../../../models/project-backend.model';
 
+import {
+  parseComplexity,
+  parseMilestoneStatus,
+  parseSkillImportance,
+  parseSkillProficiency,
+  parseTechnologyCategory
+} from './type-guards';
+
 /**
  * Calculate project duration in human-readable format
  */
@@ -103,20 +111,12 @@ function findNextMilestone(milestones: ProjectMilestoneBackend[]): ProjectTimeli
 
 /**
  * Map backend complexity string to frontend enum
+ *
+ * @deprecated Use parseComplexity from type-guards instead
+ * Kept for backward compatibility during migration
  */
 function mapComplexity(complexity: string): ProjectComplexity {
-  const complexityMap: Record<string, ProjectComplexity> = {
-    'LOW': 'SIMPLE',
-    'MEDIUM': 'MODERATE',
-    'HIGH': 'COMPLEX',
-    'VERY_HIGH': 'ENTERPRISE',
-    'SIMPLE': 'SIMPLE',
-    'MODERATE': 'MODERATE',
-    'COMPLEX': 'COMPLEX',
-    'ENTERPRISE': 'ENTERPRISE'
-  };
-
-  return complexityMap[complexity] || 'MODERATE';
+  return parseComplexity(complexity);
 }
 
 /**
@@ -126,7 +126,7 @@ export function mapTechnology(tech: ProjectTechnologyBackend): ProjectTechnology
   return {
     id: tech.technologyId,
     name: tech.technologyName,
-    category: tech.category as any || 'Other',
+    category: parseTechnologyCategory(tech.category),
     isPrimary: tech.isPrimary,
     version: tech.version || undefined,
     usageNotes: tech.usageNotes || undefined
@@ -252,39 +252,59 @@ export function mapProject(backend: ProjectBackend): Project {
 
 /**
  * Map backend project list response to frontend response
+ *
+ * UPDATED: 2025-11-22
+ * Simplified to pure transformation - no fallbacks, no calculations
+ * Assumes backend returns complete, valid pagination object
+ * Use validateProjectListResponse() before calling this function
+ *
+ * @param backend - Validated backend response
+ * @returns Frontend project list response
  */
 export function mapProjectListResponse(backend: ProjectListResponseBackend): ProjectListResponse {
   return {
     projects: backend.projects.map(mapProject),
+
+    // ✅ Direct mapping - no fallbacks, no calculations
     pagination: {
-      page: backend.pagination?.page || 1,
-      size: backend.pagination?.size || 20,
-      totalElements: backend.total,
-      totalPages: backend.pagination?.totalPages || Math.ceil(backend.total / (backend.pagination?.size || 20))
+      page: backend.pagination.page,
+      size: backend.pagination.size,
+      totalElements: backend.pagination.totalElements,
+      totalPages: backend.pagination.totalPages
     },
-    analytics: backend.analytics || {
-      totalProjects: 0,
-      activeProjects: 0,
-      completedProjects: 0,
-      onHoldProjects: 0,
-      cancelledProjects: 0,
-      totalEmployeesInvolved: 0,
-      averageTeamSize: 0,
-      averageProjectDuration: '0 days',
-      totalBudget: 0,
-      totalSpent: 0,
-      averageProgress: 0,
-      topTechnologies: [],
-      topIndustries: [],
-      complexityDistribution: {
-        SIMPLE: 0,
-        MODERATE: 0,
-        COMPLEX: 0,
-        ENTERPRISE: 0
-      },
-      averageSuccessRating: 0,
-      averageClientSatisfaction: 0
-    }
+
+    analytics: backend.analytics || createEmptyAnalytics()
+  };
+}
+
+/**
+ * Create empty analytics object
+ *
+ * Used as default when backend doesn't provide analytics
+ */
+function createEmptyAnalytics(): ProjectListAnalytics {
+  return {
+    totalProjects: 0,
+    activeProjects: 0,
+    completedProjects: 0,
+    onHoldProjects: 0,
+    cancelledProjects: 0,
+    totalEmployeesInvolved: 0,
+    averageTeamSize: 0,
+    averageProjectDuration: '0 days',
+    totalBudget: 0,
+    totalSpent: 0,
+    averageProgress: 0,
+    topTechnologies: [],
+    topIndustries: [],
+    complexityDistribution: {
+      SIMPLE: 0,
+      MODERATE: 0,
+      COMPLEX: 0,
+      ENTERPRISE: 0
+    },
+    averageSuccessRating: 0,
+    averageClientSatisfaction: 0
   };
 }
 
@@ -347,7 +367,7 @@ function mapMilestone(milestone: ProjectMilestoneBackend): ProjectMilestone {
     description: milestone.description,
     dueDate: milestone.dueDate,
     completedDate: milestone.completedDate,
-    status: milestone.status as any,
+    status: parseMilestoneStatus(milestone.status),
     deliverables: milestone.deliverables
   };
 }
@@ -359,8 +379,8 @@ function mapRequiredSkill(skill: ProjectSkillBackend): ProjectRequiredSkill {
   return {
     id: skill.skillId,
     name: skill.skillName,
-    importance: skill.importance as any,
-    minProficiency: skill.minProficiency as any
+    importance: parseSkillImportance(skill.importance),
+    minProficiency: parseSkillProficiency(skill.minProficiency)
   };
 }
 
