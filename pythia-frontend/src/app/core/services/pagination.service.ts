@@ -28,7 +28,7 @@
  * @module PaginationService
  */
 
-import { Injectable, signal, computed, Signal } from '@angular/core';
+import { signal, computed, Signal } from '@angular/core';
 import { PaginationMetadata } from '../../models';
 
 /**
@@ -55,32 +55,40 @@ export interface PaginationState extends PaginationMetadata {
 }
 
 /**
- * Generic Pagination Service
+ * Generic Pagination Utility Class
  *
  * Manages pagination state for any entity type with computed signals.
  * Converts between 0-indexed backend pagination and 1-indexed UI display.
+ *
+ * **Design:** Plain TypeScript class (not @Injectable) for maximum reusability.
+ * Each consuming service should instantiate its own instance.
  *
  * @template T - Type of items being paginated (e.g., Project, Employee)
  *
  * @example
  * ```typescript
- * // Create instance for projects
- * const projectPagination = inject(PaginationService<Project>);
+ * // Create instance in a service
+ * export class ProjectsService {
+ *   private readonly paginationService = new PaginationService<Project>();
  *
- * // Update from API response
- * projectPagination.setPage(
- *   { page: 0, size: 10, totalElements: 42, totalPages: 5 },
- *   [project1, project2, ...]
- * );
+ *   // Update from API response
+ *   this.paginationService.setPage(
+ *     { page: 0, size: 10, totalElements: 42, totalPages: 5 },
+ *     [project1, project2, ...]
+ *   );
+ *
+ *   // Expose pagination state
+ *   readonly pagination = this.paginationService.state;
+ *   readonly currentPage = this.paginationService.currentPage;
+ * }
+ * ```
  *
  * // Use in template
- * <div>Page {{ projectPagination.currentPage() }} of {{ projectPagination.totalPages() }}</div>
- * <div>Showing {{ projectPagination.firstItem() }}-{{ projectPagination.lastItem() }} of {{ projectPagination.totalItems() }}</div>
- * <button [disabled]="!projectPagination.hasPrevious()">Previous</button>
- * <button [disabled]="!projectPagination.hasNext()">Next</button>
- * ```
+ * <div>Page {{ service.currentPage() }} of {{ service.totalPages() }}</div>
+ * <div>Showing {{ service.firstItem() }}-{{ service.lastItem() }} of {{ service.totalItems() }}</div>
+ * <button [disabled]="!service.hasPrevious()">Previous</button>
+ * <button [disabled]="!service.hasNext()">Next</button>
  */
-@Injectable()
 export class PaginationService<T = unknown> {
 
   // ============================================================================

@@ -64,9 +64,9 @@ export class ProjectsService {
    * Pagination service instance for projects
    *
    * Provides reactive pagination state with computed properties.
-   * Reusable across all paginated endpoints.
+   * Instantiated directly (not via DI) for type-safe, per-service pagination.
    */
-  private readonly paginationService = inject(PaginationService<Project>);
+  private readonly paginationService = new PaginationService<Project>();
 
   /**
    * Expose pagination state from pagination service
@@ -98,11 +98,16 @@ export class ProjectsService {
   // FILTER STATE
   // ============================================================================
 
-  /** Current filter parameters */
+  /**
+   * Current filter parameters
+   *
+   * NOTE: page is 0-indexed for backend compatibility (OpenAPI spec)
+   * PaginationService handles UI conversion (0→1 indexed display)
+   */
   readonly filters = signal<ProjectQueryParams>({
-    page: 1,
-    size: 20,
-    order: 'desc',
+    page: 0,        // 0-indexed (backend expects 0 for first page)
+    size: 20,       // Default from OpenAPI spec
+    order: 'desc',  // Will be combined with sort for backend
     sort: 'startDate'
   });
 
@@ -218,7 +223,7 @@ export class ProjectsService {
    */
   search(query: string): void {
     this.searchQuery.set(query);
-    this.loadProjects({ search: query, page: 1 });
+    this.loadProjects({ search: query, page: 0 });  // Reset to first page (0-indexed)
   }
 
   /**
@@ -226,7 +231,7 @@ export class ProjectsService {
    */
   clearFilters(): void {
     this.filters.set({
-      page: 1,
+      page: 0,        // 0-indexed (backend compatibility)
       size: 20,
       order: 'desc',
       sort: 'startDate'
@@ -237,6 +242,9 @@ export class ProjectsService {
 
   /**
    * Go to specific page
+   *
+   * @param page - 0-indexed page number (backend format)
+   *               First page = 0, Second page = 1, etc.
    */
   goToPage(page: number): void {
     this.loadProjects({ page });
@@ -246,7 +254,7 @@ export class ProjectsService {
    * Change page size
    */
   changePageSize(size: number): void {
-    this.loadProjects({ size, page: 1 });
+    this.loadProjects({ size, page: 0 });  // Reset to first page when changing size
   }
 
   /**
@@ -532,13 +540,17 @@ export class ProjectsService {
     if (filters.search) {
       params = params.set('search', filters.search);
     }
+
+    // ✅ OpenAPI spec: sort format is "field,direction" (e.g., "startDate,desc")
     if (filters.sort) {
-      params = params.set('sort', filters.sort);
+      const sortValue = filters.order
+        ? `${filters.sort},${filters.order}`  // Combine: "startDate,desc"
+        : filters.sort;                       // Fallback: just field name
+      params = params.set('sort', sortValue);
     }
-    if (filters.order) {
-      params = params.set('order', filters.order);
-    }
-    if (filters.page) {
+
+    // ✅ Page is 0-indexed (OpenAPI spec requirement)
+    if (filters.page !== undefined) {
       params = params.set('page', filters.page.toString());
     }
     if (filters.size) {

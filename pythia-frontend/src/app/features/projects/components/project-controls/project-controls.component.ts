@@ -271,10 +271,12 @@ export class ProjectControlsComponent {
 
   /**
    * Emit pagination change event
+   *
+   * Converts from 1-indexed UI page to 0-indexed backend page
    */
   private emitPaginationChange(): void {
     this.paginationChange.emit({
-      page: this.currentPage(),
+      page: this.currentPage() - 1,  // Convert: UI page 1 → backend page 0
       size: this.pageSize()
     });
   }
