@@ -1,7 +1,7 @@
 import { Component, signal, inject, effect, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatRippleModule } from '@angular/material/core';
-import { SearchService } from '../../services/search.service';
+import { SearchService } from '../../services/search';
 import {
   MIN_QUERY_LENGTH,
   SEARCH_DEBOUNCE_MS,

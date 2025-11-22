@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatRippleModule } from '@angular/material/core';
 import { Candidate } from '../../models/candidate.model';
-import { SearchService } from '../../services/search.service';
+import { SearchService } from '../../services/search';
 import { InternalFilters } from '../../models/internal-filters.model';
 
 /**

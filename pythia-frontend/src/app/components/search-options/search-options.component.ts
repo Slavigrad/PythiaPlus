@@ -1,7 +1,7 @@
 import { Component, signal, effect, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatRippleModule } from '@angular/material/core';
-import { SearchService } from '../../services/search.service';
+import { SearchService } from '../../services/search';
 import {
   DEFAULT_TOP_K,
   DEFAULT_MIN_SCORE,

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { SearchBarComponent } from './search-bar.component';
-import { SearchService } from '../../services/search.service';
+import { SearchService } from '../../services/search';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 

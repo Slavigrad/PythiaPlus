@@ -1,9 +1,9 @@
 import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatRippleModule } from '@angular/material/core';
-import { SearchService } from '../../services/search.service';
-import { ComparisonService } from '../../services/comparison.service';
-import { ExportService } from '../../services/export.service';
+import { SearchService } from '../../services/search';
+import { ComparisonService } from '../../services/state/comparison';
+import { ExportService } from '../../services/integration/export';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { SearchOptionsComponent } from '../../components/search-options/search-options.component';
 import { CandidateListComponent } from '../../components/candidate-list/candidate-list.component';

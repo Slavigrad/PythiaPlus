@@ -2,7 +2,7 @@ import { Component, inject, ChangeDetectionStrategy, computed } from '@angular/c
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ComparisonService } from '../../services/comparison.service';
+import { ComparisonService } from '../../services/state/comparison';
 import {
   CandidateProfile,
   Certification,
