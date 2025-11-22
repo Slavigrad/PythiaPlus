@@ -63,22 +63,77 @@ paths:
   /projects:
     get:
       tags: [Projects]
-      summary: Get all projects
-      description: Retrieve all projects with optional filtering
+      summary: Get all projects with pagination
+      description: |
+        Retrieve all projects with pagination, sorting, and optional filtering.
+
+        **Pagination**: Uses 0-indexed pages (backend) but UI typically displays 1-indexed.
+        **Sorting**: Supports multiple fields (name, startDate, endDate, company, industry, status, priority, complexity).
+        **Filtering**: Filter by status, industry, or company.
+
+        **Default behavior**: Returns page 0, size 20, sorted by startDate descending (newest first).
       operationId: getAllProjects
       parameters:
+        - name: page
+          in: query
+          description: Page number (0-indexed)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          example: 0
+        - name: size
+          in: query
+          description: Page size (1-100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          example: 20
+        - name: sort
+          in: query
+          description: |
+            Sort specification in format "field,direction".
+
+            **Allowed fields**: name, startDate, endDate, company, industry, status, priority, complexity
+            **Directions**: asc, desc
+            **Default**: startDate,desc (newest first)
+          required: false
+          schema:
+            type: string
+          examples:
+            nameAsc:
+              value: "name,asc"
+              summary: Sort by name ascending
+            startDateDesc:
+              value: "startDate,desc"
+              summary: Sort by start date descending (default)
+            companyAsc:
+              value: "company,asc"
+              summary: Sort by company name ascending
         - name: status
           in: query
+          description: Filter by project status
+          required: false
           schema:
             $ref: '#/components/schemas/ProjectStatus'
         - name: industry
           in: query
+          description: Filter by industry
+          required: false
           schema:
             type: string
+          example: "FinTech"
         - name: company
           in: query
+          description: Filter by company name
+          required: false
           schema:
             type: string
+          example: "TechCorp"
       responses:
         '200':
           description: Success
@@ -86,6 +141,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectListResponse'
+        '400':
+          description: Bad Request - Invalid pagination parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Bad Request"
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  violations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          example: "getAllProjects.page"
+                        message:
+                          type: string
+                          example: "must be greater than or equal to 0"
+                  status:
+                    type: integer
+                    example: 400
 
     post:
       tags: [Projects]
@@ -812,23 +894,99 @@ components:
 
     ProjectListResponse:
       type: object
+      required:
+        - projects
+        - pagination
+        - filters
       properties:
         projects:
           type: array
+          description: List of projects on the current page
           items:
             $ref: '#/components/schemas/ProjectDto'
-        total:
-          type: integer
-          example: 15
+        pagination:
+          $ref: '#/components/schemas/PaginationMetadata'
         filters:
           type: object
+          description: Applied filters (shows "all" if no filter applied)
+          required:
+            - status
+            - industry
+            - company
           properties:
             status:
               type: string
+              example: "ACTIVE"
+              description: Applied status filter or "all"
             industry:
               type: string
+              example: "FinTech"
+              description: Applied industry filter or "all"
             company:
               type: string
+              example: "TechCorp"
+              description: Applied company filter or "all"
+      example:
+        projects:
+          - id: 1
+            name: "AI-Powered Trading Platform"
+            description: "Revolutionary algorithmic trading system"
+            company: "FinanceInc"
+            industry: "FinTech"
+            status: "ACTIVE"
+            startDate: "2024-01-15"
+            endDate: null
+            priority: "High"
+            complexity: "Enterprise"
+        pagination:
+          page: 0
+          size: 20
+          totalElements: 15
+          totalPages: 1
+        filters:
+          status: "ACTIVE"
+          industry: "all"
+          company: "all"
+
+    PaginationMetadata:
+      type: object
+      description: |
+        Pagination metadata following Pythia Hybrid Pagination format.
+
+        **Important**: Page numbers are 0-indexed (backend standard).
+        Frontend typically converts to 1-indexed for display.
+      required:
+        - page
+        - size
+        - totalElements
+        - totalPages
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          description: Current page number (0-indexed)
+          example: 0
+        size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Number of items per page
+          example: 20
+        totalElements:
+          type: integer
+          minimum: 0
+          description: Total number of items across all pages
+          example: 42
+        totalPages:
+          type: integer
+          minimum: 0
+          description: Total number of pages
+          example: 3
+      example:
+        page: 0
+        size: 20
+        totalElements: 42
+        totalPages: 3
 
     ProjectStatsResponse:
       type: object
