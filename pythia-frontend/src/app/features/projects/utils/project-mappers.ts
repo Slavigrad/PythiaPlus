@@ -23,7 +23,6 @@ import {
   ProjectTechnology,
   ProjectTag,
   ProjectComplexity,
-  PaginationMetadata,
   ProjectListAnalytics,
   ProjectListResponse,
   ProjectDetail,
@@ -33,6 +32,8 @@ import {
   ProjectMilestone,
   ProjectRequiredSkill
 } from '../../../models/project.model';
+
+import { PaginationMetadata } from '../../../models/pagination.model';
 
 import {
   ProjectBackend,
@@ -258,7 +259,7 @@ export function mapProjectListResponse(backend: ProjectListResponseBackend): Pro
     pagination: {
       page: backend.pagination?.page || 1,
       size: backend.pagination?.size || 20,
-      total: backend.total,
+      totalElements: backend.total,
       totalPages: backend.pagination?.totalPages || Math.ceil(backend.total / (backend.pagination?.size || 20))
     },
     analytics: backend.analytics || {

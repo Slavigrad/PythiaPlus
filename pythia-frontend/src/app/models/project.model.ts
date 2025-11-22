@@ -4,6 +4,8 @@
  * Core project entity with full details including team, technologies, and analytics
  */
 
+import { PaginationMetadata } from './pagination.model';
+
 /**
  * Project status enumeration
  */
@@ -230,16 +232,6 @@ export interface ProjectDetail {
   milestones: ProjectMilestone[];
   tags: ProjectTag[];
   analytics: ProjectAnalytics;
-}
-
-/**
- * Pagination metadata
- */
-export interface PaginationMetadata {
-  page: number;
-  size: number;
-  total: number;
-  totalPages: number;
 }
 
 /**

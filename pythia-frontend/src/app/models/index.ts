@@ -5,6 +5,9 @@
  * Usage: import { Employee, Candidate, SearchParams } from '@app/models';
  */
 
+// Shared models
+export * from './pagination.model';
+
 // Employee models
 export * from './employee.model';
 export * from './employee-update.model';

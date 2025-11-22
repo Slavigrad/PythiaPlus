@@ -6,6 +6,7 @@
  */
 
 import { Employee } from './employee.model';
+import { PaginationMetadata } from './pagination.model';
 
 /**
  * Employee List Response (Pythia Hybrid format)
@@ -16,23 +17,4 @@ import { Employee } from './employee.model';
 export interface EmployeeListResponse {
   employees: Employee[];
   pagination: PaginationMetadata;
-}
-
-/**
- * Pagination metadata
- *
- * Provides information about the current page and total available data
- */
-export interface PaginationMetadata {
-  /** Current page number (0-indexed) */
-  page: number;
-
-  /** Number of items per page */
-  size: number;
-
-  /** Total number of employees across all pages */
-  totalElements: number;
-
-  /** Total number of pages */
-  totalPages: number;
 }

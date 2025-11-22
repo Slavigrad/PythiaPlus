@@ -12,7 +12,8 @@ import {
   AddProjectTeamMemberRequest,
   UpdateProjectTeamMemberRequest,
   AddProjectTechnologyRequest,
-  ProjectListAnalytics
+  ProjectListAnalytics,
+  PaginationMetadata
 } from '../../../models';
 import { ProjectListResponseBackend, ProjectBackend } from '../../../models/project-backend.model';
 import { mapProjectListResponse, mapProjectDetail } from '../utils/project-mappers';
@@ -55,12 +56,7 @@ export class ProjectsService {
   readonly analytics = signal<ProjectListAnalytics | null>(null);
 
   /** Pagination metadata */
-  readonly pagination = signal<{
-    page: number;
-    size: number;
-    total: number;
-    totalPages: number;
-  } | null>(null);
+  readonly pagination = signal<PaginationMetadata | null>(null);
 
   // ============================================================================
   // SINGLE PROJECT STATE
@@ -95,7 +91,7 @@ export class ProjectsService {
   // ============================================================================
 
   /** Total projects count */
-  readonly totalProjects = computed(() => this.pagination()?.total ?? 0);
+  readonly totalProjects = computed(() => this.pagination()?.totalElements ?? 0);
 
   /** Has any filters applied (excluding pagination) */
   readonly hasFilters = computed(() => {

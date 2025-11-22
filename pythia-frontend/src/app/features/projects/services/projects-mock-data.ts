@@ -559,7 +559,7 @@ export const MOCK_PROJECT_LIST_RESPONSE: ProjectListResponse = {
   pagination: {
     page: 1,
     size: 20,
-    total: 42,
+    totalElements: 42,
     totalPages: 3
   },
   analytics: MOCK_ANALYTICS
