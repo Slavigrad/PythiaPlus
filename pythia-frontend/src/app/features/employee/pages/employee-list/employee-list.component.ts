@@ -13,11 +13,12 @@
 import { Component, signal, computed, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -29,6 +30,8 @@ import { EmployeeCardComponent } from '../../components/employee-card/employee-c
 import { EmployeeCardCompactComponent } from '../../components/employee-card-compact/employee-card-compact.component';
 import { EmployeeFilterPanelComponent } from '../../components/employee-filter-panel/employee-filter-panel.component';
 import { ViewToggleComponent } from '../../components/view-toggle/view-toggle.component';
+import { EmployeeCreateButtonComponent } from '../../components/employee-create-button/employee-create-button.component';
+import { EmployeeCreateWizardComponent } from '../../components/employee-create-wizard/employee-create-wizard.component';
 
 export type ViewMode = 'grid' | 'list' | 'gallery';
 
@@ -45,7 +48,6 @@ export interface EmployeeFilters {
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
@@ -55,7 +57,8 @@ export interface EmployeeFilters {
     EmployeeCardComponent,
     EmployeeCardCompactComponent,
     EmployeeFilterPanelComponent,
-    ViewToggleComponent
+    ViewToggleComponent,
+    EmployeeCreateButtonComponent
   ],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.scss'
@@ -63,6 +66,7 @@ export interface EmployeeFilters {
 export class EmployeeListComponent {
   private readonly employeeService = inject(EmployeeService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   // Expose Math for template
   protected readonly Math = Math;
@@ -581,5 +585,32 @@ export class EmployeeListComponent {
    */
   protected get hasPreviousPage(): boolean {
     return this.currentPage() > 0;
+  }
+
+  /**
+   * Open Employee Creation Wizard - "Oracle's Summons"
+   *
+   * Opens the visionary 6-step wizard dialog for creating new employee profiles.
+   * The wizard features cinematic transitions, progress tracking, and auto-save.
+   */
+  protected onCreateEmployee(): void {
+    const dialogRef = this.dialog.open(EmployeeCreateWizardComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '900px',
+      panelClass: 'wizard-dialog',
+      disableClose: false, // Allow closing with ESC or backdrop click
+      autoFocus: true,
+      restoreFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('✨ Employee created:', result);
+        // Refresh employee list
+        this.refresh();
+      }
+    });
   }
 }
