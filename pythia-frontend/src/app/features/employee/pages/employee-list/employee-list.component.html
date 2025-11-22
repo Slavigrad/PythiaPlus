@@ -19,6 +19,17 @@
       </div>
 
       <div class="page-header__actions">
+        <!-- Add New Profile Button -->
+        <button
+          mat-raised-button
+          color="primary"
+          routerLink="/employees/new"
+          class="add-employee-btn"
+          matTooltip="Create a new employee profile">
+          <mat-icon>person_add</mat-icon>
+          Add New Profile
+        </button>
+
         <!-- View Toggle -->
         <app-view-toggle
           [viewMode]="viewMode()"
