@@ -234,15 +234,15 @@
                 <div
                   class="proficiency-bar"
                   role="img"
-                  [attr.aria-label]="lang.name + ' proficiency: ' + lang.proficiency">
+                  [attr.aria-label]="lang.name + ' proficiency: ' + (lang.level || 'Unknown')">
                   <div
                     class="bar-fill bar-language"
-                    [style.width.%]="getLanguageProficiency(lang.proficiency)">
+                    [style.width.%]="getLanguageProficiency(lang.level)">
                   </div>
                 </div>
 
                 <p class="language-description">
-                  {{ getLanguageDescription(lang.proficiency) }}
+                  {{ getLanguageDescription(lang.level) }}
                 </p>
               </div>
             }

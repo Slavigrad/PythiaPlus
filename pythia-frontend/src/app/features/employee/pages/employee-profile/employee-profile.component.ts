@@ -203,30 +203,64 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
   /**
    * Get language proficiency percentage for bar
+   * Supports both proficiency levels (native, fluent, etc.) and CEFR levels (A1, A2, B1, B2, C1, C2)
    */
-  protected getLanguageProficiency(proficiency: string): number {
-    const levels: Record<string, number> = {
-      'native': 100,
-      'fluent': 90,
-      'advanced': 75,
-      'intermediate': 50,
-      'beginner': 25
+  protected getLanguageProficiency(level: string | undefined): number {
+    if (!level) return 50;
+
+    const normalizedLevel = level.toUpperCase();
+
+    // CEFR levels (European standard)
+    const cefrLevels: Record<string, number> = {
+      'A1': 20,
+      'A2': 35,
+      'B1': 50,
+      'B2': 65,
+      'C1': 85,
+      'C2': 100
     };
-    return levels[proficiency.toLowerCase()] || 50;
+
+    // Proficiency levels (alternative format)
+    const proficiencyLevels: Record<string, number> = {
+      'NATIVE': 100,
+      'FLUENT': 90,
+      'ADVANCED': 75,
+      'INTERMEDIATE': 50,
+      'BEGINNER': 25
+    };
+
+    return cefrLevels[normalizedLevel] || proficiencyLevels[normalizedLevel] || 50;
   }
 
   /**
    * Get language proficiency description
+   * Supports both proficiency levels and CEFR levels
    */
-  protected getLanguageDescription(proficiency: string): string {
-    const descriptions: Record<string, string> = {
-      'native': 'Native proficiency',
-      'fluent': 'Full professional proficiency',
-      'advanced': 'Professional working proficiency',
-      'intermediate': 'Limited working proficiency',
-      'beginner': 'Elementary proficiency'
+  protected getLanguageDescription(level: string | undefined): string {
+    if (!level) return 'Unknown proficiency';
+
+    const normalizedLevel = level.toUpperCase();
+
+    // CEFR level descriptions
+    const cefrDescriptions: Record<string, string> = {
+      'A1': 'Beginner - Can understand and use familiar everyday expressions',
+      'A2': 'Elementary - Can communicate in simple routine tasks',
+      'B1': 'Intermediate - Can deal with most situations while traveling',
+      'B2': 'Upper Intermediate - Can interact with native speakers with fluency',
+      'C1': 'Advanced - Can use language flexibly for social, academic, and professional purposes',
+      'C2': 'Proficient - Can understand virtually everything with ease'
     };
-    return descriptions[proficiency.toLowerCase()] || 'Unknown proficiency';
+
+    // Proficiency level descriptions
+    const proficiencyDescriptions: Record<string, string> = {
+      'NATIVE': 'Native proficiency',
+      'FLUENT': 'Full professional proficiency',
+      'ADVANCED': 'Professional working proficiency',
+      'INTERMEDIATE': 'Limited working proficiency',
+      'BEGINNER': 'Elementary proficiency'
+    };
+
+    return cefrDescriptions[normalizedLevel] || proficiencyDescriptions[normalizedLevel] || 'Unknown proficiency';
   }
 
   /**

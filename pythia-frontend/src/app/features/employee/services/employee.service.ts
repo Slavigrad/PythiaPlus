@@ -95,6 +95,15 @@ export class EmployeeService {
     this.http.get<Employee>(`${this.API_BASE_URL}/employees/${id}`)
       .pipe(
         tap((employee) => {
+          // Compute location from city and country if not provided
+          if (!employee.location && employee.city && employee.country) {
+            employee.location = `${employee.city}, ${employee.country}`;
+          } else if (!employee.location && employee.city) {
+            employee.location = employee.city;
+          } else if (!employee.location && employee.country) {
+            employee.location = employee.country;
+          }
+
           this.employee.set(employee);
           this.loading.set(false);
         }),
