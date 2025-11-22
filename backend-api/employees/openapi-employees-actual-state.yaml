@@ -1,0 +1,1030 @@
+openapi: 3.0.3
+info:
+  title: Pythia Employees API - ACTUAL CURRENT STATE
+  description: |
+    # 🔍 Pythia Employees API - What We Actually Have
+    
+    **Purpose**: This specification documents the **ACTUAL CURRENT IMPLEMENTATION** 
+    of the `/api/v1/employees` endpoints in the Pythia backend.
+    
+    ## 🚨 Critical Finding: GET /api/v1/employees NOT IMPLEMENTED
+    
+    **Issue**: When calling `GET /api/v1/employees`, you receive:
+    ```
+    HTTP/1.1 405 Method Not Allowed
+    Allow: POST
+    ```
+    
+    **Root Cause**: The `EmployeeController` class only implements:
+    - ✅ `POST /api/v1/employees` - Create employee
+    - ✅ `GET /api/v1/employees/{id}` - Get employee by ID
+    - ❌ `GET /api/v1/employees` - **NOT IMPLEMENTED**
+    
+    **Location**: `pythia-backend/src/main/kotlin/net/slavigrad/pythia/adapters/web/v1/api/controller/EmployeeController.kt`
+    
+    ## 📋 What We Have vs What We Need
+    
+    | Endpoint | Method | Status | Notes |
+    |----------|--------|--------|-------|
+    | `/api/v1/employees` | GET | ❌ NOT IMPLEMENTED | Returns 405 - This is the problem! |
+    | `/api/v1/employees` | POST | ✅ IMPLEMENTED | Creates new employee |
+    | `/api/v1/employees/{id}` | GET | ✅ IMPLEMENTED | Gets employee by ID |
+    | `/api/v1/employees/{id}` | PUT | ✅ IMPLEMENTED | Full update (in EmployeeUpdateController) |
+    | `/api/v1/employees/{id}` | PATCH | ✅ IMPLEMENTED | Partial update (in EmployeeUpdateController) |
+    | `/api/v1/employees/{id}` | DELETE | ❌ NOT IMPLEMENTED | No delete functionality |
+    
+    ## 🎯 Solution Options
+    
+    ### Option 1: Use Search API Instead
+    The `/api/v1/search` endpoint can list all employees:
+    ```
+    GET /api/v1/search?query=*&page=0&size=20
+    ```
+    
+    ### Option 2: Implement GET /api/v1/employees
+    Add a new method to `EmployeeController`:
+    ```kotlin
+    @GetMapping
+    fun getAllEmployees(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int
+    ): ResponseEntity<List<EmployeeDetailResponse>>
+    ```
+    
+    ## 📚 Related Documentation
+    - Frontend expects: `openapi-employees-spec-angular-proposal.yaml`
+    - Test files: `02-api-testing/pythia-api-rest-test-employees/employees/`
+    - Controllers: `pythia-backend/src/main/kotlin/net/slavigrad/pythia/adapters/web/v1/api/controller/`
+    
+  version: 1.0.0-actual
+  contact:
+    name: Pythia Development Team
+  
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+
+tags:
+  - name: employees-implemented
+    description: Endpoints that ARE implemented
+  - name: employees-missing
+    description: Endpoints that are NOT implemented (causing 405 errors)
+
+paths:
+  # =============================================================================
+  # ❌ NOT IMPLEMENTED - This is why you get 405 Method Not Allowed
+  # =============================================================================
+  /employees:
+    get:
+      tags:
+        - employees-missing
+      summary: "❌ NOT IMPLEMENTED - List all employees"
+      description: |
+        ## 🚨 STATUS: NOT IMPLEMENTED
+        
+        **This endpoint does NOT exist in the backend!**
+        
+        When you call `GET /api/v1/employees`, you get:
+        ```
+        HTTP/1.1 405 Method Not Allowed
+        Allow: POST
+        ```
+        
+        **Why?** The `EmployeeController` class has no `@GetMapping` method 
+        without a path variable. It only has:
+        - `@PostMapping` - for creating employees
+        - `@GetMapping("/{id}")` - for getting a single employee
+        
+        **Workaround**: Use the search API instead:
+        ```
+        GET /api/v1/search?query=*&page=0&size=20
+        ```
+        
+        **To Fix**: Add this method to EmployeeController.kt:
+        ```kotlin
+        @GetMapping
+        fun getAllEmployees(
+            @RequestParam(defaultValue = "0") page: Int,
+            @RequestParam(defaultValue = "20") size: Int
+        ): ResponseEntity<Page<EmployeeDetailResponse>> {
+            // Implementation needed
+        }
+        ```
+      operationId: listEmployees
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '405':
+          description: Method Not Allowed - This endpoint is not implemented
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: integer
+                    example: 405
+                  error:
+                    type: string
+                    example: "Method Not Allowed"
+                  path:
+                    type: string
+                    example: "/api/v1/employees"
+              example:
+                timestamp: "2025-11-21T13:36:20.223+00:00"
+                status: 405
+                error: "Method Not Allowed"
+                path: "/api/v1/employees"
+    
+    # =============================================================================
+    # ✅ IMPLEMENTED - POST /api/v1/employees
+    # =============================================================================
+    post:
+      tags:
+        - employees-implemented
+      summary: "✅ Create new employee"
+      description: |
+        ## ✅ STATUS: IMPLEMENTED
+        
+        Creates a new employee with all associated data.
+        
+        **Controller**: `EmployeeController.createEmployee()`
+        **Location**: Line 35-70 in EmployeeController.kt
+        
+        ### Required Fields
+        - `fullName` (min 2 characters)
+        - `email` (valid email, must be unique)
+        
+        ### Optional Fields
+        All other fields are optional (title, phone, city, country, technologies, skills, etc.)
+        
+        ### Error Responses
+        - 400: Validation error (invalid data)
+        - 404: Referenced entity not found (e.g., invalid technologyId)
+        - 409: Email already exists (duplicate)
+        - 500: Internal server error
+      operationId: createEmployee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeCreateRequest'
+            examples:
+              minimal:
+                summary: Minimal valid request
+                value:
+                  fullName: "John Doe"
+                  email: "john.doe@example.com"
+              complete:
+                summary: Complete request with all fields
+                value:
+                  fullName: "Jane Smith"
+                  email: "jane.smith@example.com"
+                  title: "Senior Software Engineer"
+                  phone: "+41 79 123 4567"
+                  city: "Zurich"
+                  country: "Switzerland"
+                  profilePicture: "https://example.com/jane.jpg"
+                  summary: "Experienced software engineer"
+                  department: "Engineering"
+                  seniority: "Senior"
+                  yearsExperience: 10
+                  availability: "available"
+                  technologies:
+                    - technologyId: 1
+                      proficiency: "expert"
+                      years: 5
+                  skills:
+                    - skillId: 1
+                      proficiency: "advanced"
+                      years: 4
+      responses:
+        '201':
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeCreateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  
+  # =============================================================================
+  # ✅ IMPLEMENTED - GET /api/v1/employees/{id}
+  # =============================================================================
+  /employees/{id}:
+    get:
+      tags:
+        - employees-implemented
+      summary: "✅ Get employee by ID"
+      description: |
+        ## ✅ STATUS: IMPLEMENTED
+        
+        Returns complete employee profile with all related data.
+        
+        **Controller**: `EmployeeController.getEmployeeById()`
+        **Location**: Line 78-93 in EmployeeController.kt
+        
+        ### Response Includes
+        - Basic info (name, email, title, phone, location, etc.)
+        - Technologies with proficiency and years
+        - Skills with proficiency and years
+        - Certifications with issue/expiry dates
+        - Languages with proficiency levels
+        - Work experiences with date ranges
+        - Education history
+        - Timestamps (createdAt, updatedAt)
+        
+        ### Error Responses
+        - 404: Employee not found
+        - 500: Internal server error
+      operationId: getEmployeeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Employee found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    # =============================================================================
+    # ✅ IMPLEMENTED - PUT /api/v1/employees/{id}
+    # =============================================================================
+    put:
+      tags:
+        - employees-implemented
+      summary: "✅ Update employee (full update)"
+      description: |
+        ## ✅ STATUS: IMPLEMENTED
+
+        Updates an existing employee profile.
+
+        **Controller**: `EmployeeUpdateController.updateEmployee()`
+        **Location**: `EmployeeUpdateController.kt` line 23-52
+
+        ### Update Strategy
+        - **Scalar fields**: Update if provided, preserve if omitted
+        - **Array fields** (technologies, skills, etc.): **DELETE ALL + INSERT**
+          - Omit field: Keep existing data unchanged
+          - Send `[]`: Clear all items
+          - Send array: Replace all existing items
+
+        ### Important Notes
+        - Array fields are NOT merged - they completely replace existing data
+        - To add one technology, you must send ALL technologies (old + new)
+        - Empty arrays clear the data
+
+        ### Error Responses
+        - 400: Validation error
+        - 404: Employee not found
+        - 500: Internal server error
+      operationId: updateEmployee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeUpdateRequest'
+            examples:
+              updateBasicInfo:
+                summary: Update basic info only
+                value:
+                  title: "Lead Kotlin Developer"
+                  seniority: "Lead"
+                  yearsExperience: 10
+              updateTechnologies:
+                summary: Update technologies (replaces all)
+                value:
+                  technologies:
+                    - technologyId: 1
+                      proficiency: "expert"
+                      years: 6
+      responses:
+        '200':
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeUpdateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    # =============================================================================
+    # ✅ IMPLEMENTED - PATCH /api/v1/employees/{id}
+    # =============================================================================
+    patch:
+      tags:
+        - employees-implemented
+      summary: "✅ Partial update employee"
+      description: |
+        ## ✅ STATUS: IMPLEMENTED
+
+        Partially updates an existing employee profile.
+
+        **Controller**: `EmployeeUpdateController.patchEmployee()`
+        **Location**: `EmployeeUpdateController.kt` line 58-87
+
+        ### Important Note
+        **In the current implementation, PATCH behaves identically to PUT.**
+        Both use the same DELETE ALL + INSERT strategy for array fields.
+
+        This endpoint exists for semantic correctness but doesn't implement
+        true RFC 6902 JSON Patch behavior.
+
+        ### Error Responses
+        - 400: Validation error
+        - 404: Employee not found
+        - 500: Internal server error
+      operationId: patchEmployee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeUpdateRequest'
+            example:
+              availability: "available"
+      responses:
+        '200':
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeUpdateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    # =============================================================================
+    # ❌ NOT IMPLEMENTED - DELETE /api/v1/employees/{id}
+    # =============================================================================
+    delete:
+      tags:
+        - employees-missing
+      summary: "❌ NOT IMPLEMENTED - Delete employee"
+      description: |
+        ## 🚨 STATUS: NOT IMPLEMENTED
+
+        There is no delete functionality in the backend.
+
+        **Why?** No `@DeleteMapping` method exists in any employee controller.
+
+        **To Implement**: Add delete method to EmployeeController or create
+        a new EmployeeDeleteController.
+      operationId: deleteEmployee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '405':
+          description: Method Not Allowed - Delete not implemented
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                    example: 405
+                  error:
+                    type: string
+                    example: "Method Not Allowed"
+
+# =============================================================================
+# COMPONENTS - Schemas and Responses
+# =============================================================================
+components:
+  schemas:
+    # ===========================================================================
+    # Employee Create Request
+    # ===========================================================================
+    EmployeeCreateRequest:
+      type: object
+      required:
+        - fullName
+        - email
+      properties:
+        fullName:
+          type: string
+          minLength: 2
+          maxLength: 255
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: "john.doe@example.com"
+        title:
+          type: string
+          maxLength: 255
+          example: "Senior Software Engineer"
+        phone:
+          type: string
+          maxLength: 50
+          example: "+41 79 123 4567"
+        city:
+          type: string
+          maxLength: 100
+          example: "Zurich"
+        country:
+          type: string
+          maxLength: 100
+          example: "Switzerland"
+        profilePicture:
+          type: string
+          format: uri
+          example: "https://example.com/profile.jpg"
+        summary:
+          type: string
+          maxLength: 2000
+          example: "Experienced software engineer"
+        department:
+          type: string
+          maxLength: 100
+          example: "Engineering"
+        seniority:
+          type: string
+          enum: [Junior, Mid-Level, Senior, Lead, Principal, Staff]
+          example: "Senior"
+        yearsExperience:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 50
+          example: 10.0
+        availability:
+          type: string
+          enum: [available, notice, unavailable]
+          example: "available"
+        technologies:
+          type: array
+          items:
+            type: object
+            properties:
+              technologyId:
+                type: integer
+                format: int64
+              proficiency:
+                type: string
+              years:
+                type: integer
+        skills:
+          type: array
+          items:
+            type: object
+            properties:
+              skillId:
+                type: integer
+                format: int64
+              proficiency:
+                type: string
+              years:
+                type: integer
+        certifications:
+          type: array
+          items:
+            type: object
+            properties:
+              certificationId:
+                type: integer
+                format: int64
+              issuedOn:
+                type: string
+                format: date
+              expiresOn:
+                type: string
+                format: date
+                nullable: true
+        languages:
+          type: array
+          items:
+            type: object
+            properties:
+              languageId:
+                type: integer
+                format: int64
+              level:
+                type: string
+        workExperiences:
+          type: array
+          items:
+            type: object
+            properties:
+              company:
+                type: string
+              role:
+                type: string
+              startDate:
+                type: string
+                format: date
+              endDate:
+                type: string
+                format: date
+                nullable: true
+              description:
+                type: string
+        educations:
+          type: array
+          items:
+            type: object
+            properties:
+              institution:
+                type: string
+              degree:
+                type: string
+              field:
+                type: string
+              startYear:
+                type: integer
+              endYear:
+                type: integer
+
+    # ===========================================================================
+    # Employee Create Response
+    # ===========================================================================
+    EmployeeCreateResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        message:
+          type: string
+          example: "Employee created successfully"
+        employee:
+          $ref: '#/components/schemas/EmployeeDetailResponse'
+
+    # ===========================================================================
+    # Employee Update Request
+    # ===========================================================================
+    EmployeeUpdateRequest:
+      type: object
+      description: All fields are optional. Omitted fields preserve existing values.
+      properties:
+        fullName:
+          type: string
+          minLength: 2
+          maxLength: 255
+        title:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        phone:
+          type: string
+          maxLength: 50
+        city:
+          type: string
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        profilePicture:
+          type: string
+          format: uri
+        summary:
+          type: string
+          maxLength: 2000
+        department:
+          type: string
+          maxLength: 100
+        seniority:
+          type: string
+          enum: [Junior, Mid-Level, Senior, Lead, Principal, Staff]
+        yearsExperience:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 50
+        availability:
+          type: string
+          enum: [available, notice, unavailable]
+        technologies:
+          type: array
+          description: REPLACES all existing technologies
+          items:
+            type: object
+            properties:
+              technologyId:
+                type: integer
+                format: int64
+              proficiency:
+                type: string
+              years:
+                type: integer
+        skills:
+          type: array
+          description: REPLACES all existing skills
+          items:
+            type: object
+            properties:
+              skillId:
+                type: integer
+                format: int64
+              proficiency:
+                type: string
+              years:
+                type: integer
+        certifications:
+          type: array
+          description: REPLACES all existing certifications
+          items:
+            type: object
+            properties:
+              certificationId:
+                type: integer
+                format: int64
+              issuedOn:
+                type: string
+                format: date
+              expiresOn:
+                type: string
+                format: date
+                nullable: true
+        languages:
+          type: array
+          description: REPLACES all existing languages
+          items:
+            type: object
+            properties:
+              languageId:
+                type: integer
+                format: int64
+              level:
+                type: string
+        workExperiences:
+          type: array
+          description: REPLACES all existing work experiences
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                nullable: true
+              company:
+                type: string
+              role:
+                type: string
+              startDate:
+                type: string
+                format: date
+              endDate:
+                type: string
+                format: date
+                nullable: true
+              description:
+                type: string
+        educations:
+          type: array
+          description: REPLACES all existing educations
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                nullable: true
+              institution:
+                type: string
+              degree:
+                type: string
+              field:
+                type: string
+              startYear:
+                type: integer
+              endYear:
+                type: integer
+
+    # ===========================================================================
+    # Employee Update Response
+    # ===========================================================================
+    EmployeeUpdateResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        message:
+          type: string
+          example: "Employee updated successfully"
+        employee:
+          $ref: '#/components/schemas/EmployeeDetailResponse'
+
+    # ===========================================================================
+    # Employee Detail Response
+    # ===========================================================================
+    EmployeeDetailResponse:
+      type: object
+      required:
+        - id
+        - fullName
+        - email
+        - availability
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        fullName:
+          type: string
+          example: "John Doe"
+        title:
+          type: string
+          nullable: true
+          example: "Senior Software Engineer"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        phone:
+          type: string
+          nullable: true
+          example: "+41 79 123 4567"
+        location:
+          type: string
+          nullable: true
+          description: Formatted as "City, Country"
+          example: "Zurich, Switzerland"
+        profilePicture:
+          type: string
+          nullable: true
+          format: uri
+          example: "https://example.com/profile.jpg"
+        summary:
+          type: string
+          nullable: true
+          example: "Experienced software engineer"
+        department:
+          type: string
+          nullable: true
+          example: "Engineering"
+        seniority:
+          type: string
+          nullable: true
+          example: "Senior"
+        yearsExperience:
+          type: number
+          format: double
+          nullable: true
+          example: 10.0
+        availability:
+          type: string
+          enum: [available, notice, unavailable]
+          example: "available"
+        technologies:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              proficiency:
+                type: string
+              years:
+                type: integer
+        skills:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              proficiency:
+                type: string
+              years:
+                type: integer
+        certifications:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              issuedOn:
+                type: string
+                format: date
+              expiresOn:
+                type: string
+                format: date
+                nullable: true
+        languages:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              level:
+                type: string
+        workExperiences:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              company:
+                type: string
+              role:
+                type: string
+              startDate:
+                type: string
+                format: date
+              endDate:
+                type: string
+                format: date
+                nullable: true
+              description:
+                type: string
+        educations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              institution:
+                type: string
+              degree:
+                type: string
+              field:
+                type: string
+              startYear:
+                type: integer
+              endYear:
+                type: integer
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-11-20T14:22:00Z"
+
+  # =============================================================================
+  # Reusable Responses
+  # =============================================================================
+  responses:
+    BadRequest:
+      description: Bad Request - Validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+              status:
+                type: integer
+                example: 400
+              error:
+                type: string
+                example: "Bad Request"
+              message:
+                type: string
+                example: "Validation failed"
+              path:
+                type: string
+
+    NotFound:
+      description: Not Found - Resource does not exist
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Not Found"
+              message:
+                type: string
+                example: "Employee not found"
+              status:
+                type: integer
+                example: 404
+
+    Conflict:
+      description: Conflict - Duplicate resource
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+              status:
+                type: integer
+                example: 409
+              error:
+                type: string
+                example: "Conflict"
+              message:
+                type: string
+                example: "Email already exists"
+              path:
+                type: string
+
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal Server Error"
+              message:
+                type: string
+                example: "An unexpected error occurred"
+              status:
+                type: integer
+                example: 500
+

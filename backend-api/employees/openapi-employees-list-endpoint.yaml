@@ -1,0 +1,565 @@
+openapi: 3.0.3
+info:
+  title: Pythia - GET /employees Endpoint Specification
+  description: |
+    # 🎯 GET /employees - Backend Architect's Recommendation
+    
+    **Purpose**: This specification defines the **RECOMMENDED** implementation for the 
+    `GET /api/v1/employees` endpoint based on architectural analysis.
+    
+    ## 📊 Three Implementation Options Analyzed
+    
+    ### Option A: Simple Array (Quick MVP)
+    ```json
+    [
+      { "id": 1, "fullName": "Sarah Chen", ... },
+      { "id": 2, "fullName": "Max Mueller", ... }
+    ]
+    ```
+    ✅ Simplest | ❌ No pagination | ⚠️ Doesn't scale
+    
+    ### Option B: HAL/HATEOAS (Enterprise Standard)
+    ```json
+    {
+      "_embedded": { "employees": [...] },
+      "_links": { "self": {...}, "next": {...} },
+      "page": { "size": 20, "totalElements": 150 }
+    }
+    ```
+    ✅ Industry standard | ✅ Scalable | ❌ Complex for Angular
+    
+    ### Option C: Pythia Hybrid (RECOMMENDED) ⭐
+    ```json
+    {
+      "employees": [...],
+      "pagination": {
+        "page": 0,
+        "size": 20,
+        "totalElements": 150,
+        "totalPages": 8
+      }
+    }
+    ```
+    ✅ Simple | ✅ Scalable | ✅ Pythia-consistent | ✅ Future-proof
+    
+    ---
+    
+    ## 🏗️ Architectural Decision
+    
+    **RECOMMENDATION: Option C - Pythia Hybrid Approach**
+    
+    ### Why This Approach?
+    
+    1. **Consistency**: Matches Pythia's existing `/search` endpoint pattern
+    2. **Scalability**: Supports pagination for 10,000+ employees
+    3. **Simplicity**: No HAL/HATEOAS complexity
+    4. **Angular-Friendly**: Minimal code changes required
+    5. **Future-Proof**: Easy to add filtering, sorting, field selection
+    
+    ### Migration from Spring Data REST
+    
+    The old Spring Data REST auto-generated endpoints with HAL format.
+    This new design is **intentionally different** - it's a modern, clean API
+    that serves Pythia's specific needs without Spring Data REST baggage.
+    
+    ---
+    
+    ## 🔄 Angular Team Migration Guide
+    
+    ### Current Angular Code (Expected)
+    ```typescript
+    getAllEmployees(): Observable<Employee[]> {
+      return this.http.get<Employee[]>('/api/v1/employees');
+    }
+    ```
+    
+    ### Updated Angular Code (Recommended)
+    ```typescript
+    getAllEmployees(page = 0, size = 20): Observable<EmployeeListResponse> {
+      return this.http.get<EmployeeListResponse>(
+        `/api/v1/employees?page=${page}&size=${size}`
+      );
+    }
+    
+    // Component usage:
+    this.employeeService.getAllEmployees().subscribe(response => {
+      this.employees = response.employees;
+      this.totalElements = response.pagination.totalElements;
+      this.totalPages = response.pagination.totalPages;
+    });
+    ```
+    
+    ### Backward Compatibility Option
+    
+    If Angular team wants to keep current code working, backend can support both:
+    - `GET /employees` → Returns simple array (deprecated)
+    - `GET /employees?paginated=true` → Returns paginated response
+    
+    ---
+    
+    ## 📈 Performance Considerations
+    
+    - **Small datasets (< 100 employees)**: Simple array works fine
+    - **Medium datasets (100-1000)**: Pagination recommended
+    - **Large datasets (1000+)**: Pagination REQUIRED
+    
+    **Pythia's Scale**: If you expect 500+ employees, use pagination from day 1.
+    
+    ---
+    
+    ## 🚀 Future Enhancements
+    
+    This design allows easy addition of:
+    - Server-side filtering: `?search=kotlin&department=Engineering`
+    - Server-side sorting: `?sort=fullName,asc`
+    - Field selection: `?fields=id,fullName,email,technologies`
+    - Cursor-based pagination: `?cursor=eyJpZCI6MTAwfQ==`
+    
+  version: 2.0.0-recommended
+  contact:
+    name: Pythia Backend Architecture Team
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.pythia.com/api/v1
+    description: Production server (future)
+
+tags:
+  - name: employees-list
+    description: Employee list endpoint (RECOMMENDED IMPLEMENTATION)
+
+paths:
+  # =============================================================================
+  # RECOMMENDED: GET /api/v1/employees (Pythia Hybrid Approach)
+  # =============================================================================
+  /employees:
+    get:
+      tags:
+        - employees-list
+      summary: List all employees with pagination (RECOMMENDED)
+      description: |
+        ## 🎯 RECOMMENDED IMPLEMENTATION
+        
+        Returns a paginated list of employees with metadata.
+        
+        ### Response Structure
+        
+        ```json
+        {
+          "employees": [
+            { "id": 1, "fullName": "Sarah Chen", ... },
+            { "id": 2, "fullName": "Max Mueller", ... }
+          ],
+          "pagination": {
+            "page": 0,
+            "size": 20,
+            "totalElements": 150,
+            "totalPages": 8
+          }
+        }
+        ```
+        
+        ### Key Features
+        
+        - ✅ **Pagination**: Prevents loading all employees at once
+        - ✅ **Metadata**: Total count, page info for UI
+        - ✅ **Sorting**: Optional sort parameter
+        - ✅ **Scalable**: Works with 10,000+ employees
+        - ✅ **Simple**: No HAL/HATEOAS complexity
+        
+        ### Default Behavior
+        
+        - Default page: 0 (first page)
+        - Default size: 20 employees per page
+        - Default sort: None (database order, typically by ID)
+        
+        ### Angular Integration
+        
+        ```typescript
+        // Service
+        getAllEmployees(page = 0, size = 20): Observable<EmployeeListResponse> {
+          return this.http.get<EmployeeListResponse>(
+            `/api/v1/employees?page=${page}&size=${size}`
+          );
+        }
+        
+        // Component
+        loadEmployees() {
+          this.employeeService.getAllEmployees(this.currentPage, 20)
+            .subscribe(response => {
+              this.employees = response.employees;
+              this.totalElements = response.pagination.totalElements;
+            });
+        }
+        ```
+        
+        ### Performance Notes
+        
+        - Each employee includes ALL nested data (technologies, skills, etc.)
+        - For 20 employees with 5 technologies each = ~100 DB queries (N+1 problem)
+        - **Recommendation**: Consider adding `?summary=true` parameter for list view
+          that returns only basic fields (id, name, title, email, availability)
+        
+      operationId: listEmployees
+      parameters:
+        - name: page
+          in: query
+          description: Page number (0-indexed)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+            example: 0
+        - name: size
+          in: query
+          description: Number of employees per page (max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+            example: 20
+        - name: sort
+          in: query
+          description: |
+            Sort criteria in format: `property,direction`
+            
+            Examples:
+            - `fullName,asc` - Sort by name ascending
+            - `yearsExperience,desc` - Sort by experience descending
+            - `createdAt,desc` - Sort by creation date (newest first)
+          required: false
+          schema:
+            type: string
+            example: "fullName,asc"
+      responses:
+        '200':
+          description: Successful response with paginated employee list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeListResponse'
+              examples:
+                firstPage:
+                  summary: First page of employees (page 0)
+                  value:
+                    employees:
+                      - id: 1
+                        fullName: "Sarah Chen"
+                        title: "Senior Kotlin Developer"
+                        email: "sarah.chen@example.com"
+                        phone: "+41 79 123 4567"
+                        location: "Zurich, Switzerland"
+                        profilePicture: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+                        summary: "Passionate Kotlin developer with 8 years of experience"
+                        department: "Engineering"
+                        seniority: "Senior"
+                        yearsExperience: 8
+                        availability: "available"
+                        technologies:
+                          - id: 1
+                            name: "Kotlin"
+                            proficiency: "expert"
+                            years: 5
+                        skills:
+                          - id: 1
+                            name: "Microservices"
+                            proficiency: "advanced"
+                            years: 4
+                        certifications: []
+                        languages:
+                          - id: 1
+                            name: "English"
+                            proficiency: "fluent"
+                            level: "C2"
+                        workExperiences:
+                          - id: 1
+                            company: "Tech Corp"
+                            role: "Senior Backend Developer"
+                            startDate: "2020-03-01"
+                            endDate: null
+                            description: "Leading backend team"
+                        educations:
+                          - id: 1
+                            institution: "ETH Zurich"
+                            degree: "MSc"
+                            field: "Computer Science"
+                            startYear: 2012
+                            endYear: 2015
+                        createdAt: "2024-01-15T10:30:00Z"
+                        updatedAt: "2024-11-20T14:22:00Z"
+                    pagination:
+                      page: 0
+                      size: 20
+                      totalElements: 150
+                      totalPages: 8
+                emptyResult:
+                  summary: No employees found
+                  value:
+                    employees: []
+                    pagination:
+                      page: 0
+                      size: 20
+                      totalElements: 0
+                      totalPages: 0
+        '400':
+          description: Bad Request - Invalid pagination parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Bad Request"
+                message: "Page size must be between 1 and 100"
+                status: 400
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    # ===========================================================================
+    # EMPLOYEE LIST RESPONSE (Pythia Hybrid Format)
+    # ===========================================================================
+    EmployeeListResponse:
+      type: object
+      required:
+        - employees
+        - pagination
+      properties:
+        employees:
+          type: array
+          description: Array of employee objects with full details
+          items:
+            $ref: '#/components/schemas/Employee'
+        pagination:
+          $ref: '#/components/schemas/PaginationMetadata'
+
+    # ===========================================================================
+    # PAGINATION METADATA
+    # ===========================================================================
+    PaginationMetadata:
+      type: object
+      required:
+        - page
+        - size
+        - totalElements
+        - totalPages
+      properties:
+        page:
+          type: integer
+          description: Current page number (0-indexed)
+          example: 0
+        size:
+          type: integer
+          description: Number of items per page
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of employees across all pages
+          example: 150
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 8
+
+    # ===========================================================================
+    # EMPLOYEE (Full Detail Object)
+    # ===========================================================================
+    Employee:
+      type: object
+      required:
+        - id
+        - fullName
+        - email
+        - availability
+      description: |
+        Complete employee profile with all nested relationships.
+
+        **Note**: This is the SAME object returned by GET /employees/{id}.
+        The list endpoint returns full objects, not simplified summaries.
+
+        **Performance Consideration**: For large lists, consider adding a
+        `?summary=true` parameter that returns only basic fields.
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        fullName:
+          type: string
+          example: "Sarah Chen"
+        title:
+          type: string
+          nullable: true
+          example: "Senior Kotlin Developer"
+        email:
+          type: string
+          format: email
+          example: "sarah.chen@example.com"
+        phone:
+          type: string
+          nullable: true
+          example: "+41 79 123 4567"
+        location:
+          type: string
+          nullable: true
+          description: Formatted as "City, Country"
+          example: "Zurich, Switzerland"
+        profilePicture:
+          type: string
+          nullable: true
+          format: uri
+          example: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+        summary:
+          type: string
+          nullable: true
+          example: "Passionate Kotlin developer with 8 years of experience"
+        department:
+          type: string
+          nullable: true
+          example: "Engineering"
+        seniority:
+          type: string
+          nullable: true
+          enum: [Junior, Mid-Level, Senior, Lead, Principal, Staff]
+          example: "Senior"
+        yearsExperience:
+          type: number
+          format: double
+          nullable: true
+          example: 8.0
+        availability:
+          type: string
+          enum: [available, notice, unavailable]
+          example: "available"
+        technologies:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              proficiency:
+                type: string
+              years:
+                type: integer
+        skills:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              proficiency:
+                type: string
+              years:
+                type: integer
+        certifications:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              issuedOn:
+                type: string
+                format: date
+              expiresOn:
+                type: string
+                format: date
+                nullable: true
+        languages:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              level:
+                type: string
+        workExperiences:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              company:
+                type: string
+              role:
+                type: string
+              startDate:
+                type: string
+                format: date
+              endDate:
+                type: string
+                format: date
+                nullable: true
+              description:
+                type: string
+        educations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              institution:
+                type: string
+              degree:
+                type: string
+              field:
+                type: string
+              startYear:
+                type: integer
+              endYear:
+                type: integer
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-11-20T14:22:00Z"
+
+    # ===========================================================================
+    # ERROR RESPONSE
+    # ===========================================================================
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Bad Request"
+        message:
+          type: string
+          example: "Invalid pagination parameters"
+        status:
+          type: integer
+          example: 400
+
