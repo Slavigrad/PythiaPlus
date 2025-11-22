@@ -65,6 +65,9 @@ export class EmployeeListComponent {
   private readonly router = inject(Router);
   protected readonly themeService = inject(ThemeService);
 
+  // Expose Math for template
+  protected readonly Math = Math;
+
   // State Management
   protected readonly viewMode = signal<ViewMode>('grid');
   protected readonly showFilters = signal(true);

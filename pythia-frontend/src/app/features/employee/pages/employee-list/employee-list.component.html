@@ -657,4 +657,54 @@
       </div>
     </div>
   }
+
+  <!-- Pagination Controls -->
+  @if (totalPages() > 1) {
+    <div class="pagination-container">
+      <div class="pagination-info">
+        <span class="page-stats">
+          Showing {{ (currentPage() * pageSize()) + 1 }}-{{ Math.min((currentPage() + 1) * pageSize(), totalElements()) }}
+          of {{ totalElements() }} employees
+        </span>
+      </div>
+
+      <div class="pagination-controls">
+        <button
+          mat-icon-button
+          [disabled]="!hasPreviousPage"
+          (click)="previousPage()"
+          matTooltip="Previous page"
+          class="pagination-btn">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <span class="page-indicator">
+          Page {{ currentPage() + 1 }} of {{ totalPages() }}
+        </span>
+
+        <button
+          mat-icon-button
+          [disabled]="!hasNextPage"
+          (click)="nextPage()"
+          matTooltip="Next page"
+          class="pagination-btn">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
+      <div class="page-size-selector">
+        <label for="page-size">Per page:</label>
+        <select
+          id="page-size"
+          [value]="pageSize()"
+          (change)="handlePageSizeChange(+$any($event.target).value)"
+          class="page-size-select">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+    </div>
+  }
 </div>
