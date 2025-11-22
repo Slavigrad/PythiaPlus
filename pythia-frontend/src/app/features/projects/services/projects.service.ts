@@ -12,11 +12,12 @@ import {
   AddProjectTeamMemberRequest,
   UpdateProjectTeamMemberRequest,
   AddProjectTechnologyRequest,
-  ProjectListAnalytics,
-  PaginationMetadata
+  ProjectListAnalytics
 } from '../../../models';
 import { ProjectListResponseBackend, ProjectBackend } from '../../../models/project-backend.model';
 import { mapProjectListResponse, mapProjectDetail } from '../utils/project-mappers';
+import { PaginationService } from '../../../core/services';
+import { validateProjectListResponse } from '../utils/api-validators';
 
 /**
  * Projects Service
@@ -55,8 +56,30 @@ export class ProjectsService {
   /** Analytics summary for current project list */
   readonly analytics = signal<ProjectListAnalytics | null>(null);
 
-  /** Pagination metadata */
-  readonly pagination = signal<PaginationMetadata | null>(null);
+  // ============================================================================
+  // PAGINATION SERVICE
+  // ============================================================================
+
+  /**
+   * Pagination service instance for projects
+   *
+   * Provides reactive pagination state with computed properties.
+   * Reusable across all paginated endpoints.
+   */
+  private readonly paginationService = inject(PaginationService<Project>);
+
+  /**
+   * Expose pagination state from pagination service
+   *
+   * Components should use these computed signals for pagination UI
+   */
+  readonly pagination = this.paginationService.state;
+  readonly currentPage = this.paginationService.currentPage;
+  readonly pageSize = this.paginationService.pageSize;
+  readonly hasNextPage = this.paginationService.hasNext;
+  readonly hasPreviousPage = this.paginationService.hasPrevious;
+  readonly firstItem = this.paginationService.firstItem;
+  readonly lastItem = this.paginationService.lastItem;
 
   // ============================================================================
   // SINGLE PROJECT STATE
@@ -91,7 +114,7 @@ export class ProjectsService {
   // ============================================================================
 
   /** Total projects count */
-  readonly totalProjects = computed(() => this.pagination()?.totalElements ?? 0);
+  readonly totalProjects = this.paginationService.totalItems;
 
   /** Has any filters applied (excluding pagination) */
   readonly hasFilters = computed(() => {
@@ -134,6 +157,12 @@ export class ProjectsService {
 
   /**
    * Load projects with current filters
+   *
+   * UPDATED: 2025-11-22
+   * - Added validation pipeline for backend responses
+   * - Integrated PaginationService for state management
+   * - Fail-fast error handling for invalid responses
+   *
    * Updates projects, analytics, and pagination signals
    */
   loadProjects(params?: Partial<ProjectQueryParams>): void {
@@ -147,15 +176,33 @@ export class ProjectsService {
 
     const httpParams = this.buildHttpParams(this.filters());
 
-    this.http.get<ProjectListResponseBackend>(`${this.API_BASE_URL}/projects`, { params: httpParams })
+    this.http.get<unknown>(`${this.API_BASE_URL}/projects`, { params: httpParams })
       .pipe(
-        map(backendResponse => mapProjectListResponse(backendResponse)),
+        // ✅ Step 1: Validate backend response structure
+        tap((response) => {
+          try {
+            validateProjectListResponse(response);
+          } catch (err) {
+            console.error('[ProjectsService] Backend response validation failed:', err);
+            throw err;
+          }
+        }),
+
+        // ✅ Step 2: Map to frontend model (now type-safe after validation)
+        map((backendResponse) => mapProjectListResponse(backendResponse as ProjectListResponseBackend)),
+
+        // ✅ Step 3: Update all state
         tap((response) => {
           this.projects.set(response.projects);
           this.analytics.set(response.analytics);
-          this.pagination.set(response.pagination);
+
+          // ✅ Update pagination service
+          this.paginationService.setPage(response.pagination, response.projects);
+
           this.loading.set(false);
         }),
+
+        // ✅ Step 4: Handle errors
         catchError((error: HttpErrorResponse) => {
           this.error.set(this.getErrorMessage(error));
           this.loading.set(false);

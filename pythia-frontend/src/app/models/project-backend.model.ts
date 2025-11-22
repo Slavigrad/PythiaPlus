@@ -122,20 +122,80 @@ export interface ProjectBackend {
 
 /**
  * Project list response from backend
+ *
+ * UPDATED: 2025-11-22
+ * Backend now returns complete pagination object (no more root-level "total")
+ * Matches Spring Boot Page<T> structure after backend implementation
+ *
+ * @see BACKEND-PAGINATION-SPEC.md for full specification
  */
 export interface ProjectListResponseBackend {
+  /** Array of projects on current page */
   projects: ProjectBackend[];
-  total: number;
+
+  /**
+   * Pagination metadata
+   *
+   * REQUIRED: Backend must always return complete pagination object
+   * Contains page number, page size, total elements, and total pages
+   */
+  pagination: {
+    /** Current page number (0-indexed from backend) */
+    page: number;
+
+    /** Number of items per page */
+    size: number;
+
+    /** Total number of items across all pages */
+    totalElements: number;
+
+    /** Total number of pages */
+    totalPages: number;
+  };
+
+  /**
+   * Active filters applied to the query
+   * Optional - only present if filters were applied
+   */
   filters?: {
     status: string;
     industry: string;
     company: string;
   };
-  pagination?: {
-    page: number;
-    size: number;
-    total: number;
-    totalPages: number;
+
+  /**
+   * Analytics summary for the filtered result set
+   * Optional - may not be present in all responses
+   */
+  analytics?: {
+    totalProjects: number;
+    activeProjects: number;
+    completedProjects: number;
+    onHoldProjects: number;
+    cancelledProjects: number;
+    totalEmployeesInvolved: number;
+    averageTeamSize: number;
+    averageProjectDuration: string;
+    totalBudget: number;
+    totalSpent: number;
+    averageProgress: number;
+    topTechnologies: Array<{
+      name: string;
+      count: number;
+      percentage: number;
+    }>;
+    topIndustries: Array<{
+      name: string;
+      count: number;
+      percentage: number;
+    }>;
+    complexityDistribution: {
+      SIMPLE: number;
+      MODERATE: number;
+      COMPLEX: number;
+      ENTERPRISE: number;
+    };
+    averageSuccessRating: number;
+    averageClientSatisfaction: number;
   };
-  analytics?: any; // Analytics structure from backend
 }
