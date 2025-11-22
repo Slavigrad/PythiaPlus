@@ -33,8 +33,9 @@ export class ValidationError extends Error {
     this.name = 'ValidationError';
 
     // Maintain proper stack trace in V8 engines
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ValidationError);
+    if ('captureStackTrace' in Error) {
+      (Error as { captureStackTrace(target: object, constructor: Function): void })
+        .captureStackTrace(this, ValidationError);
     }
   }
 }
@@ -91,11 +92,11 @@ export function validateProjectListResponse(
     );
   }
 
-  if (!isValidArray(resp.projects)) {
-    console.error('[API Validator] Field "projects" is not an array:', resp.projects);
+  if (!isValidArray(resp['projects'])) {
+    console.error('[API Validator] Field "projects" is not an array:', resp['projects']);
     throw new ValidationError(
       'Invalid API response: "projects" must be an array',
-      { projects: resp.projects, response }
+      { projects: resp['projects'], response }
     );
   }
 
@@ -111,15 +112,15 @@ export function validateProjectListResponse(
     );
   }
 
-  if (!resp.pagination || typeof resp.pagination !== 'object') {
-    console.error('[API Validator] Field "pagination" is not an object:', resp.pagination);
+  if (!resp['pagination'] || typeof resp['pagination'] !== 'object') {
+    console.error('[API Validator] Field "pagination" is not an object:', resp['pagination']);
     throw new ValidationError(
       'Invalid API response: "pagination" must be an object',
-      { pagination: resp.pagination, response }
+      { pagination: resp['pagination'], response }
     );
   }
 
-  const pagination = resp.pagination as Record<string, unknown>;
+  const pagination = resp['pagination'] as Record<string, unknown>;
 
   // ============================================================================
   // STEP 4: Validate pagination fields exist and have correct types
@@ -134,11 +135,11 @@ export function validateProjectListResponse(
     );
   }
 
-  if (!isValidNumber(pagination.page)) {
-    console.error('[API Validator] pagination.page is not a valid number:', pagination.page);
+  if (!isValidNumber(pagination['page'])) {
+    console.error('[API Validator] pagination.page is not a valid number:', pagination['page']);
     throw new ValidationError(
       'Invalid API response: pagination.page must be a number',
-      { page: pagination.page, pagination }
+      { page: pagination['page'], pagination }
     );
   }
 
@@ -151,11 +152,11 @@ export function validateProjectListResponse(
     );
   }
 
-  if (!isValidNumber(pagination.size)) {
-    console.error('[API Validator] pagination.size is not a valid number:', pagination.size);
+  if (!isValidNumber(pagination['size'])) {
+    console.error('[API Validator] pagination.size is not a valid number:', pagination['size']);
     throw new ValidationError(
       'Invalid API response: pagination.size must be a number',
-      { size: pagination.size, pagination }
+      { size: pagination['size'], pagination }
     );
   }
 
@@ -168,11 +169,11 @@ export function validateProjectListResponse(
     );
   }
 
-  if (!isValidNumber(pagination.totalElements)) {
-    console.error('[API Validator] pagination.totalElements is not a valid number:', pagination.totalElements);
+  if (!isValidNumber(pagination['totalElements'])) {
+    console.error('[API Validator] pagination.totalElements is not a valid number:', pagination['totalElements']);
     throw new ValidationError(
       'Invalid API response: pagination.totalElements must be a number',
-      { totalElements: pagination.totalElements, pagination }
+      { totalElements: pagination['totalElements'], pagination }
     );
   }
 
@@ -185,11 +186,11 @@ export function validateProjectListResponse(
     );
   }
 
-  if (!isValidNumber(pagination.totalPages)) {
-    console.error('[API Validator] pagination.totalPages is not a valid number:', pagination.totalPages);
+  if (!isValidNumber(pagination['totalPages'])) {
+    console.error('[API Validator] pagination.totalPages is not a valid number:', pagination['totalPages']);
     throw new ValidationError(
       'Invalid API response: pagination.totalPages must be a number',
-      { totalPages: pagination.totalPages, pagination }
+      { totalPages: pagination['totalPages'], pagination }
     );
   }
 
@@ -198,38 +199,38 @@ export function validateProjectListResponse(
   // ============================================================================
 
   // Page must be non-negative (0-indexed)
-  if (pagination.page < 0) {
-    console.error('[API Validator] pagination.page cannot be negative:', pagination.page);
+  if ((pagination['page'] as number) < 0) {
+    console.error('[API Validator] pagination.page cannot be negative:', pagination['page']);
     throw new ValidationError(
       'Invalid API response: pagination.page cannot be negative',
-      { page: pagination.page, pagination }
+      { page: pagination['page'], pagination }
     );
   }
 
   // Size must be positive
-  if (pagination.size <= 0) {
-    console.error('[API Validator] pagination.size must be positive:', pagination.size);
+  if ((pagination['size'] as number) <= 0) {
+    console.error('[API Validator] pagination.size must be positive:', pagination['size']);
     throw new ValidationError(
       'Invalid API response: pagination.size must be positive',
-      { size: pagination.size, pagination }
+      { size: pagination['size'], pagination }
     );
   }
 
   // TotalElements must be non-negative
-  if (pagination.totalElements < 0) {
-    console.error('[API Validator] pagination.totalElements cannot be negative:', pagination.totalElements);
+  if ((pagination['totalElements'] as number) < 0) {
+    console.error('[API Validator] pagination.totalElements cannot be negative:', pagination['totalElements']);
     throw new ValidationError(
       'Invalid API response: pagination.totalElements cannot be negative',
-      { totalElements: pagination.totalElements, pagination }
+      { totalElements: pagination['totalElements'], pagination }
     );
   }
 
   // TotalPages must be non-negative
-  if (pagination.totalPages < 0) {
-    console.error('[API Validator] pagination.totalPages cannot be negative:', pagination.totalPages);
+  if ((pagination['totalPages'] as number) < 0) {
+    console.error('[API Validator] pagination.totalPages cannot be negative:', pagination['totalPages']);
     throw new ValidationError(
       'Invalid API response: pagination.totalPages cannot be negative',
-      { totalPages: pagination.totalPages, pagination }
+      { totalPages: pagination['totalPages'], pagination }
     );
   }
 
@@ -237,14 +238,14 @@ export function validateProjectListResponse(
   // STEP 6: Validate totalPages calculation (optional but recommended)
   // ============================================================================
 
-  const expectedTotalPages = pagination.totalElements === 0
+  const expectedTotalPages = (pagination['totalElements'] as number) === 0
     ? 0
-    : Math.ceil(pagination.totalElements / pagination.size);
+    : Math.ceil((pagination['totalElements'] as number) / (pagination['size'] as number));
 
-  if (pagination.totalPages !== expectedTotalPages) {
+  if ((pagination['totalPages'] as number) !== expectedTotalPages) {
     console.warn(
-      `[API Validator] pagination.totalPages (${pagination.totalPages}) doesn't match calculation ` +
-      `(ceil(${pagination.totalElements} / ${pagination.size}) = ${expectedTotalPages}). ` +
+      `[API Validator] pagination.totalPages (${pagination['totalPages']}) doesn't match calculation ` +
+      `(ceil(${pagination['totalElements']} / ${pagination['size']}) = ${expectedTotalPages}). ` +
       `This may indicate a backend bug.`
     );
     // Don't throw - just warn, as backend might have valid reasons for different calculation
@@ -254,25 +255,25 @@ export function validateProjectListResponse(
   // STEP 7: Validate projects array size (warning only)
   // ============================================================================
 
-  const projectsCount = resp.projects.length;
+  const projectsCount = (resp['projects'] as unknown[]).length;
 
   // Check if number of projects exceeds page size
-  if (projectsCount > pagination.size) {
+  if (projectsCount > (pagination['size'] as number)) {
     console.warn(
-      `[API Validator] Response contains ${projectsCount} projects but page size is ${pagination.size}. ` +
+      `[API Validator] Response contains ${projectsCount} projects but page size is ${pagination['size']}. ` +
       `This may indicate a backend bug.`
     );
   }
 
   // Check if we're on a non-last page but have fewer items than page size
   if (
-    projectsCount < pagination.size &&
+    projectsCount < (pagination['size'] as number) &&
     projectsCount > 0 &&
-    pagination.page < pagination.totalPages - 1
+    (pagination['page'] as number) < (pagination['totalPages'] as number) - 1
   ) {
     console.warn(
-      `[API Validator] On page ${pagination.page} (not last page) but only ${projectsCount} items ` +
-      `(expected ${pagination.size}). This may indicate a backend bug.`
+      `[API Validator] On page ${pagination['page']} (not last page) but only ${projectsCount} items ` +
+      `(expected ${pagination['size']}). This may indicate a backend bug.`
     );
   }
 
