@@ -114,4 +114,10 @@ export class EmployeeCardCompactComponent {
     event.stopPropagation();
     this.actionClick.emit({ employeeId: this.employee().id, action });
   }
+
+  protected onImageError(event: Event): void {
+    // Hide broken images by setting display: none
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+  }
 }

@@ -184,4 +184,10 @@ export class EmployeeCardComponent {
     }
     return profilePic;
   }
+
+  protected onImageError(event: Event): void {
+    // Hide broken images by setting display: none
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+  }
 }
