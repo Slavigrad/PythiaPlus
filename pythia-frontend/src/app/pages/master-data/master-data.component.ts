@@ -6,9 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NotificationService } from '../../core/services/notification.service';
 import { TechnologyService } from '../../services/technology.service';
 import { Technology } from '../../models/technology.model';
 import { TechnologyEditDialogComponent } from './components/technology-edit-dialog/technology-edit-dialog.component';
@@ -50,7 +50,6 @@ import { MasterDataSearch } from '../../components/master-data-search/master-dat
     MatCardModule,
     MatChipsModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule,
     MatDialogModule,
     MatTooltipModule,
     MasterDataSearch
@@ -66,7 +65,7 @@ export class MasterDataComponent implements OnInit {
   protected readonly certificateService = inject(CertificateService);
   protected readonly languageService = inject(LanguageService);
   protected readonly skillService = inject(SkillService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
   // Active tab index
@@ -93,7 +92,7 @@ export class MasterDataComponent implements OnInit {
   protected loadTechnologies(): void {
     this.technologyService.loadTechnologies().subscribe({
       error: (error) => {
-        this.showError('Failed to load technologies');
+        this.notificationService.error('Failed to load technologies');
         console.error('Error loading technologies:', error);
       }
     });
@@ -112,10 +111,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.technologyService.createTechnology(result).subscribe({
           next: () => {
-            this.showSuccess('Technology added successfully');
+            this.notificationService.success('Technology added successfully');
           },
           error: (error) => {
-            this.showError('Failed to add technology');
+            this.notificationService.error('Failed to add technology');
             console.error('Error creating technology:', error);
           }
         });
@@ -136,10 +135,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.technologyService.updateTechnology(technology.id, result).subscribe({
           next: () => {
-            this.showSuccess('Technology updated successfully');
+            this.notificationService.success('Technology updated successfully');
           },
           error: (error) => {
-            this.showError('Failed to update technology');
+            this.notificationService.error('Failed to update technology');
             console.error('Error updating technology:', error);
           }
         });
@@ -158,39 +157,16 @@ export class MasterDataComponent implements OnInit {
     if (confirmed) {
       this.technologyService.deleteTechnology(technology.id).subscribe({
         next: () => {
-          this.showSuccess('Technology deleted successfully');
+          this.notificationService.success('Technology deleted successfully');
         },
         error: (error) => {
-          this.showError('Failed to delete technology');
+          this.notificationService.error('Failed to delete technology');
           console.error('Error deleting technology:', error);
         }
       });
     }
   }
 
-  /**
-   * Show success notification
-   */
-  private showSuccess(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 3000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: ['success-snackbar']
-    });
-  }
-
-  /**
-   * Show error notification
-   */
-  private showError(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 5000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: ['error-snackbar']
-    });
-  }
 
   /**
    * Load roles from API
@@ -198,7 +174,7 @@ export class MasterDataComponent implements OnInit {
   protected loadRoles(): void {
     this.roleService.loadRoles().subscribe({
       error: (error) => {
-        this.showError('Failed to load roles');
+        this.notificationService.error('Failed to load roles');
         console.error('Error loading roles:', error);
       }
     });
@@ -217,10 +193,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.roleService.createRole(result).subscribe({
           next: () => {
-            this.showSuccess('Role added successfully');
+            this.notificationService.success('Role added successfully');
           },
           error: (error) => {
-            this.showError('Failed to add role');
+            this.notificationService.error('Failed to add role');
             console.error('Error creating role:', error);
           }
         });
@@ -241,10 +217,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.roleService.updateRole(role.id, result).subscribe({
           next: () => {
-            this.showSuccess('Role updated successfully');
+            this.notificationService.success('Role updated successfully');
           },
           error: (error) => {
-            this.showError('Failed to update role');
+            this.notificationService.error('Failed to update role');
             console.error('Error updating role:', error);
           }
         });
@@ -263,10 +239,10 @@ export class MasterDataComponent implements OnInit {
     if (confirmed) {
       this.roleService.deleteRole(role.id).subscribe({
         next: () => {
-          this.showSuccess('Role deleted successfully');
+          this.notificationService.success('Role deleted successfully');
         },
         error: (error) => {
-          this.showError('Failed to delete role');
+          this.notificationService.error('Failed to delete role');
           console.error('Error deleting role:', error);
         }
       });
@@ -279,7 +255,7 @@ export class MasterDataComponent implements OnInit {
   protected loadTrainings(): void {
     this.trainingService.loadTrainings().subscribe({
       error: (error) => {
-        this.showError('Failed to load trainings');
+        this.notificationService.error('Failed to load trainings');
         console.error('Error loading trainings:', error);
       }
     });
@@ -298,10 +274,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.trainingService.createTraining(result).subscribe({
           next: () => {
-            this.showSuccess('Training added successfully');
+            this.notificationService.success('Training added successfully');
           },
           error: (error) => {
-            this.showError('Failed to add training');
+            this.notificationService.error('Failed to add training');
             console.error('Error creating training:', error);
           }
         });
@@ -322,10 +298,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.trainingService.updateTraining(training.id, result).subscribe({
           next: () => {
-            this.showSuccess('Training updated successfully');
+            this.notificationService.success('Training updated successfully');
           },
           error: (error) => {
-            this.showError('Failed to update training');
+            this.notificationService.error('Failed to update training');
             console.error('Error updating training:', error);
           }
         });
@@ -344,10 +320,10 @@ export class MasterDataComponent implements OnInit {
     if (confirmed) {
       this.trainingService.deleteTraining(training.id).subscribe({
         next: () => {
-          this.showSuccess('Training deleted successfully');
+          this.notificationService.success('Training deleted successfully');
         },
         error: (error) => {
-          this.showError('Failed to delete training');
+          this.notificationService.error('Failed to delete training');
           console.error('Error deleting training:', error);
         }
       });
@@ -360,7 +336,7 @@ export class MasterDataComponent implements OnInit {
   protected loadCertificates(): void {
     this.certificateService.loadCertificates().subscribe({
       error: (error) => {
-        this.showError('Failed to load certificates');
+        this.notificationService.error('Failed to load certificates');
         console.error('Error loading certificates:', error);
       }
     });
@@ -379,10 +355,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.certificateService.createCertificate(result).subscribe({
           next: () => {
-            this.showSuccess('Certificate added successfully');
+            this.notificationService.success('Certificate added successfully');
           },
           error: (error) => {
-            this.showError('Failed to add certificate');
+            this.notificationService.error('Failed to add certificate');
             console.error('Error creating certificate:', error);
           }
         });
@@ -403,10 +379,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.certificateService.updateCertificate(certificate.id, result).subscribe({
           next: () => {
-            this.showSuccess('Certificate updated successfully');
+            this.notificationService.success('Certificate updated successfully');
           },
           error: (error) => {
-            this.showError('Failed to update certificate');
+            this.notificationService.error('Failed to update certificate');
             console.error('Error updating certificate:', error);
           }
         });
@@ -425,10 +401,10 @@ export class MasterDataComponent implements OnInit {
     if (confirmed) {
       this.certificateService.deleteCertificate(certificate.id).subscribe({
         next: () => {
-          this.showSuccess('Certificate deleted successfully');
+          this.notificationService.success('Certificate deleted successfully');
         },
         error: (error) => {
-          this.showError('Failed to delete certificate');
+          this.notificationService.error('Failed to delete certificate');
           console.error('Error deleting certificate:', error);
         }
       });
@@ -441,7 +417,7 @@ export class MasterDataComponent implements OnInit {
   protected loadLanguages(): void {
     this.languageService.loadLanguages().subscribe({
       error: (error) => {
-        this.showError('Failed to load languages');
+        this.notificationService.error('Failed to load languages');
         console.error('Error loading languages:', error);
       }
     });
@@ -460,10 +436,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.languageService.createLanguage(result).subscribe({
           next: () => {
-            this.showSuccess('Language added successfully');
+            this.notificationService.success('Language added successfully');
           },
           error: (error) => {
-            this.showError('Failed to add language');
+            this.notificationService.error('Failed to add language');
             console.error('Error creating language:', error);
           }
         });
@@ -484,10 +460,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.languageService.updateLanguage(language.id, result).subscribe({
           next: () => {
-            this.showSuccess('Language updated successfully');
+            this.notificationService.success('Language updated successfully');
           },
           error: (error) => {
-            this.showError('Failed to update language');
+            this.notificationService.error('Failed to update language');
             console.error('Error updating language:', error);
           }
         });
@@ -506,10 +482,10 @@ export class MasterDataComponent implements OnInit {
     if (confirmed) {
       this.languageService.deleteLanguage(language.id).subscribe({
         next: () => {
-          this.showSuccess('Language deleted successfully');
+          this.notificationService.success('Language deleted successfully');
         },
         error: (error) => {
-          this.showError('Failed to delete language');
+          this.notificationService.error('Failed to delete language');
           console.error('Error deleting language:', error);
         }
       });
@@ -522,7 +498,7 @@ export class MasterDataComponent implements OnInit {
   protected loadSkills(): void {
     this.skillService.loadSkills().subscribe({
       error: (error) => {
-        this.showError('Failed to load skills');
+        this.notificationService.error('Failed to load skills');
         console.error('Error loading skills:', error);
       }
     });
@@ -541,10 +517,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.skillService.createSkill(result).subscribe({
           next: () => {
-            this.showSuccess('Skill added successfully');
+            this.notificationService.success('Skill added successfully');
           },
           error: (error) => {
-            this.showError('Failed to add skill');
+            this.notificationService.error('Failed to add skill');
             console.error('Error creating skill:', error);
           }
         });
@@ -565,10 +541,10 @@ export class MasterDataComponent implements OnInit {
       if (result) {
         this.skillService.updateSkill(skill.id, result).subscribe({
           next: () => {
-            this.showSuccess('Skill updated successfully');
+            this.notificationService.success('Skill updated successfully');
           },
           error: (error) => {
-            this.showError('Failed to update skill');
+            this.notificationService.error('Failed to update skill');
             console.error('Error updating skill:', error);
           }
         });
@@ -587,10 +563,10 @@ export class MasterDataComponent implements OnInit {
     if (confirmed) {
       this.skillService.deleteSkill(skill.id).subscribe({
         next: () => {
-          this.showSuccess('Skill deleted successfully');
+          this.notificationService.success('Skill deleted successfully');
         },
         error: (error) => {
-          this.showError('Failed to delete skill');
+          this.notificationService.error('Failed to delete skill');
           console.error('Error deleting skill:', error);
         }
       });

@@ -1,174 +1,120 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { BaseDataService, DataResponse } from '../core/services/base-data.service';
 import { Technology, TechnologyResponse, TechnologyRequest } from '../models/technology.model';
 
 /**
  * Technology Service
  *
- * Manages CRUD operations for technology master data
- * - GET: Fetch all technologies
- * - POST: Create new technology
- * - PUT: Update existing technology
- * - DELETE: Remove technology
+ * Manages CRUD operations for technology master data.
+ * Extends BaseDataService for standardized data management.
  *
- * Uses signals for reactive state management
- * Includes client-side search/filter functionality
+ * Features (inherited from BaseDataService):
+ * - Reactive state management with signals
+ * - Loading/error states
+ * - Search/filter functionality
+ * - CRUD operations (load, create, update, delete)
+ * - Consistent error handling
+ *
+ * Signals:
+ * - data: WritableSignal<Technology[]> - All technologies
+ * - loading: WritableSignal<boolean> - Loading state
+ * - error: WritableSignal<string | null> - Error message
+ * - total: WritableSignal<number> - Total count
+ * - searchQuery: WritableSignal<string> - Search filter
+ * - filteredData: Signal<Technology[]> - Filtered results
+ *
+ * Methods:
+ * - load(): Observable<TechnologyResponse> - Fetch all technologies
+ * - create(request): Observable<Technology> - Create new technology
+ * - update(id, request): Observable<Technology> - Update technology
+ * - delete(id): Observable<void> - Delete technology
+ * - clearError(): void - Clear error state
+ * - resetSearch(): void - Clear search filter
  */
 @Injectable({
   providedIn: 'root'
 })
-export class TechnologyService {
-  private readonly http = inject(HttpClient);
-
-  // API configuration
-  private readonly API_BASE_URL = 'http://localhost:8080/api/v1';
-
-  // Reactive state signals
-  readonly technologies = signal<Technology[]>([]);
-  readonly loading = signal(false);
-  readonly error = signal<string | null>(null);
-  readonly total = signal(0);
-
-  // Search/filter state
-  readonly searchQuery = signal('');
-
+export class TechnologyService extends BaseDataService<Technology, TechnologyRequest> {
   /**
-   * Filtered technologies based on search query
-   * Searches across: name, description, category
-   * Case-insensitive partial matching
+   * API endpoint for technologies
    */
-  readonly filteredTechnologies = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    const items = this.technologies();
-
-    if (!query) {
-      return items;
-    }
-
-    return items.filter(tech =>
-      tech.name.toLowerCase().includes(query) ||
-      tech.description.toLowerCase().includes(query) ||
-      tech.category.toLowerCase().includes(query) ||
-      (tech.code?.toLowerCase().includes(query) ?? false)
-    );
-  });
+  protected getEndpoint(): string {
+    return 'technologies';
+  }
 
   /**
-   * Fetch all technologies from the API
+   * Define searchable fields for technology filtering
+   * Searches across: name, description, category, code
+   */
+  protected getSearchFields(tech: Technology): string[] {
+    return [
+      tech.name,
+      tech.description,
+      tech.category,
+      tech.code || ''
+    ];
+  }
+
+  /**
+   * Custom error message for 404 responses
+   */
+  protected getItemNotFoundMessage(): string {
+    return 'Technology not found.';
+  }
+
+  /**
+   * Custom error message for 409 (duplicate) responses
+   */
+  protected getDuplicateMessage(): string {
+    return 'A technology with this name already exists.';
+  }
+
+  /**
+   * Load all technologies
+   * Alias for base load() method with proper return type
    */
   loadTechnologies(): Observable<TechnologyResponse> {
-    this.loading.set(true);
-    this.error.set(null);
-
-    return this.http.get<TechnologyResponse>(`${this.API_BASE_URL}/technologies`).pipe(
-      tap(response => {
-        this.technologies.set(response.items);
-        this.total.set(response.total);
-        this.loading.set(false);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.handleError(error);
-        throw error;
-      })
-    );
+    return this.load();
   }
 
   /**
    * Create a new technology
+   * Alias for base create() method
    */
   createTechnology(request: TechnologyRequest): Observable<Technology> {
-    this.loading.set(true);
-    this.error.set(null);
-
-    return this.http.post<Technology>(`${this.API_BASE_URL}/technologies`, request).pipe(
-      tap(newTech => {
-        // Add to local state
-        this.technologies.update(techs => [...techs, newTech]);
-        this.total.update(t => t + 1);
-        this.loading.set(false);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.handleError(error);
-        throw error;
-      })
-    );
+    return this.create(request);
   }
 
   /**
    * Update an existing technology
+   * Alias for base update() method
    */
   updateTechnology(id: number, request: TechnologyRequest): Observable<Technology> {
-    this.loading.set(true);
-    this.error.set(null);
-
-    return this.http.put<Technology>(`${this.API_BASE_URL}/technologies/${id}`, request).pipe(
-      tap(updatedTech => {
-        // Update local state
-        this.technologies.update(techs =>
-          techs.map(tech => tech.id === id ? updatedTech : tech)
-        );
-        this.loading.set(false);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.handleError(error);
-        throw error;
-      })
-    );
+    return this.update(id, request);
   }
 
   /**
    * Delete a technology
+   * Alias for base delete() method
    */
   deleteTechnology(id: number): Observable<void> {
-    this.loading.set(true);
-    this.error.set(null);
-
-    return this.http.delete<void>(`${this.API_BASE_URL}/technologies/${id}`).pipe(
-      tap(() => {
-        // Remove from local state
-        this.technologies.update(techs => techs.filter(tech => tech.id !== id));
-        this.total.update(t => t - 1);
-        this.loading.set(false);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.handleError(error);
-        throw error;
-      })
-    );
+    return this.delete(id);
   }
 
   /**
-   * Clear error state
+   * Computed signal for backward compatibility
+   * Returns filtered technologies based on search query
    */
-  clearError(): void {
-    this.error.set(null);
+  get technologies() {
+    return this.data;
   }
 
   /**
-   * Reset search query to show all technologies
+   * Computed signal for filtered technologies
+   * Provides backward compatibility with existing code
    */
-  resetSearch(): void {
-    this.searchQuery.set('');
-  }
-
-  /**
-   * Handle HTTP errors
-   */
-  private handleError(error: HttpErrorResponse): void {
-    this.loading.set(false);
-
-    if (error.status === 0) {
-      this.error.set('Unable to connect to server. Please check your connection.');
-    } else if (error.status === 404) {
-      this.error.set('Technology not found.');
-    } else if (error.status === 409) {
-      this.error.set('A technology with this name already exists.');
-    } else if (error.status >= 500) {
-      this.error.set('Server error. Please try again later.');
-    } else {
-      this.error.set(error.error?.message || 'An unexpected error occurred.');
-    }
+  get filteredTechnologies() {
+    return this.filteredData;
   }
 }
