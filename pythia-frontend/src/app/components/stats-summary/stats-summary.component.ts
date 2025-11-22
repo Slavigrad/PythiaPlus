@@ -1,6 +1,6 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { SearchService } from '../../services/search.service';
+import { SearchService } from '../../services/search';
 
 /**
  * Stats Summary Component

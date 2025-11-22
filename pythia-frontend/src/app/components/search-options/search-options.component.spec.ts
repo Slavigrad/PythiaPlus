@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { SearchOptionsComponent } from './search-options.component';
-import { SearchService } from '../../services/search.service';
+import { SearchService } from '../../services/search';
 import { signal } from '@angular/core';
 
 describe('SearchOptionsComponent', () => {
