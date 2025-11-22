@@ -394,7 +394,7 @@ export interface TechnologyStackResponse { ... }
 ## 📚 Related Documents
 
 - **[VISUAL_TESTING_GUIDE.md](VISUAL_TESTING_GUIDE.md)** - Comprehensive testing guide for QA
-- **[ANALYTICS_TEMPLE_API_ENHANCEMENTS.md](ANALYTICS_TEMPLE_API_ENHANCEMENTS.md)** - Detailed backend API specs
+- **[ANALYTICS_TEMPLE_API_ENHANCEMENTS.md](documents/analytics-temple/ANALYTICS_TEMPLE_API_ENHANCEMENTS.md)** - Detailed backend API specs
 - **[backend-api/projects/openapi-project-management.yaml](backend-api/projects/openapi-project-management.yaml)** - Current OpenAPI spec
 - **[CLAUDE.md](CLAUDE.md)** - Project conventions and AI assistant guide
 
