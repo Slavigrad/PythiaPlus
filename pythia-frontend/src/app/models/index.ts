@@ -19,6 +19,7 @@ export * from './candidate.model';
 // Search models
 export * from './search-params.model';
 export * from './search-response.model';
+export * from './internal-filters.model';
 
 // Facet models
 export * from './facet.model';

@@ -81,6 +81,28 @@
     <app-stats-summary />
   }
 
+  <!-- Result Filter Strip (Internal Search + Quick Chips) -->
+  @if (searchService.hasResults() && !searchService.loading()) {
+    <app-result-filter-strip />
+  }
+
+  <!-- Reset Search Results Button (when cache is active) -->
+  @if (searchService.isCacheActive() && searchService.hasResults()) {
+    <div class="reset-cache-container">
+      <button
+        type="button"
+        class="reset-cache-btn"
+        (click)="handleResetSearch()"
+        matRipple
+        aria-label="Reset search results and start a new search">
+        <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+        <span>Reset Search Results</span>
+      </button>
+    </div>
+  }
+
   <!-- Facet Pills Toggle Button (only when facets are available) -->
   @if (searchService.facets() && !searchService.loading()) {
     <div class="facets-toggle-container">
@@ -144,7 +166,7 @@
   <!-- Results -->
   @if (searchService.hasResults() && !searchService.loading()) {
     <app-candidate-list
-      [candidates]="searchService.searchResults()"
+      [candidates]="searchService.displayResults()"
       [selectable]="true"
       [selectedIds]="comparisonService.selectedIds()"
       [maxSelectionsReached]="comparisonService.isMaxReached()"

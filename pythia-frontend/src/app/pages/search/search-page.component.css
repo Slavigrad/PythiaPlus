@@ -420,4 +420,74 @@
     width: 18px;
     height: 18px;
   }
+
+  .reset-cache-btn {
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+
+  .reset-cache-btn .reset-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ========================================
+   Reset Search Results Button
+   ======================================== */
+
+.reset-cache-container {
+  display: flex;
+  justify-content: center;
+  margin: var(--spacing-md) 0;
+}
+
+.reset-cache-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, #b91c1c 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+  transition: all 0.2s ease;
+}
+
+.reset-cache-btn:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  transform: translateY(-1px);
+}
+
+.reset-cache-btn:active {
+  transform: translateY(0);
+}
+
+.reset-cache-btn .reset-icon {
+  width: 20px;
+  height: 20px;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.reset-cache-btn:hover .reset-icon {
+  animation-duration: 1s;
+}
+
+.reset-cache-btn:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 3px;
 }

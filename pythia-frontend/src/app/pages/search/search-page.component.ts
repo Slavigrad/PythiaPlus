@@ -11,6 +11,7 @@ import { EmptyStateComponent } from '../../components/empty-state/empty-state.co
 import { FacetPillsComponent } from '../../components/facet-pills/facet-pills.component';
 import { StatsSummaryComponent } from '../../components/stats-summary/stats-summary.component';
 import { ComparisonToolbarComponent } from '../../components/comparison-toolbar/comparison-toolbar.component';
+import { ResultFilterStripComponent } from '../../components/result-filter-strip/result-filter-strip';
 
 /**
  * Search Page Component
@@ -29,6 +30,7 @@ import { ComparisonToolbarComponent } from '../../components/comparison-toolbar/
     FacetPillsComponent,
     StatsSummaryComponent,
     ComparisonToolbarComponent,
+    ResultFilterStripComponent,
     MatRippleModule
   ],
   templateUrl: './search-page.component.html',
@@ -70,7 +72,16 @@ export class SearchPageComponent implements OnInit {
       this.urlTopK.set(topK);
       this.urlMinScore.set(minScore);
 
-      // Restore search if query exists
+      // Check if we have cached results (coming back from employee profile)
+      if (this.searchService.hasCachedResults() && query) {
+        // Restore from cache instead of making a new backend call
+        const restored = this.searchService.restoreFromCache();
+        if (restored) {
+          return; // Use cached results, skip backend call
+        }
+      }
+
+      // No cache or cache failed - perform new search if query exists
       if (query && query.length >= 3) {
         this.searchService.search({
           query,
@@ -127,7 +138,7 @@ export class SearchPageComponent implements OnInit {
    */
   protected handleExport(format: 'csv' | 'json'): void {
     const selectedIds = this.comparisonService.selectedIdsArray();
-    const selectedCandidates = this.searchService.searchResults().filter(c =>
+    const selectedCandidates = this.searchService.displayResults().filter(c =>
       selectedIds.includes(c.id)
     );
 
@@ -169,5 +180,16 @@ export class SearchPageComponent implements OnInit {
    */
   protected navigateToMasterData(): void {
     this.router.navigate(['/master-data']);
+  }
+
+  /**
+   * Handle reset search results
+   * Clears the cache and triggers a new search
+   */
+  protected handleResetSearch(): void {
+    this.searchService.clearCache();
+    this.searchService.clearInternalFilters();
+    // Optionally navigate back to clear URL params
+    this.router.navigate(['/search']);
   }
 }

@@ -1,0 +1,471 @@
+/**
+ * Result Filter Strip Component Styles
+ *
+ * A visionary control center for refining search results
+ * Follows Pythia design system with smooth animations
+ */
+
+/* ========================================
+   Container
+   ======================================== */
+
+.result-filter-strip {
+  background: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.result-filter-strip:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ========================================
+   Header (Always Visible)
+   ======================================== */
+
+.strip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-neutral-50) 0%, var(--color-neutral-100) 100%);
+  border-bottom: 1px solid var(--color-neutral-200);
+  gap: var(--spacing-md);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+}
+
+.filter-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary-500);
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
+  margin: 0;
+  line-height: 1;
+}
+
+.result-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-600);
+  font-weight: var(--font-weight-medium);
+}
+
+.active-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--color-primary-500);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* ========================================
+   Header Buttons
+   ======================================== */
+
+.clear-all-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 6px 12px;
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-md);
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clear-all-btn:hover {
+  background: var(--color-neutral-200);
+  border-color: var(--color-neutral-400);
+  color: var(--color-neutral-900);
+}
+
+.clear-all-btn:active {
+  transform: scale(0.98);
+}
+
+.clear-all-btn .clear-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.expand-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-md);
+  color: var(--color-neutral-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.expand-btn:hover {
+  background: var(--color-neutral-200);
+  border-color: var(--color-neutral-400);
+  color: var(--color-neutral-900);
+}
+
+.expand-btn .chevron-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.expand-btn.expanded .chevron-icon {
+  transform: rotate(180deg);
+}
+
+/* ========================================
+   Expandable Content
+   ======================================== */
+
+.strip-content {
+  padding: var(--spacing-lg);
+  background: white;
+  animation: slideDown 0.25s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Internal Search Section
+   ======================================== */
+
+.internal-search-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--spacing-sm);
+  width: 20px;
+  height: 20px;
+  color: var(--color-neutral-500);
+  pointer-events: none;
+}
+
+.internal-search-input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-xl) var(--spacing-sm) 40px;
+  background: var(--color-neutral-50);
+  border: 2px solid var(--color-neutral-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  color: var(--color-neutral-900);
+  transition: all 0.2s ease;
+}
+
+.internal-search-input::placeholder {
+  color: var(--color-neutral-500);
+}
+
+.internal-search-input:focus {
+  outline: none;
+  background: white;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-neutral-500);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clear-search-btn:hover {
+  background: var(--color-neutral-200);
+  color: var(--color-neutral-900);
+}
+
+.clear-search-btn .clear-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ========================================
+   Quick Filter Chips Section
+   ======================================== */
+
+.quick-filters-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.chip-category {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.category-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+/* ========================================
+   Filter Chips (The Star of the Show)
+   ======================================== */
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 6px 12px;
+  background: white;
+  border: 1.5px solid var(--color-neutral-300);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-700);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-chip:hover {
+  border-color: var(--color-neutral-400);
+  background: var(--color-neutral-50);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.filter-chip:active {
+  transform: translateY(0);
+}
+
+/* Active state - category-specific colors */
+.filter-chip.active[data-category="technology"] {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: #2563eb;
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.filter-chip.active[data-category="skill"] {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #059669;
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.filter-chip.active[data-category="certification"] {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-color: #d97706;
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.filter-chip.active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.chip-label {
+  line-height: 1;
+}
+
+.chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--color-neutral-100);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.filter-chip.active .chip-count {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* ========================================
+   No Chips Message
+   ======================================== */
+
+.no-chips-message {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--color-neutral-500);
+  font-size: var(--font-size-sm);
+}
+
+.no-chips-message p {
+  margin: 0;
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus indicators (WCAG AA compliant) */
+.expand-btn:focus-visible,
+.clear-all-btn:focus-visible,
+.clear-search-btn:focus-visible,
+.filter-chip:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .strip-header {
+    flex-wrap: wrap;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .header-left {
+    flex-wrap: wrap;
+  }
+
+  .result-count {
+    width: 100%;
+    margin-top: var(--spacing-xs);
+  }
+
+  .strip-content {
+    padding: var(--spacing-md);
+  }
+
+  .chip-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .filter-chip {
+    font-size: var(--font-size-xs);
+    padding: 5px 10px;
+  }
+}
+
+/* Touch-friendly tap targets on mobile */
+@media (hover: none) {
+  .filter-chip,
+  .expand-btn,
+  .clear-all-btn,
+  .clear-search-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* ========================================
+   Animation Polish
+   ======================================== */
+
+/* Ripple effect is handled by MatRippleModule */
+
+/* Smooth transitions for state changes */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover lift effect for chips */
+@media (hover: hover) {
+  .filter-chip:hover {
+    transform: translateY(-1px) scale(1.02);
+  }
+
+  .filter-chip.active:hover {
+    transform: translateY(-2px) scale(1.02);
+  }
+}
+
+/* Active press effect */
+.filter-chip:active {
+  transform: scale(0.98);
+}
