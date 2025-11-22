@@ -90,6 +90,12 @@ export class EmployeeListComponent {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
+  // Pagination State
+  protected readonly currentPage = signal(0);
+  protected readonly pageSize = signal(20);
+  protected readonly totalPages = signal(0);
+  protected readonly totalElements = signal(0);
+
   // Filters
   protected readonly filters = signal<EmployeeFilters>({
     search: '',
@@ -297,14 +303,30 @@ export class EmployeeListComponent {
     this.loadEmployees();
   }
 
-  private loadEmployees(): void {
+  /**
+   * Load employees with pagination
+   * @param page Page number (0-indexed)
+   */
+  private loadEmployees(page: number = 0): void {
     this.loading.set(true);
     this.error.set(null);
+    this.currentPage.set(page);
 
-    this.employeeService.getAllEmployees().subscribe({
-      next: (data) => {
-        this.employees.set(data);
+    this.employeeService.getAllEmployees(page, this.pageSize()).subscribe({
+      next: (response) => {
+        // Extract employees from Pythia Hybrid response
+        this.employees.set(response.employees);
+
+        // Update pagination metadata
+        this.totalPages.set(response.pagination.totalPages);
+        this.totalElements.set(response.pagination.totalElements);
+
         this.loading.set(false);
+
+        console.log(
+          `Loaded page ${page + 1}/${response.pagination.totalPages} ` +
+          `(${response.employees.length} employees)`
+        );
       },
       error: (err) => {
         console.error('Failed to load employees:', err);
@@ -504,6 +526,58 @@ export class EmployeeListComponent {
   }
 
   protected refresh(): void {
-    this.loadEmployees();
+    this.loadEmployees(this.currentPage());
+  }
+
+  // Pagination Actions
+  /**
+   * Navigate to next page
+   */
+  protected nextPage(): void {
+    if (this.currentPage() < this.totalPages() - 1) {
+      this.loadEmployees(this.currentPage() + 1);
+    }
+  }
+
+  /**
+   * Navigate to previous page
+   */
+  protected previousPage(): void {
+    if (this.currentPage() > 0) {
+      this.loadEmployees(this.currentPage() - 1);
+    }
+  }
+
+  /**
+   * Navigate to specific page
+   * @param page Page number (0-indexed)
+   */
+  protected goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages()) {
+      this.loadEmployees(page);
+    }
+  }
+
+  /**
+   * Change page size and reload from first page
+   * @param newSize New page size
+   */
+  protected handlePageSizeChange(newSize: number): void {
+    this.pageSize.set(newSize);
+    this.loadEmployees(0); // Reset to first page
+  }
+
+  /**
+   * Check if there's a next page available
+   */
+  protected get hasNextPage(): boolean {
+    return this.currentPage() < this.totalPages() - 1;
+  }
+
+  /**
+   * Check if there's a previous page available
+   */
+  protected get hasPreviousPage(): boolean {
+    return this.currentPage() > 0;
   }
 }
