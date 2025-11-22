@@ -1,68 +1,38 @@
 /**
  * Employee List Response Model
  *
- * HAL/HATEOAS response format for employee list endpoint
+ * Pythia Hybrid response format for employee list endpoint
+ * Matches Pythia's existing /search endpoint pattern for consistency
  */
 
+import { Employee } from './employee.model';
+
 /**
- * Employee summary for list view
- * Simplified version of Employee interface for list display
- * Note: id is extracted from _links.self.href by the service
+ * Employee List Response (Pythia Hybrid format)
+ *
+ * Response from GET /api/v1/employees with pagination
+ * This format is consistent with Pythia's /search endpoint
  */
-export interface EmployeeListItem {
-  id?: number;  // Extracted from _links.self.href
-  fullName: string;
-  title: string;
-  city: string;
-  country: string;
-  email: string;
-  phone: string;
-  summary: string;
-  department: string;
-  seniority: string;
-  yearsExperience: number;
-  availability: string;
-  profilePicture: string;
-  createdAt: string;
-  updatedAt: string;
-  _links?: {
-    self: { href: string };
-    employee: { href: string };
-    experiences: { href: string };
-    employeeSkills: { href: string };
-    employeeCertifications: { href: string };
-    educations: { href: string };
-    employeeTechnologies: { href: string };
-    employeeLanguages: { href: string };
-  };
+export interface EmployeeListResponse {
+  employees: Employee[];
+  pagination: PaginationMetadata;
 }
 
 /**
  * Pagination metadata
+ *
+ * Provides information about the current page and total available data
  */
-export interface PageMetadata {
+export interface PaginationMetadata {
+  /** Current page number (0-indexed) */
+  page: number;
+
+  /** Number of items per page */
   size: number;
+
+  /** Total number of employees across all pages */
   totalElements: number;
+
+  /** Total number of pages */
   totalPages: number;
-  number: number;
-}
-
-/**
- * HAL Links
- */
-export interface HalLinks {
-  self: { href: string };
-  profile?: { href: string };
-  search?: { href: string };
-}
-
-/**
- * Employee List Response (HAL/HATEOAS format)
- */
-export interface EmployeeListResponse {
-  _embedded: {
-    employees: EmployeeListItem[];
-  };
-  _links: HalLinks;
-  page: PageMetadata;
 }

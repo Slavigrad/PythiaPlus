@@ -6,8 +6,7 @@ import {
   Employee,
   EmployeeUpdateRequest,
   EmployeeUpdateResponse,
-  EmployeeListResponse,
-  EmployeeListItem
+  EmployeeListResponse
 } from '../../../models';
 
 /**
@@ -31,10 +30,10 @@ export class EmployeeService {
   readonly error = signal<string | null>(null);
 
   // Signal state for employee list
-  readonly employees = signal<EmployeeListItem[]>([]);
+  readonly employees = signal<Employee[]>([]);
   readonly listLoading = signal(false);
   readonly listError = signal<string | null>(null);
-  readonly pageMetadata = signal<{ size: number; totalElements: number; totalPages: number; number: number } | null>(null);
+  readonly pageMetadata = signal<{ page: number; size: number; totalElements: number; totalPages: number } | null>(null);
 
   // Update operation state
   readonly updateLoading = signal(false);
