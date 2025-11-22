@@ -117,9 +117,29 @@
       <!-- Constellation View (Phase 3) -->
       @if (viewMode() === 'constellation') {
         <div class="constellation-view-container">
-          <app-constellation-view
-            [projects]="projectsService.projects()"
-            (projectSelect)="handleConstellationProjectSelect($event)" />
+          @defer (on viewport; prefetch on idle) {
+            <app-constellation-view
+              [projects]="projectsService.projects()"
+              (projectSelect)="handleConstellationProjectSelect($event)" />
+          } @placeholder {
+            <div class="constellation-placeholder" aria-label="Loading 3D constellation view">
+              <div class="loading-message">
+                <svg class="spinning-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+                <p>Loading 3D Constellation...</p>
+              </div>
+            </div>
+          } @loading (minimum 300ms) {
+            <div class="constellation-placeholder" aria-label="Loading 3D constellation view">
+              <div class="loading-message">
+                <svg class="spinning-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+                <p>Initializing 3D Engine...</p>
+              </div>
+            </div>
+          }
         </div>
       }
 
@@ -183,22 +203,62 @@
           <!-- Charts Grid -->
           <div class="charts-grid">
             <!-- Status Distribution Chart -->
-            <app-status-distribution-chart
-              [statusData]="statusDistribution()" />
+            @defer (on viewport; prefetch on idle) {
+              <app-status-distribution-chart
+                [statusData]="statusDistribution()" />
+            } @placeholder {
+              <div class="chart-card-placeholder">
+                <div class="chart-skeleton"></div>
+              </div>
+            } @loading (minimum 200ms) {
+              <div class="chart-card-placeholder">
+                <div class="chart-skeleton pulse"></div>
+              </div>
+            }
 
             <!-- Budget Timeline Chart -->
-            <app-budget-timeline-chart
-              [totalAllocated]="projectsService.analytics()?.totalBudget ?? 0"
-              [totalSpent]="projectsService.analytics()?.totalSpent ?? 0" />
+            @defer (on viewport; prefetch on idle) {
+              <app-budget-timeline-chart
+                [totalAllocated]="projectsService.analytics()?.totalBudget ?? 0"
+                [totalSpent]="projectsService.analytics()?.totalSpent ?? 0" />
+            } @placeholder {
+              <div class="chart-card-placeholder">
+                <div class="chart-skeleton"></div>
+              </div>
+            } @loading (minimum 200ms) {
+              <div class="chart-card-placeholder">
+                <div class="chart-skeleton pulse"></div>
+              </div>
+            }
 
             <!-- Progress Gauge Chart -->
-            <app-progress-gauge-chart
-              [averageProgress]="projectsService.analytics()?.averageProgress ?? 0"
-              [totalProjects]="totalProjects()" />
+            @defer (on viewport; prefetch on idle) {
+              <app-progress-gauge-chart
+                [averageProgress]="projectsService.analytics()?.averageProgress ?? 0"
+                [totalProjects]="totalProjects()" />
+            } @placeholder {
+              <div class="chart-card-placeholder">
+                <div class="chart-skeleton"></div>
+              </div>
+            } @loading (minimum 200ms) {
+              <div class="chart-card-placeholder">
+                <div class="chart-skeleton pulse"></div>
+              </div>
+            }
 
             <!-- Technology Stack Chart -->
-            <app-technology-stack-chart
-              [technologyData]="technologyUsage()" />
+            @defer (on viewport; prefetch on idle) {
+              <app-technology-stack-chart
+                [technologyData]="technologyUsage()" />
+            } @placeholder {
+              <div class="chart-card-placeholder">
+                <div class="chart-skeleton"></div>
+              </div>
+            } @loading (minimum 200ms) {
+              <div class="chart-card-placeholder">
+                <div class="chart-skeleton pulse"></div>
+              </div>
+            }
           </div>
         </div>
       }

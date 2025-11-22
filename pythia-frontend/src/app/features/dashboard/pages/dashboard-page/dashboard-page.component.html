@@ -81,12 +81,22 @@
             <mat-card-subtitle>Distribution by availability status</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            @if (availabilityChartData()) {
-              <app-donut-chart
-                [data]="availabilityChartData()!"
-                centerText="Total"
-                (chartClick)="onAvailabilityClick($event)"
-              />
+            @defer (on viewport; prefetch on idle) {
+              @if (availabilityChartData()) {
+                <app-donut-chart
+                  [data]="availabilityChartData()!"
+                  centerText="Total"
+                  (chartClick)="onAvailabilityClick($event)"
+                />
+              }
+            } @placeholder {
+              <div class="chart-placeholder" aria-label="Loading availability chart">
+                <div class="chart-skeleton"></div>
+              </div>
+            } @loading (minimum 200ms) {
+              <div class="chart-placeholder" aria-label="Loading availability chart">
+                <div class="chart-skeleton pulse"></div>
+              </div>
             }
           </mat-card-content>
         </mat-card>
@@ -110,12 +120,22 @@
             </div>
           </mat-card-header>
           <mat-card-content>
-            @if (locationsChartData()) {
-              <app-horizontal-bar-chart
-                [data]="locationsChartData()!"
-                [height]="350"
-                (chartClick)="onLocationClick($event)"
-              />
+            @defer (on viewport; prefetch on idle) {
+              @if (locationsChartData()) {
+                <app-horizontal-bar-chart
+                  [data]="locationsChartData()!"
+                  [height]="350"
+                  (chartClick)="onLocationClick($event)"
+                />
+              }
+            } @placeholder {
+              <div class="chart-placeholder" aria-label="Loading locations chart">
+                <div class="chart-skeleton" style="height: 350px;"></div>
+              </div>
+            } @loading (minimum 200ms) {
+              <div class="chart-placeholder" aria-label="Loading locations chart">
+                <div class="chart-skeleton pulse" style="height: 350px;"></div>
+              </div>
             }
           </mat-card-content>
         </mat-card>
@@ -139,12 +159,22 @@
             </div>
           </mat-card-header>
           <mat-card-content>
-            @if (skillsChartData()) {
-              <app-horizontal-bar-chart
-                [data]="skillsChartData()!"
-                [height]="450"
-                (chartClick)="onSkillClick($event)"
-              />
+            @defer (on viewport; prefetch on idle) {
+              @if (skillsChartData()) {
+                <app-horizontal-bar-chart
+                  [data]="skillsChartData()!"
+                  [height]="450"
+                  (chartClick)="onSkillClick($event)"
+                />
+              }
+            } @placeholder {
+              <div class="chart-placeholder" aria-label="Loading skills chart">
+                <div class="chart-skeleton" style="height: 450px;"></div>
+              </div>
+            } @loading (minimum 200ms) {
+              <div class="chart-placeholder" aria-label="Loading skills chart">
+                <div class="chart-skeleton pulse" style="height: 450px;"></div>
+              </div>
             }
           </mat-card-content>
         </mat-card>
